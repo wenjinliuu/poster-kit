@@ -1,0 +1,22 @@
+{
+  "file": "光互连ETF持仓",
+  "eyebrow": "持仓占比 · 光互连主题 ETF",
+  "tag": "示例数据",
+  "title": ["光互连主题 ETF", "前十大持仓", "谁的权重最高？"],
+  "object": "coin",
+  "companies": {
+    "SZSE:300308": {"name": "中际旭创"}, "SZSE:300502": {"name": "新易盛"}, "NASDAQ:COHR": {"name": "Coherent"},
+    "NASDAQ:LITE": {"name": "Lumentum"}, "SZSE:300394": {"name": "天孚通信"}, "SSE:688498": {"name": "源杰科技"},
+    "SZSE:002281": {"name": "光迅科技"}, "NYSE:CIEN": {"name": "Ciena"}, "NYSE:FN": {"name": "Fabrinet"}, "NASDAQ:AAOI": {"name": "应用光电"}
+  },
+  "sections": [
+    {"type": "holdings", "title": "持仓权重", "note": "占基金净值比例", "center_label": "前十大合计", "center_value": "86.4%",
+     "items": [["SZSE:300308",15.4],["SZSE:300502",14.6],["NASDAQ:COHR",14.2],["NASDAQ:LITE",13.7],["SZSE:300394",7.9],["SSE:688498",5.4],
+               ["SZSE:002281",4.7],["NYSE:CIEN",4.4],["NYSE:FN",4.0],["NASDAQ:AAOI",2.1]], "other": 13.6},
+    {"type": "table", "title": "前五大持仓表现", "note": "近一周（示例）",
+     "columns": [{"label":"股票","type":"company"},{"label":"权重"},{"label":"周涨跌","type":"pct"}],
+     "rows": [["SZSE:300308","15.4%",12.6],["SZSE:300502","14.6%",9.8],["NASDAQ:COHR","14.2%",-2.3],["NASDAQ:LITE","13.7%",4.1],["SZSE:300394","7.9%",-0.8]]},
+    {"type": "notes", "items": ["A 股光模块龙头合计占比超过三成。", "前四大持仓权重接近，集中度较高。"]}
+  ],
+  "footer": ["口径：示例 ETF 前十大持仓及权重，按占净值比例排序（示例数据）", "数据截至：2026 年 10 月 17 日", "图中徽标仅用于识别，归各自所有者；不构成投资建议。"]
+}

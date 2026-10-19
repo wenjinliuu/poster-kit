@@ -1,0 +1,33 @@
+{
+  "file": "AI资本开支",
+  "eyebrow": "数据统计 · AI 资本开支",
+  "tag": "示例数据",
+  "title": ["2027 年 AI 资本开支", "预计 8,600 亿美元", "钱从哪来，流向哪里"],
+  "object": "rack",
+  "companies": {
+    "NASDAQ:GOOGL": {"name": "谷歌"}, "NASDAQ:AMZN": {"name": "亚马逊"}, "NASDAQ:MSFT": {"name": "微软"},
+    "NASDAQ:META": {"name": "Meta"}, "NYSE:ORCL": {"name": "甲骨文"}, "NASDAQ:CRWV": {"name": "CoreWeave"},
+    "NASDAQ:NVDA": {"name": "英伟达"}, "NASDAQ:AVGO": {"name": "博通"}, "NASDAQ:AMD": {"name": "超威半导体"},
+    "NYSE:ANET": {"name": "Arista"}, "NASDAQ:COHR": {"name": "Coherent"}, "SZSE:300308": {"name": "中际旭创"},
+    "NYSE:VRT": {"name": "维谛技术"}, "NYSE:ETN": {"name": "伊顿"}, "NYSE:GEV": {"name": "GE Vernova"}
+  },
+  "sections": [
+    {"type": "kpis", "items": [
+      {"label": "2027E 合计", "value": "8,600", "unit": "亿美元", "note": "示例数据"},
+      {"label": "同比增速", "value": "+37", "unit": "%", "note": "较 2026E", "tone": "up"},
+      {"label": "前五大占比", "value": "90", "unit": "%", "note": "集中度"}]},
+    {"type": "years", "title": "历年资本开支", "note": "单位：亿美元，E 为预测",
+     "items": [["2023", 1520], ["2024", 2310], ["2025", 4060], ["2026E", 6280], ["2027E", 8600]]},
+    {"type": "ranking", "title": "钱从哪来", "note": "2027E 各公司资本开支", "unit": "亿美元",
+     "items": [["NASDAQ:GOOGL", 2050], ["NASDAQ:AMZN", 1860], ["NASDAQ:MSFT", 1640], ["NASDAQ:META", 1380], ["NYSE:ORCL", 820], ["NASDAQ:CRWV", 410]],
+     "other": ["其他", 440, "二线云厂商等"]},
+    {"type": "banner", "label": "2027E 合计", "value": "$8,600 亿", "note": "较 2026E 增长 37%"},
+    {"type": "flows", "title": "流向哪里", "note": "主要受益环节与代表公司", "prefix": "$", "suffix": " 亿",
+     "items": [{"name": "芯片与服务器", "value": 3870, "companies": ["NASDAQ:NVDA", "NASDAQ:AVGO", "NASDAQ:AMD"]},
+               {"name": "网络与光通信", "value": 1550, "companies": ["NYSE:ANET", "NASDAQ:COHR", "SZSE:300308"]},
+               {"name": "数据中心基建", "value": 1290, "companies": ["NYSE:VRT", "NYSE:ETN", "NYSE:GEV"]}],
+     "other": 1890},
+    {"type": "notes", "items": ["资本开支按现金口径，租赁支出不计入。", "流向拆分为机构估算，仅作结构参考。"]}
+  ],
+  "footer": ["来源：公司财报指引与机构预测汇总（示例数据）", "制图时间：2026 年 10 月 19 日", "图中徽标仅用于识别，归各自所有者；不构成投资建议。"]
+}

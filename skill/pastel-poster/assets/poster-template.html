@@ -1,0 +1,307 @@
+<title>__PAGE_TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* pastel-poster 模板 · 雾彩·明亮。页面外壳安静，海报 1080 宽固定；由 build_poster.py 注入 SPEC 与 LOGOS */
+:root{
+  --bg:#f4f5f8;--surface:#ffffff;--fg:#1b1d27;--fg2:#5d6274;--fg3:#9297a8;--line:#e2e4ec;
+  --f-ui:-apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111318;--surface:#1a1d25;--fg:#eceef4;--fg2:#a0a6b8;--fg3:#6c7285;--line:#2a2f3b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111318;--surface:#1a1d25;--fg:#eceef4;--fg2:#a0a6b8;--fg3:#6c7285;--line:#2a2f3b;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1120px;margin:0 auto}
+.page-h{padding-block:28px 6px}
+.page-h h1{margin:0;font-size:clamp(22px,4vw,32px);font-weight:900;letter-spacing:-.01em;text-wrap:balance}
+.page-h p{margin:4px 0 0;color:var(--fg2);font-size:14px}
+section.ver{margin-top:28px;display:grid;gap:10px}
+.ver-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ver-h b{font-size:17px}
+.ver-h span{display:block;font-size:13px;color:var(--fg2)}
+.dl-box{display:grid;justify-items:end;gap:4px}
+.dl{all:unset;cursor:pointer;background:var(--fg);color:var(--bg);font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;white-space:nowrap}
+.dl:focus-visible{outline:2px solid var(--fg2);outline-offset:2px}
+.dl[disabled]{opacity:.5;cursor:default}
+.dl-msg{font-size:12px;color:var(--fg3);min-height:1em}
+.frame{width:100%;overflow:hidden;border-radius:14px;border:1px solid var(--line);background:#fff}
+.frame > .poster{transform-origin:0 0}
+
+/* ================= 海报 ================= */
+.poster{width:1080px;box-sizing:border-box;padding:76px 72px 52px;position:relative;overflow:hidden;
+  --ink:#16172a;--ink2:#444760;--ink3:#8e91a7;--track:#eceef4;--axis:#dcdfe9;
+  --p-body:-apple-system,"PingFang SC","Noto Sans SC",sans-serif;--p-title:"Noto Sans SC","PingFang SC",sans-serif;--p-num:"Plus Jakarta Sans","Noto Sans SC",sans-serif;
+  font-family:var(--p-body);color:var(--ink);background:linear-gradient(180deg,#ffffff 0,#fafbfd 560px,#f7f8fc 100%);display:flex;flex-direction:column;gap:30px}
+.poster *{box-sizing:border-box}
+.poster > *:not(.bg-obj){position:relative;z-index:1}
+.bg-obj{position:absolute;top:-20px;right:-90px;width:620px;z-index:0;pointer-events:none}
+.bg-obj svg,.gt-icon svg,.ri svg{display:block}
+.p-eyebrow{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--ink3);margin-bottom:-14px}
+.p-eyebrow .tag{font-size:14px;padding:4px 10px;border-radius:999px;border:1.5px solid var(--ink3);font-weight:500}
+.p-title{display:grid;gap:2px;margin:0}
+.p-title .t1{font-family:var(--p-title);font-weight:900;font-size:88px;line-height:1.08;letter-spacing:-.025em}
+.p-title .t2{font-family:var(--p-title);font-weight:900;font-size:104px;line-height:1.08;letter-spacing:-.03em;color:var(--accent)}
+.p-title .t3{font-weight:500;font-size:50px;line-height:1.25;color:var(--ink2);margin-top:8px;letter-spacing:-.01em}
+.card{background:#fff;border-radius:30px;box-shadow:0 8px 28px rgba(40,40,90,.06);padding:32px 34px;display:flex;flex-direction:column;gap:22px}
+.card-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.card-h h3{margin:0;font-family:var(--p-title);font-size:30px;font-weight:900;letter-spacing:-.01em}
+.card-h span{font-size:17px;color:var(--ink3)}
+.p-foot{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;padding-top:20px}
+.p-foot .fl{display:grid;gap:4px;font-size:16px;color:var(--ink2);line-height:1.55}
+.p-foot .fl small{font-size:14px;color:var(--ink3)}
+.p-foot .mark{display:grid;justify-items:end;gap:2px;font-size:14px;color:var(--ink3);text-align:right}
+.p-foot .mark b{font-family:var(--p-num);font-size:22px;font-weight:800;color:var(--ink)}
+
+/* 公司徽章 */
+.badge{width:var(--bs,60px);height:var(--bs,60px);flex:none;display:grid;place-items:center;border-radius:50%;overflow:hidden;
+  font-weight:900;font-size:calc(var(--bs,60px)*.42);line-height:1;color:var(--c,#5b4cff);background:#fff;box-shadow:0 0 0 2px var(--g-soft,#e4e6ee);font-family:var(--p-num)}
+.badge img{width:100%;height:100%;object-fit:cover;display:block}
+.co{display:flex;align-items:center;gap:14px;min-width:0}
+.co-t{display:grid;min-width:0}
+.co-t b{font-family:var(--p-num);font-weight:800;font-size:27px;line-height:1.15;letter-spacing:-.01em;white-space:nowrap}
+.co-t span{font-size:17px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* chain：分组 + 公司网格 */
+.groups{display:grid;gap:16px}
+.grp{display:grid;gap:20px;background:var(--g-tint);border-radius:28px;padding:24px 30px 28px;position:relative}
+.grp-tag{display:flex;align-items:center;gap:16px;padding-right:110px;min-width:0}
+.gt-name{font-family:var(--p-title);font-size:30px;font-weight:900;line-height:1.2;background:var(--g);color:#fff;padding:4px 18px;border-radius:999px;white-space:nowrap}
+.gt-desc{font-size:19px;line-height:1.45;color:var(--g-deep);font-weight:700}
+.gt-icon{position:absolute;top:8px;right:22px;width:80px}
+.grp-list{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:22px 18px}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:16px}
+.kpi{background:#fff;border-radius:26px;box-shadow:0 8px 28px rgba(40,40,90,.06);padding:24px 26px;display:grid;gap:4px;align-content:start}
+.kpi .k{font-size:18px;color:var(--ink2)}
+.kpi .v{font-family:var(--p-num);font-weight:800;font-size:52px;line-height:1.1;letter-spacing:-.02em;white-space:nowrap;color:var(--g-deep,var(--ink))}
+.kpi .v small{font-size:22px;margin-left:4px;color:var(--ink2)}
+.kpi .d{font-size:16px;color:var(--ink3)}
+.kpi.up .v{color:var(--up)} .kpi.down .v{color:var(--down)}
+
+/* holdings：环形 + 卡片 */
+.hold{display:grid;grid-template-columns:460px 1fr;gap:28px;align-items:center}
+.ring{position:relative;width:460px;height:460px}
+.ring-c{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;text-align:center;gap:2px}
+.ring-c .ri{width:110px;margin-bottom:4px}
+.ring-c span{font-size:18px;color:var(--ink3)}
+.ring-c b{font-family:var(--p-num);font-size:58px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.ring-lab{position:absolute;transform:translate(-50%,-50%);color:#fff;font-family:var(--p-num);font-weight:800;font-size:24px;white-space:nowrap}
+.hold-list{display:grid;gap:10px}
+.hc{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;padding:12px 18px;border-radius:20px;background:var(--g-tint)}
+.hc .pct{font-family:var(--p-num);font-weight:800;font-size:38px;letter-spacing:-.02em;color:var(--g-deep)}
+.hc .pct small{font-size:20px}
+.rest{display:flex;flex-wrap:wrap;gap:10px}
+.rest .rc{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:20px;background:#f4f5f9;font-size:18px}
+.rest .rc b{font-family:var(--p-num);font-weight:800}
+.rest .rc em{font-style:normal;color:var(--ink3);font-size:15px}
+
+/* years：柱状 */
+.years{display:flex;align-items:flex-end;gap:22px;height:230px;border-bottom:2px solid var(--axis);padding:0 6px}
+.yr{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}
+.yr b{display:block;width:100%;border-radius:12px 12px 0 0}
+.yr span{font-family:var(--p-num);font-weight:800;font-size:22px;color:var(--ink2);white-space:nowrap}
+.yr.hi span{color:var(--accent);font-size:28px}
+.yrx{display:flex;gap:22px;padding:0 6px;margin-top:-12px}
+.yrx span{flex:1;text-align:center;font-size:17px;color:var(--ink3);font-family:var(--p-num);font-weight:700}
+
+/* ranking：排行条 */
+.rank{display:grid;gap:14px}
+.rk-row{display:grid;grid-template-columns:240px 1fr 170px;align-items:center;gap:18px}
+.track{height:22px;border-radius:12px;background:var(--track)}
+.track b{display:block;height:100%;border-radius:12px}
+.rk-row .val{text-align:right;font-family:var(--p-num);font-weight:800;font-size:28px;white-space:nowrap}
+.rk-row .val small{font-family:var(--p-body);font-size:15px;color:var(--ink3);font-weight:500;margin-left:4px}
+
+/* banner / flows */
+.banner{border-radius:24px;padding:22px 34px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:#fff;background:var(--banner)}
+.banner span{font-size:24px;font-weight:700}
+.banner b{font-family:var(--p-num);font-size:58px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.banner em{font-style:normal;font-size:20px;opacity:.88}
+.share{display:flex;height:46px;gap:3px;border-radius:12px;overflow:hidden}
+.share div{display:grid;place-items:center;color:#fff;font-family:var(--p-num);font-weight:800;font-size:19px;white-space:nowrap;overflow:hidden}
+.flows{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:16px}
+.flow{border-radius:24px;background:var(--g-tint);padding:22px 22px 24px;display:grid;gap:16px;align-content:start}
+.flow-h{display:grid;gap:2px}
+.flow-h span{font-size:21px;font-weight:800;color:var(--g-deep)}
+.flow-h b{font-family:var(--p-num);font-weight:800;font-size:44px;letter-spacing:-.03em;line-height:1.1;color:var(--g-deep)}
+.flow-h small{font-size:16px;color:var(--ink3)}
+.flow .co-t b{font-size:23px} .flow .co-t span{font-size:15px}
+.flow-list{display:grid;gap:12px}
+
+/* table：通用表格 */
+.tbl{width:100%;border-collapse:collapse;font-size:20px}
+.tbl th{font-size:16px;font-weight:500;color:var(--ink3);text-align:right;padding:0 8px 12px;border-bottom:1px solid #e6e8ef}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl td{padding:13px 8px;border-bottom:1px solid #eef0f5;text-align:right;font-family:var(--p-num);font-weight:700;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:19px;font-weight:800}
+.pill.up{background:var(--up-soft);color:var(--up)} .pill.down{background:var(--down-soft);color:var(--down)}
+
+/* notes */
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:10px 32px;font-size:18px;color:var(--ink2);line-height:1.6}
+.notes div{display:flex;gap:10px}
+.notes div::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:11px;flex:none}
+
+/* 版本差异 */
+.poster[data-v="grad"] .gt-name{background:linear-gradient(90deg,var(--g),var(--g2))}
+.poster[data-v="clear"]{background:linear-gradient(180deg,#ffffff 0,#fbfcfe 100%)}
+.poster[data-v="clear"] .card,.poster[data-v="clear"] .kpi{box-shadow:none;border:1.5px solid #eceef5}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="page-h"><h1 id="pageTitle"></h1><p id="pageSub"></p></header>
+  <main id="vers"></main>
+</div>
+
+<script>
+const SPEC=/*__SPEC__*/null;
+const LOGOS=/*__LOGOS__*/{};
+
+/* ---------- 配色：雾彩·明亮 8 色（已过色盲区分校验），三个版本共用，只换处理方式 ---------- */
+const CATS=["#5b4cff","#1296f0","#0fb57b","#ff6b2c","#f0347f","#00a8c6","#a04cf5","#4cb82e"];
+const VERSIONS={
+  bright:{name:"雾彩 · 明亮",tint:.9,banner:a=>a},
+  grad:{name:"雾彩 · 渐变",tint:.9,banner:(a,b)=>`linear-gradient(100deg,${a},${b})`},
+  clear:{name:"雾彩 · 清透",tint:.94,banner:a=>a}
+};
+const UPDOWN={cn:{up:"#e8364a",down:"#0fb57b"},us:{up:"#0fb57b",down:"#e8364a"}};
+const W="#ffffff",K="#000000";
+const hex2rgb=h=>{h=h.replace("#","");const n=parseInt(h,16);return[n>>16&255,n>>8&255,n&255]};
+const mix=(a,b,t)=>{const x=hex2rgb(a),y=hex2rgb(b);return"#"+x.map((v,i)=>Math.round(v+(y[i]-v)*t).toString(16).padStart(2,"0")).join("")};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=n=>typeof n==="number"?n.toLocaleString("en-US"):esc(n);
+const $=s=>document.querySelector(s);
+
+/* ---------- 等距物件（程序绘制） ---------- */
+function Iso(){this.s=[];this.b=[1e9,1e9,-1e9,-1e9]}
+Iso.prototype.pt=function(x,y,z){const X=(x-y)*.866,Y=(x+y)*.5-z,b=this.b;if(X<b[0])b[0]=X;if(Y<b[1])b[1]=Y;if(X>b[2])b[2]=X;if(Y>b[3])b[3]=Y;return X.toFixed(1)+","+Y.toFixed(1)};
+Iso.prototype.poly=function(pts,fill){this.s.push(`<polygon points="${pts.map(q=>this.pt(...q)).join(" ")}" fill="${fill}" stroke-linejoin="round"/>`)};
+Iso.prototype.box=function(x,y,z,w,d,h,c){
+  this.poly([[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]],c.l);
+  this.poly([[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]],c.r);
+  this.poly([[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]],c.t)};
+Iso.prototype.svg=function(width,shadow){const[a,b,c,d]=this.b,pad=12,vw=c-a+pad*2,vh=d-b+pad*2;
+  const sh=shadow?`<ellipse cx="${((a+c)/2).toFixed(1)}" cy="${(d-4).toFixed(1)}" rx="${((c-a)*.42).toFixed(1)}" ry="${((c-a)*.09).toFixed(1)}" fill="${shadow}"/>`:"";
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${(width*vh/vw).toFixed(1)}" viewBox="${(a-pad).toFixed(1)} ${(b-pad).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}">${sh}${this.s.join("")}</svg>`};
+const DRAW={
+  chip(B,p){const S=220,H=18;for(let i=20;i<=S-28;i+=22){B.box(i,-16,5,8,16,4,p.pin);B.box(-16,i,5,16,8,4,p.pin)}
+    B.box(0,0,0,S,S,H,p.body);for(let i=20;i<=S-28;i+=22){B.box(i,S,5,8,16,4,p.pin);B.box(S,i,5,16,8,4,p.pin)}
+    B.box(50,50,H,120,120,12,p.core);B.poly([[72,72,H+12.5],[148,72,H+12.5],[148,148,H+12.5],[72,148,H+12.5]],p.inner)},
+  module(B,p){const L=380,D=104,H=54;B.box(0,0,0,L,D,H,p.body);for(let x=24;x<=246;x+=22)B.box(x,12,H,9,D-24,14,p.core);
+    B.box(272,12,H,92,D-24,3,p.pin);B.poly([[L,16,12],[L,46,12],[L,46,40],[L,16,40]],p.dark);B.poly([[L,58,12],[L,88,12],[L,88,40],[L,58,40]],p.dark);B.box(L,8,0,24,D-16,7,p.pin)},
+  rack(B,p){const L=290,D=180,U=48;for(let k=0;k<3;k++){const z=k*(U+8);B.box(0,0,z,L,D,U,p.body);
+    B.poly([[22,D,z+14],[180,D,z+14],[180,D,z+20],[22,D,z+20]],p.dark);B.poly([[22,D,z+28],[180,D,z+28],[180,D,z+34],[22,D,z+34]],p.dark);
+    B.poly([[226,D,z+17],[242,D,z+17],[242,D,z+31],[226,D,z+31]],p.core.r);B.poly([[252,D,z+17],[268,D,z+17],[268,D,z+31],[252,D,z+31]],p.core.r)}},
+  coin(B,p){for(let k=0;k<4;k++){const z=k*16;B.box(0,0,z,170,170,12,p.body)}B.box(30,30,64,110,110,6,p.core)},
+  globe(B,p){B.box(0,0,0,220,220,10,p.body);for(let i=0;i<4;i++)B.box(30+i*42,30+i*10,10,30,170-i*20,40+i*34,i%2?p.core:p.pin)}
+};
+const tri=(c,a,b,d)=>({t:mix(c,W,a),l:mix(c,W,b),r:mix(c,W,d)});
+const bgPal=a=>({body:tri(a,.95,.9,.84),core:tri(a,.88,.8,.72),pin:tri(a,.91,.85,.79),inner:mix(a,W,.84),dark:mix(a,W,.7),shadow:mix(a,W,.95)});
+const iconPal=g=>({body:tri(g,.8,.62,.45),core:tri(g,.6,.4,.22),pin:tri(g,.75,.6,.45),inner:mix(g,W,.5),dark:mix(g,K,.1)});
+function isoSVG(kind,pal,width,shadow){if(!DRAW[kind])return"";const B=new Iso();DRAW[kind](B,pal);return B.svg(width,shadow)}
+
+/* ---------- 公司 ---------- */
+const CO=SPEC.companies||{};
+function coInfo(key){const c=CO[key]||{};const code=c.code||String(key).split(":").pop();return{code,name:c.name||"",logo:LOGOS[key]&&LOGOS[key].src}}
+function badge(key,size){const c=coInfo(key);
+  if(c.logo)return `<span class="badge" style="--bs:${size}px"><img src="${c.logo}" alt="${esc(c.code)}"></span>`;
+  const ch=/[一-鿿]/.test(c.name)?c.name[0]:(c.code[0]||"?");
+  return `<span class="badge" style="--bs:${size}px">${esc(ch)}</span>`}
+function coItem(key,size){const c=coInfo(key);return `<div class="co">${badge(key,size)}<div class="co-t"><b>${esc(c.code)}</b><span>${esc(c.name)}</span></div></div>`}
+function labelItem(it,size){ // 排行里既可以是公司键，也可以是 {label, sub}
+  if(typeof it==="string"&&CO[it])return coItem(it,size);
+  const l=typeof it==="string"?{label:it}:it;return `<div class="co"><span class="badge" style="--bs:${size}px;--c:#8e91a7">${esc((l.label||"·")[0])}</span><div class="co-t"><b>${esc(l.label)}</b><span>${esc(l.sub||"")}</span></div></div>`}
+
+/* ---------- 版块 ---------- */
+const cardH=(t,n)=>t?`<div class="card-h"><h3>${esc(t)}</h3><span>${esc(n||"")}</span></div>`:"";
+const SEC={
+  chain(s){return `<div class="groups">${s.groups.map((g,i)=>`<div class="grp" data-g="${i}"><div class="grp-tag"><div class="gt-name">${esc(g.name)}</div><div class="gt-desc">${esc(g.desc||"")}</div>${g.icon?`<div class="gt-icon" data-icon="${g.icon}" data-g="${i}"></div>`:""}</div><div class="grp-list" style="--cols:${s.cols||4}">${g.companies.map(k=>coItem(k,60)).join("")}</div></div>`).join("")}</div>`},
+  kpis(s){return `<div class="kpis" style="--n:${s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone||""}" ${k.tone?"":`data-g="${i}"`}><div class="k">${esc(k.label)}</div><div class="v">${esc(k.value)}<small>${esc(k.unit||"")}</small></div><div class="d">${esc(k.note||"")}</div></div>`).join("")}</div>`},
+  holdings(s){const top=s.items.slice(0,6);
+    const cards=top.map((h,i)=>{const c=coInfo(h[0]);return `<div class="hc" data-g="${i}">${badge(h[0],54)}<div class="co-t"><b>${esc(c.code)}</b><span>${esc(c.name)}</span></div><div class="pct">${h[1].toFixed(1)}<small>%</small></div></div>`}).join("");
+    const rest=(s.items.slice(6).map(h=>`<div class="rc">${badge(h[0],36)}<b>${esc(coInfo(h[0]).code)}</b><em>${h[1].toFixed(1)}%</em></div>`).join(""))+(s.other!=null?`<div class="rc"><span class="badge" style="--bs:36px;--c:#8e91a7">…</span><b>其他</b><em>${s.other.toFixed(1)}%</em></div>`:"");
+    return `<div class="card">${cardH(s.title,s.note)}<div class="hold"><div class="ring" data-ring='${JSON.stringify({items:s.items.map(h=>h[1]),other:s.other||0})}'><svg class="ring-svg" width="460" height="460" viewBox="0 0 460 460"></svg><div class="ring-c">${SPEC.object?`<div class="ri" data-icon="${SPEC.object}" data-g="-1"></div>`:""}<span>${esc(s.center_label||"合计")}</span><b>${esc(s.center_value||"")}</b></div></div><div class="hold-list">${cards}</div></div>${rest?`<div class="rest">${rest}</div>`:""}</div>`},
+  years(s){const max=Math.max(...s.items.map(y=>y[1]));const last=s.items.length-1;
+    return `<div class="card">${cardH(s.title,s.note)}<div class="years">${s.items.map((y,i)=>`<div class="yr${i===last&&s.highlight_last!==false?" hi":""}"><span>${fmt(y[1])}</span><b data-yr="${i===last&&s.highlight_last!==false?"hi":"lo"}" style="height:${(y[1]/max*78).toFixed(1)}%"></b></div>`).join("")}</div><div class="yrx">${s.items.map(y=>`<span>${esc(y[0])}</span>`).join("")}</div></div>`},
+  ranking(s){const max=Math.max(...s.items.map(r=>r[1]));const u=s.unit?`<small>${esc(s.unit)}</small>`:"";
+    const rows=s.items.map((r,i)=>`<div class="rk-row">${labelItem(r[0],50)}<div class="track"><b data-g="${i}" style="width:${(r[1]/max*100).toFixed(1)}%"></b></div><div class="val">${fmt(r[1])}${u}</div></div>`).join("")
+      +(s.other?`<div class="rk-row">${labelItem({label:s.other[0],sub:s.other[2]||""},50)}<div class="track"><b data-g="gray" style="width:${(s.other[1]/max*100).toFixed(1)}%"></b></div><div class="val">${fmt(s.other[1])}${u}</div></div>`:"");
+    return `<div class="card">${cardH(s.title,s.note)}<div class="rank">${rows}</div></div>`},
+  banner(s){return `<div class="banner"><span>${esc(s.label)}</span><b>${esc(s.value)}</b><em>${esc(s.note||"")}</em></div>`},
+  flows(s){const total=s.items.reduce((a,f)=>a+f.value,0)+(s.other||0);const pct=v=>Math.round(v/total*100);
+    const share=s.items.map((f,i)=>`<div data-g="${i}" style="flex:${f.value}">${pct(f.value)}%</div>`).join("")+(s.other?`<div data-g="gray" style="flex:${s.other}">其他 ${pct(s.other)}%</div>`:"");
+    const cards=s.items.map((f,i)=>`<div class="flow" data-g="${i}"><div class="flow-h"><span>${esc(f.name)}</span><b>${esc(s.prefix||"")}${fmt(f.value)}${esc(s.suffix||"")}</b><small>占比 ${pct(f.value)}%</small></div><div class="flow-list">${(f.companies||[]).map(k=>coItem(k,44)).join("")}</div></div>`).join("");
+    return `<div class="card">${cardH(s.title,s.note)}<div class="share">${share}</div><div class="flows" style="--n:${s.items.length}">${cards}</div></div>`},
+  table(s){const cell=(v,j)=>{const col=s.columns[j]||{};
+      if(col.type==="company")return `<td>${coItem(v,44)}</td>`;
+      if(col.type==="pct"){const n=+v;return `<td><span class="pill ${n>=0?"up":"down"}">${n>0?"+":""}${n.toFixed(2)}%</span></td>`}
+      return `<td>${fmt(v)}</td>`};
+    return `<div class="card">${cardH(s.title,s.note)}<table class="tbl"><thead><tr>${s.columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr>${r.map(cell).join("")}</tr>`).join("")}</tbody></table></div>`},
+  notes(s){return `<div class="notes">${s.items.map(t=>`<div>${esc(t)}</div>`).join("")}</div>`},
+  html(s){return s.html}
+};
+
+function posterHTML(){
+  const t=SPEC.title||[];
+  return `${SPEC.object?`<div class="bg-obj" data-bg="${SPEC.object}"></div>`:""}`
+   +`<div class="p-eyebrow">${esc(SPEC.eyebrow||"")}${SPEC.tag?`<span class="tag">${esc(SPEC.tag)}</span>`:""}</div>`
+   +`<h2 class="p-title">${t[0]?`<span class="t1">${esc(t[0])}</span>`:""}${t[1]?`<span class="t2">${esc(t[1])}</span>`:""}${t[2]?`<span class="t3">${esc(t[2])}</span>`:""}</h2>`
+   +(SPEC.sections||[]).map(s=>(SEC[s.type]||(()=>""))(s)).join("")
+   +`<div class="p-foot"><div class="fl">${(SPEC.footer||[]).map((l,i,a)=>i<a.length-1?`<span>${esc(l)}</span>`:`<small>${esc(l)}</small>`).join("")}</div><div class="mark"><b>${esc(SPEC.mark||"pastel-poster")}</b><span>${esc(SPEC.mark_sub||"")}</span></div></div>`;
+}
+
+/* ---------- 上色 ---------- */
+function paint(p,vid){
+  const V=VERSIONS[vid];const accent=SPEC.accent||CATS[0],accent2=CATS[4];const ud=UPDOWN[SPEC.updown||"cn"];
+  p.style.setProperty("--accent",accent);p.style.setProperty("--banner",V.banner(accent,accent2));
+  p.style.setProperty("--up",ud.up);p.style.setProperty("--down",ud.down);p.style.setProperty("--up-soft",mix(ud.up,W,.88));p.style.setProperty("--down-soft",mix(ud.down,W,.88));
+  const gcol=i=>i==="gray"?"#b8bdc8":CATS[+i%CATS.length];
+  p.querySelectorAll("[data-g]").forEach(el=>{const g=el.dataset.g;if(g==="-1")return;const c=gcol(g);
+    el.style.setProperty("--g",c);el.style.setProperty("--g2",CATS[(+g+1)%CATS.length]||c);el.style.setProperty("--g-tint",mix(c,W,V.tint));
+    el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",mix(c,K,.18));
+    if(el.tagName==="B"||el.parentElement.classList.contains("share"))el.style.background=vid==="grad"&&el.parentElement.classList.contains("track")?`linear-gradient(90deg,${c},${mix(c,W,.35)})`:c});
+  p.querySelectorAll("[data-yr]").forEach(el=>{el.style.background=el.dataset.yr==="hi"?accent:mix(accent,W,.72)});
+  p.querySelectorAll("[data-icon]").forEach(el=>{const g=el.dataset.g;const pal=g==="-1"?bgPal(accent):iconPal(gcol(g));el.innerHTML=isoSVG(el.dataset.icon,pal,parseFloat(getComputedStyle(el).width)||80,null)});
+  p.querySelectorAll("[data-bg]").forEach(el=>{el.innerHTML=isoSVG(el.dataset.bg,bgPal(accent),620,bgPal(accent).shadow)});
+  p.querySelectorAll("[data-ring]").forEach(el=>{const d=JSON.parse(el.dataset.ring);const svg=el.querySelector("svg");
+    const cx=230,r=178,sw=74,C2=2*Math.PI*r;let off=0,s=`<circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="#eef0f4" stroke-width="${sw}"/>`;const labs=[];
+    const segs=d.items.slice(0,6).map((v,i)=>[v,CATS[i],v>=10]);const restSum=d.items.slice(6).reduce((a,b)=>a+b,0);
+    if(restSum)segs.push([restSum,"#9aa1ae",false]);if(d.other)segs.push([d.other,"#d5d9e1",false]);
+    segs.forEach(([v,c,lab])=>{const len=v/100*C2;s+=`<circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-dasharray="${Math.max(len-4,0).toFixed(2)} ${C2.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cx})"/>`;
+      if(lab){const a=(off+len/2)/C2*2*Math.PI-Math.PI/2;labs.push(`<span class="ring-lab" style="left:${(cx+r*Math.cos(a)).toFixed(1)}px;top:${(cx+r*Math.sin(a)).toFixed(1)}px">${v.toFixed(1)}%</span>`)}off+=len});
+    svg.innerHTML=s;el.querySelectorAll(".ring-lab").forEach(e=>e.remove());svg.insertAdjacentHTML("afterend",labs.join(""))});
+}
+
+/* ---------- 页面 ---------- */
+function fit(frame){const p=frame.firstElementChild;const s=Math.min(1,frame.clientWidth/1080);p.style.transform=`scale(${s})`;frame.style.height=Math.ceil(p.offsetHeight*s)+"px"}
+const fitAll=()=>document.querySelectorAll(".frame").forEach(fit);
+let dlNS=null;const dlReady=(window.claude&&window.claude.use)?window.claude.use("downloads").then(d=>dlNS=d).catch(()=>dlNS=null):Promise.resolve(null);
+async function download(p,vid,btn,msg){
+  btn.disabled=true;msg.textContent="正在生成…";
+  try{await dlReady;if(!dlNS){msg.textContent="请在 claude.ai 中打开此页面再下载";return}
+    await document.fonts.ready;const prev=p.style.transform;p.style.transform="none";let canvas;
+    try{canvas=await html2canvas(p,{scale:2,backgroundColor:"#ffffff",useCORS:true,windowWidth:1200,logging:false})}finally{p.style.transform=prev}
+    const blob=await new Promise(r=>canvas.toBlob(r,"image/png"));
+    await dlNS.save({filename:`${SPEC.file||"poster"}-${VERSIONS[vid].name.replace(/\s|·/g,"")}.png`,data:blob});msg.textContent="已保存";
+  }catch(e){const c=e&&e.code;msg.textContent=c==="declined"?"已取消":c==="rate_limited"?"已有一个保存窗口，稍后再试":(c==="unavailable"||c==="not_granted")?"当前页面不支持下载，请在 claude.ai 中打开":"生成失败，请重试"}
+  finally{btn.disabled=false}}
+function init(){
+  $("#pageTitle").textContent=SPEC.page_title||(SPEC.title||[]).filter(Boolean).join(" ");
+  $("#pageSub").textContent=SPEC.page_sub||"同一张海报的几个版本，选一张下载高清图。";
+  const vers=(SPEC.versions||["bright","grad","clear"]).filter(v=>VERSIONS[v]);
+  const main=$("#vers");
+  vers.forEach((vid,i)=>{const sec=document.createElement("section");sec.className="ver";
+    sec.innerHTML=`<div class="ver-h"><div><b>版本 ${i+1} · ${VERSIONS[vid].name}</b></div><div class="dl-box"><button class="dl" type="button">下载高清图</button><span class="dl-msg"></span></div></div>`;
+    const fr=document.createElement("div");fr.className="frame";const p=document.createElement("div");p.className="poster";p.dataset.v=vid;p.innerHTML=posterHTML();
+    fr.appendChild(p);sec.appendChild(fr);main.appendChild(sec);paint(p,vid);
+    sec.querySelector(".dl").addEventListener("click",()=>download(p,vid,sec.querySelector(".dl"),sec.querySelector(".dl-msg")))});
+  requestAnimationFrame(fitAll);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitAll);
+  new ResizeObserver(fitAll).observe(document.body);
+}
+init();
+</script>

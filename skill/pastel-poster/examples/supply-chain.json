@@ -1,0 +1,26 @@
+{
+  "file": "AI光互连",
+  "eyebrow": "产业链名单 · AI 光互连",
+  "tag": "示例",
+  "title": ["AI 光互连", "三条主线全梳理", "代表公司一览"],
+  "object": "module",
+  "updown": "cn",
+  "companies": {
+    "SZSE:300308": {"name": "中际旭创"}, "SZSE:300502": {"name": "新易盛"}, "SZSE:300394": {"name": "天孚通信"},
+    "SZSE:002281": {"name": "光迅科技"}, "NASDAQ:COHR": {"name": "Coherent"}, "NASDAQ:LITE": {"name": "Lumentum"},
+    "SSE:688498": {"name": "源杰科技"}, "NASDAQ:MRVL": {"name": "迈威尔科技"}, "NASDAQ:AVGO": {"name": "博通"},
+    "NASDAQ:CRDO": {"name": "Credo"}, "NYSE:ANET": {"name": "Arista"}, "NASDAQ:CSCO": {"name": "思科"},
+    "NYSE:GLW": {"name": "康宁"}, "NYSE:APH": {"name": "安费诺"}, "HKEX:6869": {"name": "长飞光纤"}
+  },
+  "sections": [
+    {"type": "chain", "cols": 4, "groups": [
+      {"name": "光模块", "desc": "把电信号变成光，数据中心的“高速公路”", "icon": "module",
+       "companies": ["SZSE:300308", "SZSE:300502", "SZSE:300394", "SZSE:002281", "NASDAQ:COHR", "NASDAQ:LITE"]},
+      {"name": "光芯片与器件", "desc": "激光器、DSP 芯片，光信号的“发动机”", "icon": "chip",
+       "companies": ["SSE:688498", "NASDAQ:MRVL", "NASDAQ:AVGO", "NASDAQ:CRDO"]},
+      {"name": "交换与连接", "desc": "交换机、光纤和连接器，流量的“枢纽”", "icon": "rack",
+       "companies": ["NYSE:ANET", "NASDAQ:CSCO", "NYSE:GLW", "NYSE:APH", "HKEX:6869"]}
+    ]}
+  ],
+  "footer": ["筛选：按细分环节选取代表性 A 股、港股与美股公司（示例）", "制图时间：2026 年 10 月 19 日", "图中徽标仅用于识别，归各自所有者；不构成投资建议。"]
+}
