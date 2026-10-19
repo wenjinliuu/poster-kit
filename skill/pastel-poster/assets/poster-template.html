@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-/* pastel-poster 模板 · 雾彩·明亮。页面外壳安静，海报 1080 宽固定；由 build_poster.py 注入 SPEC 与 LOGOS */
+/* pastel-poster 模板 · 雾彩·清透。页面外壳安静，海报 1080 宽固定；由 build_poster.py 注入 SPEC 与 LOGOS */
 :root{
   --bg:#f4f5f8;--surface:#ffffff;--fg:#1b1d27;--fg2:#5d6274;--fg3:#9297a8;--line:#e2e4ec;
   --f-ui:-apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
@@ -147,7 +147,6 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .notes div::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:11px;flex:none}
 
 /* 版本差异 */
-.poster[data-v="grad"] .gt-name{background:linear-gradient(90deg,var(--g),var(--g2))}
 .poster[data-v="clear"]{background:linear-gradient(180deg,#ffffff 0,#fbfcfe 100%)}
 .poster[data-v="clear"] .card,.poster[data-v="clear"] .kpi{box-shadow:none;border:1.5px solid #eceef5}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
@@ -162,13 +161,14 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 const SPEC=/*__SPEC__*/null;
 const LOGOS=/*__LOGOS__*/{};
 
-/* ---------- 配色：雾彩·明亮 8 色（已过色盲区分校验），三个版本共用，只换处理方式 ---------- */
+/* ---------- 配色：8 个分类色（已过色盲区分校验），各风格共用 ---------- */
 const CATS=["#5b4cff","#1296f0","#0fb57b","#ff6b2c","#f0347f","#00a8c6","#a04cf5","#4cb82e"];
+// 默认只有“清透”。以后新增风格在这里加一项，并在 CSS 里写 .poster[data-v="新id"] 的差异。
+// 渐变只用同色深浅：bar 从浅到深、横幅从深到浅，不跨色相。
 const VERSIONS={
-  bright:{name:"雾彩 · 明亮",tint:.9,banner:a=>a},
-  grad:{name:"雾彩 · 渐变",tint:.9,banner:(a,b)=>`linear-gradient(100deg,${a},${b})`},
-  clear:{name:"雾彩 · 清透",tint:.94,banner:a=>a}
+  clear:{name:"雾彩 · 清透",tint:.94,banner:a=>`linear-gradient(100deg,${mix(a,K,.14)} 0%,${a} 55%,${mix(a,W,.16)} 100%)`}
 };
+const tone=(c,dir="90deg")=>`linear-gradient(${dir},${mix(c,W,.32)},${c})`;
 const UPDOWN={cn:{up:"#e8364a",down:"#0fb57b"},us:{up:"#0fb57b",down:"#e8364a"}};
 const W="#ffffff",K="#000000";
 const hex2rgb=h=>{h=h.replace("#","");const n=parseInt(h,16);return[n>>16&255,n>>8&255,n&255]};
@@ -264,8 +264,9 @@ function paint(p,vid){
   p.querySelectorAll("[data-g]").forEach(el=>{const g=el.dataset.g;if(g==="-1")return;const c=gcol(g);
     el.style.setProperty("--g",c);el.style.setProperty("--g2",CATS[(+g+1)%CATS.length]||c);el.style.setProperty("--g-tint",mix(c,W,V.tint));
     el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",mix(c,K,.18));
-    if(el.tagName==="B"||el.parentElement.classList.contains("share"))el.style.background=vid==="grad"&&el.parentElement.classList.contains("track")?`linear-gradient(90deg,${c},${mix(c,W,.35)})`:c});
-  p.querySelectorAll("[data-yr]").forEach(el=>{el.style.background=el.dataset.yr==="hi"?accent:mix(accent,W,.72)});
+    if(el.tagName==="B"&&el.parentElement.classList.contains("track"))el.style.background=g==="gray"?c:tone(c);
+    else if(el.tagName==="B"||el.parentElement.classList.contains("share"))el.style.background=c});
+  p.querySelectorAll("[data-yr]").forEach(el=>{el.style.background=el.dataset.yr==="hi"?tone(accent,"0deg"):mix(accent,W,.78)});
   p.querySelectorAll("[data-icon]").forEach(el=>{const g=el.dataset.g;const pal=g==="-1"?bgPal(accent):iconPal(gcol(g));el.innerHTML=isoSVG(el.dataset.icon,pal,parseFloat(getComputedStyle(el).width)||80,null)});
   p.querySelectorAll("[data-bg]").forEach(el=>{el.innerHTML=isoSVG(el.dataset.bg,bgPal(accent),620,bgPal(accent).shadow)});
   p.querySelectorAll("[data-ring]").forEach(el=>{const d=JSON.parse(el.dataset.ring);const svg=el.querySelector("svg");
@@ -292,11 +293,11 @@ async function download(p,vid,btn,msg){
   finally{btn.disabled=false}}
 function init(){
   $("#pageTitle").textContent=SPEC.page_title||(SPEC.title||[]).filter(Boolean).join(" ");
-  $("#pageSub").textContent=SPEC.page_sub||"同一张海报的几个版本，选一张下载高清图。";
-  const vers=(SPEC.versions||["bright","grad","clear"]).filter(v=>VERSIONS[v]);
+  $("#pageSub").textContent=SPEC.page_sub||"确认无误后点“下载高清图”。";
+  const vers=(SPEC.versions||["clear"]).filter(v=>VERSIONS[v]);
   const main=$("#vers");
   vers.forEach((vid,i)=>{const sec=document.createElement("section");sec.className="ver";
-    sec.innerHTML=`<div class="ver-h"><div><b>版本 ${i+1} · ${VERSIONS[vid].name}</b></div><div class="dl-box"><button class="dl" type="button">下载高清图</button><span class="dl-msg"></span></div></div>`;
+    sec.innerHTML=`<div class="ver-h"><div><b>${vers.length>1?`版本 ${i+1} · `:""}${VERSIONS[vid].name}</b></div><div class="dl-box"><button class="dl" type="button">下载高清图</button><span class="dl-msg"></span></div></div>`;
     const fr=document.createElement("div");fr.className="frame";const p=document.createElement("div");p.className="poster";p.dataset.v=vid;p.innerHTML=posterHTML();
     fr.appendChild(p);sec.appendChild(fr);main.appendChild(sec);paint(p,vid);
     sec.querySelector(".dl").addEventListener("click",()=>download(p,vid,sec.querySelector(".dl"),sec.querySelector(".dl-msg")))});

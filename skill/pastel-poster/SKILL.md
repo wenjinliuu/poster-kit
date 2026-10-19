@@ -1,9 +1,9 @@
 ---
 name: pastel-poster
-description: Use when the user asks for a poster, infographic, or table-style visual summary (海报/信息图/表格海报/产业链图/持仓占比/数据统计图), especially for stocks, sectors, supply chains or AI weekly reports. Builds a light "雾彩·明亮" Chinese poster page with real company logos, several versions on one page, and high-res PNG download.
+description: Use when the user asks for a poster, infographic, or table-style visual summary (海报/信息图/表格海报/产业链图/持仓占比/数据统计图), especially for stocks, sectors, supply chains or AI weekly reports. Builds a light "雾彩·清透" Chinese poster page with real company logos, and high-res PNG download.
 ---
 
-# pastel-poster · 雾彩·明亮海报
+# pastel-poster · 雾彩·清透海报
 
 把一个话题做成可下载的中文海报。风格、配色、logo 来源都已定好，不要每次再问风格。
 
@@ -27,13 +27,14 @@ description: Use when the user asks for a poster, infographic, or table-style vi
    python3 scripts/build_poster.py spec.json logos.json poster.html --preview preview.png
    ```
    看一眼预览图，按 `references/gates.md` 的版式关卡检查，有问题改 spec 后重新生成。只检查一轮。
-6. **发布**：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。页面里默认有 3 个版本（明亮 / 渐变 / 清透），各带“下载高清图”按钮，导出约 2160px 宽 PNG。
+6. **发布**：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。默认只出“雾彩·清透”一个版本，带“下载高清图”按钮，导出约 2160px 宽 PNG。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
 
 ## 风格要点（详细见 `references/style.md`、`references/palette.md`）
 
 - 底色接近纯白，右上角放淡化的等距主题物件（`chip` 芯片、`module` 光模块、`rack` 服务器、`coin` 硬币堆、`globe` 柱群），彩色只用在分类、数字和图表上。
 - 分类颜色按 8 色顺序分配，颜色跟着分类走；一张海报不超过 8 个分类。
 - 标题三层：黑色主句、强调色大字、灰色副句。
+- 渐变只用同色深浅（浅 → 深），只用在排行条、重点柱和合计横幅上；不跨色相，不用在文字和分类胶囊上。
 - 涨跌色默认 A 股习惯（红涨绿跌），美股题材可在 spec 里写 `"updown": "us"`。
 
 ## 内容原则
