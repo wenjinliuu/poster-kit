@@ -185,7 +185,7 @@ Iso.prototype.box=function(x,y,z,w,d,h,c){
   this.poly([[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]],c.l);
   this.poly([[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]],c.r);
   this.poly([[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]],c.t)};
-Iso.prototype.svg=function(width,shadow){const[a,b,c,d]=this.b,pad=12,vw=c-a+pad*2,vh=d-b+pad*2;
+Iso.prototype.svg=function(width,shadow){const[a,b,c,d]=this.b,pad=12,ry=shadow?(c-a)*.09:0,vw=c-a+pad*2,vh=d-b+pad*2+Math.max(0,ry-8); // 底部留出阴影高度，避免被视框截成直线
   const sh=shadow?`<ellipse cx="${((a+c)/2).toFixed(1)}" cy="${(d-4).toFixed(1)}" rx="${((c-a)*.42).toFixed(1)}" ry="${((c-a)*.09).toFixed(1)}" fill="${shadow}"/>`:"";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${(width*vh/vw).toFixed(1)}" viewBox="${(a-pad).toFixed(1)} ${(b-pad).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}">${sh}${this.s.join("")}</svg>`};
 const DRAW={
