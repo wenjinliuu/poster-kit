@@ -299,9 +299,10 @@ async function renderPoster(p,scale=2){
       const r=el.getBoundingClientRect();if(r.width>=2&&r.height>=2)return;
       const col=/rgba?\([^)]*\)|#[0-9a-f]{3,8}/i.exec(bg);el.style.backgroundImage="none";if(col)el.style.backgroundColor=col[0]});
     const h=c.scrollHeight;
+    scale=Math.min(scale,Math.sqrt(16e6/(1080*h))); // iPhone 的 Safari 单张画布约 1670 万像素封顶，海报很长时自动降低倍率
     const canvas=await html2canvas(c,{scale,width:1080,height:h,windowWidth:1200,windowHeight:h+200,scrollX:0,scrollY:-window.scrollY,
       backgroundColor:"#ffffff",useCORS:true,logging:false});
-    return {canvas,height:h};
+    return {canvas,height:h,scale};
   }finally{box.remove()}
 }
 window.__renderPoster=renderPoster; // 给 scripts/test_export.py 用：和按钮走同一套逻辑
@@ -309,7 +310,7 @@ async function download(p,vid,btn,msg){
   btn.disabled=true;msg.textContent="正在生成…";
   try{await dlReady;if(!dlNS){msg.textContent="请在 claude.ai 中打开此页面再下载";return}
     const {canvas}=await renderPoster(p);
-    const blob=await new Promise(r=>canvas.toBlob(r,"image/png"));
+    const blob=await new Promise(r=>canvas.toBlob(r,"image/png"));if(!blob)throw new Error("toBlob 返回空（图片太大）");
     await dlNS.save({filename:`${SPEC.file||"poster"}-${VERSIONS[vid].name.replace(/\s|·/g,"")}.png`,data:blob});msg.textContent="已保存";
   }catch(e){const c=e&&e.code;msg.textContent=c==="declined"?"已取消":c==="rate_limited"?"已有一个保存窗口，稍后再试":(c==="unavailable"||c==="not_granted")?"当前页面不支持下载，请在 claude.ai 中打开":"生成失败，请重试"}
   finally{btn.disabled=false}}

@@ -6,7 +6,7 @@
 
 不给 spec 时用 examples/ 里的全部示例。每个示例生成一页 HTML，用无头浏览器以手机视口（390×844）打开，
 执行和按钮完全相同的导出逻辑（模板里的 window.__renderPoster），检查：
-  1. PNG 宽 = 1080 × 2，高 = 海报 scrollHeight × 2（误差 ≤ 2px）
+  1. PNG 宽 = 1080 × 倍率，高 = 海报 scrollHeight × 倍率（误差 ≤ 2px），且不超过 1680 万像素（倍率默认 2，海报很长时自动降低）
   2. 页脚最底部 40px 的那一段在 PNG 里能看到文字（有深色像素）
 两种场景各跑一遍：正常加载字体；拦截 Google Fonts（字体回退到更宽的系统字体，海报会更高）。
 导出的 PNG 存到输出目录，方便人工看一眼。需要 playwright（pip install playwright）和 Pillow。
@@ -32,12 +32,12 @@ EXPORT_JS = """async () => {
   const p = document.querySelector('.frame > .poster');
   const foot = p.querySelector('.p-foot');
   // 和按钮一样的导出逻辑
-  const { canvas, height } = await window.__renderPoster(p, %d);
+  const { canvas, height, scale } = await window.__renderPoster(p, %d);
   // 对照：旧写法（在页面里被缩放、被外框裁剪的节点上直接截图），只用来展示修复前的问题
   const prev = p.style.transform; p.style.transform = 'none';
   let old; try { old = await html2canvas(p, { scale: %d, backgroundColor: '#ffffff', useCORS: true, windowWidth: 1200, logging: false }); }
   finally { p.style.transform = prev; }
-  return { png: canvas.toDataURL('image/png'), w: canvas.width, h: canvas.height, scrollHeight: height,
+  return { png: canvas.toDataURL('image/png'), w: canvas.width, h: canvas.height, scrollHeight: height, scale,
            footTop: foot.offsetTop, footBottom: foot.offsetTop + foot.offsetHeight, oldH: old.height, oldPng: old.toDataURL('image/png'),
            fonts: [...document.fonts].filter(f => f.status === 'loaded').map(f => f.family).slice(0, 5) };
 }""" % (SCALE, SCALE)
@@ -69,14 +69,15 @@ def run_case(browser, html, block_fonts, out_png):
     png = base64.b64decode(r["png"].split(",", 1)[1])
     out_png.write_bytes(png)
     img = Image.open(io.BytesIO(png))
-    want_h = r["scrollHeight"] * SCALE
-    foot_dark = dark_pixels(img, (r["footBottom"] - 40) * SCALE, r["footBottom"] * SCALE)
+    s = r["scale"]  # 海报很长时会自动降低倍率（iPhone 画布约 1670 万像素封顶）
+    want_w, want_h = round(1080 * s), round(r["scrollHeight"] * s)
+    foot_dark = dark_pixels(img, (r["footBottom"] - 40) * s, r["footBottom"] * s)
     old = Image.open(io.BytesIO(base64.b64decode(r["oldPng"].split(",", 1)[1])))
     old_dark = dark_pixels(old, (r["footBottom"] - 40) * SCALE, r["footBottom"] * SCALE)
-    ok = img.width == 1080 * SCALE and abs(img.height - want_h) <= 2 and foot_dark > 50 and not errors
+    ok = abs(img.width - want_w) <= 2 and abs(img.height - want_h) <= 2 and img.width * img.height <= 16.8e6 and foot_dark > 50 and not errors
     return ok, {
         "场景": "字体加载失败" if block_fonts else "正常字体",
-        "PNG": f"{img.width}×{img.height}", "海报高": r["scrollHeight"], "应为": f"{1080 * SCALE}×{want_h}",
+        "PNG": f"{img.width}×{img.height}", "海报高": r["scrollHeight"], "倍率": round(s, 3), "应为": f"{want_w}×{want_h}",
         "页脚底部40px深色像素": foot_dark, "修复前旧写法": f"高 {r['oldH']}，页脚深色像素 {old_dark}", "已加载字体": r["fonts"], "页面报错": errors,
         "文件": str(out_png),
     }
