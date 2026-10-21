@@ -293,6 +293,11 @@ async function renderPoster(p,scale=2){
   try{
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     await nextFrame();await nextFrame();
+    // html2canvas 画渐变背景时按元素尺寸建小画布，宽或高取整为 0 会直接报错（createPattern）导致整张图失败；
+    // 接近 0 的进度条、偏离条可能只有零点几像素宽，导出前把这类细条的渐变换成同色纯色（只改克隆）
+    c.querySelectorAll("*").forEach(el=>{const bg=getComputedStyle(el).backgroundImage;if(!bg||!bg.includes("gradient"))return;
+      const r=el.getBoundingClientRect();if(r.width>=2&&r.height>=2)return;
+      const col=/rgba?\([^)]*\)|#[0-9a-f]{3,8}/i.exec(bg);el.style.backgroundImage="none";if(col)el.style.backgroundColor=col[0]});
     const h=c.scrollHeight;
     const canvas=await html2canvas(c,{scale,width:1080,height:h,windowWidth:1200,windowHeight:h+200,scrollX:0,scrollY:-window.scrollY,
       backgroundColor:"#ffffff",useCORS:true,logging:false});

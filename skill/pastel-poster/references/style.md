@@ -41,4 +41,4 @@
 - 手画或仿画任何公司 logo；没取到就用首字徽章。
 - 二维码、平台水印。
 - `box-shadow: inset …`（内阴影描边）、`color-mix()`、`backdrop-filter`：导出用的 html2canvas 1.4.1 不支持，内阴影会导出成实心色块。描边一律用 `border`（用 padding 抵消多出的宽度），混色在 JS 里算成十六进制再写进样式。
-- 导出时不要直接对页面里被 `scale()` 缩放、被 `.frame` 裁剪的海报截图：模板的 `renderPoster()` 会把海报克隆到屏幕外 1080 宽的临时容器再截，改导出逻辑时保留这一点，并跑 `scripts/test_export.py`。
+- 导出时不要直接对页面里被 `scale()` 缩放、被 `.frame` 裁剪的海报截图：模板的 `renderPoster()` 会把海报克隆到屏幕外 1080 宽的临时容器再截，改导出逻辑时保留这一点，并跑 `scripts/test_export.py`。导出前还会把宽或高不足 2px 的渐变背景换成纯色（html2canvas 遇到 0 尺寸渐变会报 createPattern 错误，整张图失败），接近 0 的进度条可以放心用渐变。
