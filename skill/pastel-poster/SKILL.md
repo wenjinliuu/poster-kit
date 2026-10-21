@@ -64,6 +64,7 @@ rm -rf /tmp/poster-kit-main && curl -sL --max-time 30 https://codeload.github.co
 
 - `scripts/fetch_logos.py`：取 logo（修正版 → 自己的 fork → TradingView → 上游 → 兜底）
 - `scripts/build_poster.py`：把 spec 填进模板，可选生成预览图
+- `scripts/test_export.py`：验收“下载高清图”，以手机视口和字体加载失败两种场景导出，检查 PNG 尺寸和页脚是否完整（改模板或导出逻辑后跑一次）
 - `assets/poster-template.html`：海报模板（样式、版块渲染、背景物件、下载）
 - `examples/`：产业链名单、资本开支统计两个完整示例
 - `references/`：版块、配色、风格、版式关卡、logo 规则

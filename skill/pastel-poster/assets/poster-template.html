@@ -282,11 +282,28 @@ function paint(p,vid){
 function fit(frame){const p=frame.firstElementChild;const s=Math.min(1,frame.clientWidth/1080);p.style.transform=`scale(${s})`;frame.style.height=Math.ceil(p.offsetHeight*s)+"px"}
 const fitAll=()=>document.querySelectorAll(".frame").forEach(fit);
 let dlNS=null;const dlReady=(window.claude&&window.claude.use)?window.claude.use("downloads").then(d=>dlNS=d).catch(()=>dlNS=null):Promise.resolve(null);
+/* 导出：不在页面里那个被缩放、被外框裁剪的节点上截图（手机上外框高度是缩小后的高度，会把底部裁掉），
+   而是把海报克隆到屏幕外一个 1080 宽、没有 transform 和 overflow 限制的临时容器里，等字体和两帧排版后再截。
+   克隆会带上 paint() 画进去的 SVG（logo、背景物件、环形图都是 innerHTML），不需要重画。 */
+const nextFrame=()=>new Promise(r=>requestAnimationFrame(()=>r()));
+async function renderPoster(p,scale=2){
+  const box=document.createElement("div");
+  box.style.cssText="position:fixed;left:-10000px;top:0;width:1080px;overflow:visible;transform:none;z-index:-1;pointer-events:none";
+  const c=p.cloneNode(true);c.style.transform="none";box.appendChild(c);document.body.appendChild(box);
+  try{
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    await nextFrame();await nextFrame();
+    const h=c.scrollHeight;
+    const canvas=await html2canvas(c,{scale,width:1080,height:h,windowWidth:1200,windowHeight:h+200,scrollX:0,scrollY:-window.scrollY,
+      backgroundColor:"#ffffff",useCORS:true,logging:false});
+    return {canvas,height:h};
+  }finally{box.remove()}
+}
+window.__renderPoster=renderPoster; // 给 scripts/test_export.py 用：和按钮走同一套逻辑
 async function download(p,vid,btn,msg){
   btn.disabled=true;msg.textContent="正在生成…";
   try{await dlReady;if(!dlNS){msg.textContent="请在 claude.ai 中打开此页面再下载";return}
-    await document.fonts.ready;const prev=p.style.transform;p.style.transform="none";let canvas;
-    try{canvas=await html2canvas(p,{scale:2,backgroundColor:"#ffffff",useCORS:true,windowWidth:1200,logging:false})}finally{p.style.transform=prev}
+    const {canvas}=await renderPoster(p);
     const blob=await new Promise(r=>canvas.toBlob(r,"image/png"));
     await dlNS.save({filename:`${SPEC.file||"poster"}-${VERSIONS[vid].name.replace(/\s|·/g,"")}.png`,data:blob});msg.textContent="已保存";
   }catch(e){const c=e&&e.code;msg.textContent=c==="declined"?"已取消":c==="rate_limited"?"已有一个保存窗口，稍后再试":(c==="unavailable"||c==="not_granted")?"当前页面不支持下载，请在 claude.ai 中打开":"生成失败，请重试"}
