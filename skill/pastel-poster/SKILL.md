@@ -12,11 +12,17 @@ description: Use when the user asks for a poster, infographic, or table-style vi
 技能的源头在 GitHub 仓库 `wenjinliuu/poster-kit`，已安装的这份可能不是最新的。先拉取最新版：
 
 ```bash
-rm -rf /tmp/poster-kit-main && curl -sL --max-time 30 https://codeload.github.com/wenjinliuu/poster-kit/tar.gz/refs/heads/main | tar xz -C /tmp && echo OK
+rm -rf /tmp/poster-kit-main /tmp/poster-kit.tgz
+curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenjinliuu/poster-kit/tar.gz/refs/heads/main \
+  && tar xzf /tmp/poster-kit.tgz -C /tmp && test -f /tmp/poster-kit-main/skill/pastel-poster/SKILL.md \
+  || { rm -rf /tmp/poster-kit-main && git clone -q --depth 1 https://github.com/wenjinliuu/poster-kit /tmp/poster-kit-main; } \
+  && test -f /tmp/poster-kit-main/skill/pastel-poster/SKILL.md && echo OK || echo FAIL
 ```
 
 - 输出 `OK`：读 `/tmp/poster-kit-main/skill/pastel-poster/SKILL.md`，按**那一份**的流程做，之后所有 `scripts/`、`assets/`、`references/`、`examples/` 都用 `/tmp/poster-kit-main/skill/pastel-poster/` 下的文件。
-- 拉取失败：直接用本技能目录里的文件，不必提示用户。
+- 输出 `FAIL`（常见原因：会话的网络只放行已接入的仓库，代理把请求挡了，返回的不是压缩包）：
+  1. 有接入 GitHub 仓库的工具（如 `add_repo`）就先把 `wenjinliuu/poster-kit` 接入本会话，再重跑上面的命令一次。
+  2. 还是失败，才用本技能目录里的文件，并**在开始做之前告诉用户一句**：“没能拉到海报技能最新版，这次用的是已安装版本，可能缺最近的修复。”不要悄悄用旧版本——旧模板的导出曾有手机上底部被截掉的问题。
 - 如果你正在读的就是 `/tmp/poster-kit-main/` 下的这份，跳过本步。
 
 ## 流程
@@ -39,7 +45,11 @@ rm -rf /tmp/poster-kit-main && curl -sL --max-time 30 https://codeload.github.co
    python3 scripts/build_poster.py spec.json logos.json poster.html --preview preview.png
    ```
    看一眼预览图，按 `references/gates.md` 的版式关卡检查，有问题改 spec 后重新生成。只检查一轮。
-6. **发布**：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。默认只出“雾彩·清透”一个版本，带“下载高清图”按钮，导出约 2160px 宽 PNG。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
+6. **验收导出**：发布前跑一次，确认手机窄屏下载的 PNG 尺寸和页脚完整（出现 ✗ 就先修再发）：
+   ```bash
+   python3 scripts/test_export.py spec.json --out export-check
+   ```
+7. **发布**：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。默认只出“雾彩·清透”一个版本，带“下载高清图”按钮，导出约 2160px 宽 PNG。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
 
 ## 风格要点（详细见 `references/style.md`、`references/palette.md`）
 
