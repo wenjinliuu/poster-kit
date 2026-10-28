@@ -93,6 +93,11 @@
           },
           "code": {
             "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "description": "logo 描边色，不写则自动从 logo 取"
           }
         },
         "additionalProperties": false
@@ -189,6 +194,15 @@
         }
       },
       "additionalProperties": false
+    },
+    "badge_ring": {
+      "enum": [
+        "brand",
+        "category",
+        "accent",
+        "none"
+      ],
+      "description": "圆形 logo 描边颜色"
     },
     "numbered": {
       "type": "boolean",

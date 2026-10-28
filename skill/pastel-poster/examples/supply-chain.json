@@ -6,7 +6,7 @@
   "object": "module",
   "updown": "cn",
   "companies": {
-    "SZSE:300308": {"name": "中际旭创"}, "SZSE:300502": {"name": "新易盛"}, "SZSE:300394": {"name": "天孚通信"},
+    "SZSE:300308": {"name": "中际旭创"}, "SZSE:300502": {"name": "新易盛", "color": "#1a6fc4"}, "SZSE:300394": {"name": "天孚通信"},
     "SZSE:002281": {"name": "光迅科技"}, "NASDAQ:COHR": {"name": "Coherent"}, "NASDAQ:LITE": {"name": "Lumentum"},
     "SSE:688498": {"name": "源杰科技"}, "NASDAQ:MRVL": {"name": "迈威尔科技"}, "NASDAQ:AVGO": {"name": "博通"},
     "NASDAQ:CRDO": {"name": "Credo"}, "NYSE:ANET": {"name": "Arista"}, "NASDAQ:CSCO": {"name": "思科"},

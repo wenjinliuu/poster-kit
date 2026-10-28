@@ -198,6 +198,38 @@ def to_data_uri(content, ext):
     return "data:image/png;base64," + base64.b64encode(content).decode()
 
 
+def brand_color(src):
+    """从 logo 里取品牌色（给圆形徽章的彩色描边用）：最常见的饱和色；全是黑白灰的 logo 返回深灰"""
+    import colorsys
+    head, data = src.split(",", 1)
+    raw = base64.b64decode(data)
+    if "svg" in head:  # 没有转成 PNG 的 SVG：数 fill 里出现最多的彩色
+        cols = re.findall(r"#([0-9a-fA-F]{6})\b", raw.decode("utf-8", "ignore"))
+        sat = [c for c in cols if colorsys.rgb_to_hsv(*(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4)))[1] > .25]
+        return "#" + max(set(sat), key=sat.count).lower() if sat else None
+    try:
+        from PIL import Image
+        im = Image.open(io.BytesIO(raw)).convert("RGBA").resize((64, 64))
+    except Exception:
+        return None
+    buckets, dark = {}, 0
+    for r, g, b, a in (im.get_flattened_data() if hasattr(im, "get_flattened_data") else im.getdata()):
+        if a < 200 or min(r, g, b) > 225:
+            continue
+        h, sv, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+        if sv > .3 and v > .25:
+            k = (r // 24, g // 24, b // 24)
+            n, sr, sg, sb = buckets.get(k, (0, 0, 0, 0))
+            buckets[k] = (n + 1, sr + r, sg + g, sb + b)
+        elif v < .4:
+            dark += 1
+    if buckets:
+        n, sr, sg, sb = max(buckets.values())
+        if n >= 12:
+            return "#%02x%02x%02x" % (sr // n, sg // n, sb // n)
+    return "#3a3d4f" if dark >= 40 else None
+
+
 def fetch_one(key, tradingview=False):
     market, ex, code = normalize_key(key)
     steps = [("override", lambda: from_overrides(market, ex, code)), ("repo", lambda: from_repos(market, code))]
@@ -216,7 +248,7 @@ def fetch_all(keys, tradingview=False):
         src, origin = fetch_one(key, tradingview)
         report[key] = origin
         if src:
-            out[key] = {"src": src, "from": origin}
+            out[key] = {"src": src, "from": origin, "color": brand_color(src)}
     return out, report
 
 

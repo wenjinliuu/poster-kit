@@ -55,8 +55,8 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 
 /* 公司徽章 */
 .badge{width:var(--bs,60px);height:var(--bs,60px);flex:none;display:grid;place-items:center;border-radius:50%;overflow:hidden;
-  font-weight:900;font-size:calc(var(--bs,60px)*.42);line-height:1;color:var(--c,#5b4cff);background:#fff;border:2px solid var(--g-soft,#e4e6ee);box-sizing:border-box;font-family:var(--p-num)}
-.badge img{width:100%;height:100%;object-fit:cover;display:block}
+  font-weight:900;font-size:calc(var(--bs,60px)*.42);line-height:1;color:var(--c,#5b4cff);background:#fff;border:2px solid var(--rc,var(--g-soft,#e4e6ee));box-sizing:border-box;background-clip:padding-box;font-family:var(--p-num)}
+.badge img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .co{display:flex;align-items:center;gap:14px;min-width:0}
 .co-t{display:grid;min-width:0}
 .co-t b{font-family:var(--p-num);font-weight:800;font-size:27px;line-height:1.15;letter-spacing:-.01em;white-space:nowrap}
@@ -530,10 +530,17 @@ function toneHex(t,i){if(t==="up")return UD.up;if(t==="down")return UD.down;if(t
 /* ---------- 公司 ---------- */
 const CO=SPEC.companies||{};
 function coInfo(key){const c=CO[key]||{};const code=c.code||String(key).split(":").pop();return{code,name:c.name||"",logo:LOGOS[key]&&LOGOS[key].src}}
-function badge(key,size){const c=coInfo(key);
-  if(c.logo)return `<span class="badge" style="--bs:${size}px"><img src="${c.logo}" alt="${esc(c.code)}"></span>`;
+// 圆形 logo：外圈一道彩色描边 + 一圈细白边。描边颜色由 spec.badge_ring 决定：
+// brand（默认，取 logo 自己的品牌色）、category（跟所在分类色）、accent（强调色）、none（浅灰细边）
+const RING=SPEC.badge_ring||"brand";
+function ringColor(key){const lc=(CO[key]&&CO[key].color)||(LOGOS[key]&&LOGOS[key].color);
+  if(RING==="none")return "#e4e6ee";if(RING==="accent")return ACC;if(RING==="category")return `var(--g,${ACC})`;
+  if(!lc)return mix(ACC,W,.45);return lum(lc)>.6?ink(lc):lc}
+function badge(key,size){const c=coInfo(key),bw=RING==="none"?1.5:size>=44?2.5:2,pd=RING==="none"?0:size>=44?2.5:1.5,inner=(size-2*bw-2*pd).toFixed(1);
+  const st=`--bs:${size}px;border-width:${bw}px;padding:${pd}px;--rc:${ringColor(key)}`;
+  if(c.logo)return `<span class="badge" style="${st}"><img src="${c.logo}" alt="${esc(c.code)}" style="width:${inner}px;height:${inner}px"></span>`;
   const ch=/[一-鿿]/.test(c.name)?c.name[0]:(c.code[0]||"?");
-  return `<span class="badge" style="--bs:${size}px">${esc(ch)}</span>`}
+  return `<span class="badge" style="${st}">${esc(ch)}</span>`}
 function coItem(key,size){const c=coInfo(key);return `<div class="co">${badge(key,size)}<div class="co-t"><b>${esc(c.code)}</b><span>${esc(c.name)}</span></div></div>`}
 function labelItem(it,size){ // 排行里既可以是公司键，也可以是 {label, sub}
   if(typeof it==="string"&&CO[it])return coItem(it,size);
