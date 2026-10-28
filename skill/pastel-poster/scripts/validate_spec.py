@@ -19,6 +19,10 @@ SECTIONS = {
     "columns": ["x", "series"], "points": ["items"], "callout": ["title"], "text": [], "cards": ["items"],
     "heatmap": ["columns", "rows"], "deviation": ["rows"], "chips": ["groups"], "target": ["items"],
     "group": ["sections"], "row": ["sections"],
+    "donut": ["items"], "stackbar": ["series", "rows"], "scatter": ["points"], "slope": ["items"], "dumbbell": ["items"],
+    "treemap": ["items"], "funnel": ["items"], "radar": ["axes", "series"], "rings": ["items"], "waffle": [],
+    "sankey": ["links"], "sparks": ["items"], "timeline": ["items"], "steps": ["items"], "compare": ["left", "right"],
+    "quadrant": ["cells"], "tree": ["root"], "pyramid": ["items"], "cycle": ["items"], "draw": ["js"],
 }
 OBJECTS = {"chip", "module", "rack", "coin", "globe", "battery", "building", "wafer", "db", "robot"}
 
@@ -45,7 +49,7 @@ def validate(spec):
         errors.append("sections 必须是非空数组")
     if not isinstance(spec.get("footer"), list) or not spec["footer"]:
         errors.append("footer 必须是数组，至少写来源和免责声明")
-    elif not any("不构成投资建议" in s or "仅用于识别" in s for s in spec["footer"] if isinstance(s, str)):
+    elif spec.get("companies") and not any("不构成投资建议" in s or "仅用于识别" in s for s in spec["footer"] if isinstance(s, str)):
         warnings.append("页脚没有免责声明（“徽标仅用于识别，归各自所有者；不构成投资建议”）")
     obj = spec.get("object")
     if isinstance(obj, dict):
@@ -131,9 +135,41 @@ def validate(spec):
                     errors.append(f"{where} 的“{it.get('label')}”没有 value")
                 if it.get("state", "solid") not in ("solid", "option", "plan"):
                     errors.append(f"{where} state 只能是 solid / option / plan")
-        elif t in ("bars", "points", "cards"):
+        elif t in ("bars", "points", "cards", "donut", "slope", "dumbbell", "treemap", "funnel", "sparks", "timeline"):
             for it in s["items"]:
                 need(it.get("company"), where)
+            if t == "donut" and len(s["items"]) > 6:
+                warnings.append(f"{where} 超过 6 块，小的并进 other（“其他”）")
+            if t == "slope" and len(s["items"]) > 10:
+                warnings.append(f"{where} 超过 10 条线会挤，只留重点并 highlight")
+        elif t == "scatter":
+            for it in s["points"]:
+                need(it.get("company"), where)
+                if "x" not in it or "y" not in it:
+                    errors.append(f"{where} 每个点要有 x 和 y")
+        elif t == "stackbar":
+            for r in s["rows"]:
+                need(r.get("company"), where)
+                if len(r.get("values", [])) != len(s["series"]):
+                    errors.append(f"{where} 行“{r.get('label')}”的值个数和 series 不一致")
+        elif t == "radar":
+            if len(s["series"]) > 3:
+                warnings.append(f"{where} 超过 3 个系列会糊成一团")
+            for q in s["series"]:
+                if len(q.get("values", [])) != len(s["axes"]):
+                    errors.append(f"{where} 系列“{q.get('name')}”的值个数和 axes 不一致")
+        elif t == "waffle":
+            if "items" not in s and "value" not in s:
+                errors.append(f"{where} 要写 items 或 value")
+        elif t == "sankey":
+            for l in s["links"]:
+                if not {"source", "target", "value"} <= set(l):
+                    errors.append(f"{where} 每条 link 要有 source、target、value")
+        elif t == "compare":
+            for side in ("left", "right"):
+                need(s[side].get("company"), where)
+        elif t == "quadrant" and len(s["cells"]) != 4:
+            errors.append(f"{where} cells 要正好 4 个（左上、右上、左下、右下）")
         elif t in ("line", "columns"):
             n = len(s["x"])
             for q in s["series"]:

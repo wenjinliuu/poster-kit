@@ -1,0 +1,55 @@
+{
+  "file": "城市生活报告",
+  "eyebrow": "数据报告 · 城市生活",
+  "tag": "虚构数据",
+  "title": ["2026 城市生活报告", "通勤变短了 **12%**", "数据全部虚构，只用来展示各类图表"],
+  "accent": "#1296f0",
+  "object": "building",
+  "numbered": true,
+  "sections": [
+    {"type": "kpis", "items": [
+      {"label": "平均单程通勤", "value": "38", "unit": "分钟", "note": "比去年少 **5 分钟**", "icon": "train-front", "tone": "accent"},
+      {"label": "每周运动", "value": "2.6", "unit": "次", "note": "达标率 41%", "icon": "dumbbell", "tone": "accent"},
+      {"label": "外卖占比", "value": "34", "unit": "%", "note": "工作日午餐", "icon": "utensils", "tone": "accent"}]},
+    {"type": "row", "sections": [
+      {"type": "donut", "title": "通勤方式", "note": "占比", "center_value": "38′", "center_label": "平均单程",
+       "items": [{"label": "地铁", "value": 41}, {"label": "公交", "value": 18}, {"label": "开车", "value": 22}, {"label": "骑行", "value": 11}], "other": 8},
+      {"type": "rings", "title": "满意度", "cols": 2, "size": 140, "items": [
+        {"label": "交通", "value": 72}, {"label": "住房", "value": 48, "tone": 3}, {"label": "医疗", "value": 66}, {"label": "教育", "value": 59}]}]},
+    {"type": "group", "title": "时间花在哪：**睡眠**被挤得最多", "sections": [
+      {"type": "stackbar", "title": "工作日 24 小时怎么分", "series": ["睡眠", "工作", "通勤", "家务", "自由"], "percent": false, "unit": "小时", "max": 24, "label_width": 130,
+       "rows": [{"label": "20–29 岁", "values": [7.1, 9.2, 1.4, 1.1, 5.2]}, {"label": "30–39 岁", "values": [6.6, 9.8, 1.3, 2.3, 4.0]}, {"label": "40–49 岁", "values": [6.8, 9.1, 1.2, 2.6, 4.3]}]},
+      {"type": "stackbar", "title": "“加班是常态”你同意吗", "series": ["很不同意", "不同意", "中立", "同意", "很同意"], "diverging": true, "label_width": 130,
+       "rows": [{"label": "互联网", "values": [5, 9, 18, 38, 30]}, {"label": "制造业", "values": [8, 16, 30, 29, 17]}, {"label": "公共事业", "values": [20, 31, 28, 15, 6]}]}]},
+    {"type": "group", "title": "城市对比：房租越贵，通勤越长", "sections": [
+      {"type": "scatter", "x_label": "房租（元/㎡·月）", "y_label": "单程通勤（分钟）", "quadrants": {"labels": ["又贵又远", "便宜但远", "便宜又近", "贵但近"]}, "height": 360,
+       "points": [{"label": "A 市", "x": 128, "y": 47, "size": 2400, "highlight": true}, {"label": "B 市", "x": 115, "y": 44, "size": 2200}, {"label": "C 市", "x": 92, "y": 41, "size": 1800},
+                  {"label": "D 市", "x": 70, "y": 36, "size": 1300}, {"label": "E 市", "x": 58, "y": 33, "size": 1000}, {"label": "F 市", "x": 45, "y": 30, "size": 900}, {"label": "G 市", "x": 52, "y": 39, "size": 1100}],
+       "caption": "气泡大小 = 常住人口（面积成比例）；虚线为各城市平均值。"},
+      {"type": "slope", "title": "通勤时间：2021 → 2026", "left": "2021", "right": "2026", "unit": "′", "height": 260,
+       "items": [{"label": "A 市", "a": 52, "b": 47, "highlight": true}, {"label": "B 市", "a": 46, "b": 44}, {"label": "C 市", "a": 39, "b": 41}, {"label": "D 市", "a": 40, "b": 36}, {"label": "E 市", "a": 31, "b": 33}]},
+      {"type": "dumbbell", "title": "最低与最高气温", "a_label": "一月", "b_label": "七月", "unit": "℃", "label_width": 120, "xmin": -15, "xmax": 36,
+       "items": [{"label": "A 市", "a": -7, "b": 31}, {"label": "C 市", "a": 4, "b": 33}, {"label": "E 市", "a": 13, "b": 29}]}]},
+    {"type": "group", "title": "钱花在哪", "sections": [
+      {"type": "treemap", "title": "月度支出结构", "height": 300, "items": [
+        {"label": "房租", "value": 3200, "group": "居住"}, {"label": "水电", "value": 300, "group": "居住"}, {"label": "餐饮", "value": 2100, "group": "日常"},
+        {"label": "交通", "value": 450, "group": "日常"}, {"label": "购物", "value": 900, "group": "日常"}, {"label": "娱乐", "value": 600, "group": "自由"}, {"label": "学习", "value": 400, "group": "自由"}]},
+      {"type": "funnel", "title": "从种草到下单", "items": [{"label": "看到推荐", "value": 10000}, {"label": "点进详情", "value": 3200}, {"label": "加入购物车", "value": 900}, {"label": "付款", "value": 410}]},
+      {"type": "bars", "title": "最想省下的开支", "style": "lollipop", "unit": "%", "max": 60, "items": [{"label": "外卖", "value": 52}, {"label": "打车", "value": 37}, {"label": "会员订阅", "value": 29}, {"label": "奶茶咖啡", "value": 24}]}]},
+    {"type": "row", "sections": [
+      {"type": "radar", "title": "城市画像", "axes": ["交通", "房价", "教育", "医疗", "绿地", "夜生活"], "size": 380,
+       "series": [{"name": "A 市", "values": [80, 30, 85, 78, 55, 90], "highlight": true}, {"name": "E 市", "values": [60, 75, 62, 60, 82, 45]}]},
+      {"type": "waffle", "title": "每 100 人里", "icon": "user", "cols": 10, "items": [{"label": "每周运动 3 次以上", "value": 41}, {"label": "偶尔运动", "value": 37, "tone": "gray"}]}]},
+    {"type": "sankey", "title": "下班后去哪", "unit": "%", "height": 300, "links": [
+      {"source": "下班", "target": "直接回家", "value": 54}, {"source": "下班", "target": "吃饭聚会", "value": 21}, {"source": "下班", "target": "健身运动", "value": 15}, {"source": "下班", "target": "继续加班", "value": 10},
+      {"source": "吃饭聚会", "target": "到家 21 点前", "value": 9}, {"source": "吃饭聚会", "target": "到家 21 点后", "value": 12}, {"source": "直接回家", "target": "到家 21 点前", "value": 54},
+      {"source": "健身运动", "target": "到家 21 点前", "value": 11}, {"source": "健身运动", "target": "到家 21 点后", "value": 4}, {"source": "继续加班", "target": "到家 21 点后", "value": 10}]},
+    {"type": "sparks", "title": "近 12 个月趋势", "cols": 3, "items": [
+      {"label": "地铁日客流", "sub": "万人次", "values": [980, 1002, 995, 1010, 1031, 1040, 1052, 1048, 1060, 1077, 1081, 1093]},
+      {"label": "平均房租", "sub": "元/㎡·月", "values": [101, 100, 99, 99, 98, 97, 97, 96, 96, 95, 95, 94]},
+      {"label": "空气优良天数", "sub": "天/月", "values": [21, 19, 24, 25, 27, 26, 28, 29, 27, 25, 23, 24]}]},
+    {"type": "columns", "title": "每月新增绿地", "note": "公顷", "stack": true, "height": 190,
+     "x": ["1月", "2月", "3月", "4月", "5月", "6月"], "series": [{"name": "公园", "values": [12, 9, 20, 26, 31, 22]}, {"name": "街角绿地", "values": [6, 5, 9, 12, 10, 14]}]}
+  ],
+  "footer": ["虚构数据：仅用于展示 pastel-poster 的各类图表", "制图：2026 年 10 月", "不构成任何建议。"]
+}

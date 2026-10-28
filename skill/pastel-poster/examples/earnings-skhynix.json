@@ -3,7 +3,12 @@
  "brand": {
   "company": "KRX:000660",
   "name": "SK 海力士",
-  "en": "SK hynix",
+  "image": "https://upload.wikimedia.org/wikipedia/commons/2/24/SK_Hynix.svg",
+  "height": 84,
+  "colors": [
+   "#e31837",
+   "#f58025"
+  ],
   "label": "KRX: 000660",
   "sub": "2026 年第三季度财报"
  },
@@ -14,13 +19,26 @@
   "营收首破 100 万亿韩元",
   "营业利润率 **80%**，连续 6 个季度创新高"
  ],
- "accent": "#f0347f",
  "object": "wafer",
  "numbered": true,
  "companies": {
   "KRX:000660": {
    "name": "SK 海力士",
    "code": "000660"
+  },
+  "NASDAQ:MU": {
+   "name": "美光"
+  },
+  "NASDAQ:SNDK": {
+   "name": "闪迪"
+  },
+  "TSE:285A": {
+   "name": "铠侠",
+   "code": "285A"
+  },
+  "KRX:005930": {
+   "name": "三星电子",
+   "code": "005930"
   }
  },
  "sections": [
@@ -359,32 +377,37 @@
        "label": "美光",
        "sub": "6–9 月 · GAAP",
        "value": 80.7,
-       "extra": "542 亿美元"
+       "extra": "542 亿美元",
+       "company": "NASDAQ:MU"
       },
       {
        "label": "SK 海力士",
        "sub": "7–9 月 · K-IFRS",
        "value": 79.7,
        "extra": "788 亿美元",
-       "highlight": true
+       "highlight": true,
+       "company": "KRX:000660"
       },
       {
        "label": "闪迪",
        "sub": "4–7 月 · GAAP",
        "value": 78.5,
-       "extra": "89.7 亿美元"
+       "extra": "89.7 亿美元",
+       "company": "NASDAQ:SNDK"
       },
       {
        "label": "铠侠",
        "sub": "4–6 月 · IFRS",
        "value": 71.9,
-       "extra": "1.77 万亿日元"
+       "extra": "1.77 万亿日元",
+       "company": "TSE:285A"
       },
       {
        "label": "三星电子（全公司）",
        "sub": "7–9 月初步",
        "value": 55.1,
-       "extra": "195 万亿韩元"
+       "extra": "195 万亿韩元",
+       "company": "KRX:005930"
       }
      ],
      "caption": "右列为对应季度营收。三星为全公司口径，存储部门数据未披露。"
@@ -413,7 +436,8 @@
         58,
         50
        ],
-       "highlight": true
+       "highlight": true,
+       "company": "KRX:000660"
       },
       {
        "name": "三星",
@@ -423,7 +447,8 @@
         21,
         20,
         33
-       ]
+       ],
+       "company": "KRX:005930"
       },
       {
        "name": "美光",
@@ -433,7 +458,8 @@
         22,
         20,
         18
-       ]
+       ],
+       "company": "NASDAQ:MU"
       }
      ],
      "height": 170

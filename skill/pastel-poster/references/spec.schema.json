@@ -126,7 +126,7 @@
     },
     "brand": {
       "type": "object",
-      "description": "品牌头部",
+      "description": "品牌头部，见 logos.md",
       "properties": {
         "company": {
           "type": "string"
@@ -142,6 +142,50 @@
         },
         "sub": {
           "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "svg": {
+          "type": "string"
+        },
+        "height": {
+          "type": "number"
+        },
+        "colors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          }
+        },
+        "wordmark": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "color": {
+                "type": "string"
+              },
+              "weight": {
+                "type": "number"
+              },
+              "italic": {
+                "type": "boolean"
+              },
+              "font": {
+                "enum": [
+                  "title"
+                ]
+              }
+            }
+          }
         }
       },
       "additionalProperties": false
@@ -189,8 +233,14 @@
             "chain",
             "chips",
             "columns",
+            "compare",
+            "cycle",
             "deviation",
+            "donut",
+            "draw",
+            "dumbbell",
             "flows",
+            "funnel",
             "group",
             "heatmap",
             "holdings",
@@ -200,11 +250,25 @@
             "mix",
             "notes",
             "points",
+            "pyramid",
+            "quadrant",
+            "radar",
             "ranking",
+            "rings",
             "row",
+            "sankey",
+            "scatter",
+            "slope",
+            "sparks",
+            "stackbar",
+            "steps",
             "table",
             "target",
             "text",
+            "timeline",
+            "tree",
+            "treemap",
+            "waffle",
             "waterfall",
             "years"
           ]
@@ -217,6 +281,9 @@
         },
         "caption": {
           "type": "string"
+        },
+        "card": {
+          "type": "boolean"
         }
       },
       "allOf": [
@@ -320,6 +387,12 @@
                       "items": {
                         "type": "array"
                       }
+                    },
+                    "icon": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
                     }
                   }
                 }
@@ -831,6 +904,287 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "donut"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "stackbar"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "series",
+              "rows"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "scatter"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "points"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "slope"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dumbbell"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "treemap"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "funnel"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "radar"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "axes",
+              "series"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rings"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "waffle"
+              }
+            }
+          },
+          "then": {
+            "required": []
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sankey"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "links"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sparks"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "timeline"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "steps"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "compare"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "left",
+              "right"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "quadrant"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "cells"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "tree"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "root"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pyramid"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "cycle"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "items"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "draw"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "js"
+            ]
           }
         }
       ]

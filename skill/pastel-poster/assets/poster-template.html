@@ -41,7 +41,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .p-eyebrow .tag{font-size:14px;padding:4px 10px;border-radius:999px;border:1.5px solid var(--ink3);font-weight:500}
 .p-title{display:grid;gap:2px;margin:0}
 .p-title .t1{font-family:var(--p-title);font-weight:900;font-size:88px;line-height:1.08;letter-spacing:-.025em}
-.p-title .t2{font-family:var(--p-title);font-weight:900;font-size:104px;line-height:1.08;letter-spacing:-.03em;color:var(--accent)}
+.p-title .t2{font-family:var(--p-title);font-weight:900;font-size:104px;line-height:1.08;letter-spacing:-.03em;color:var(--accent-ink)}
 .p-title .t3{font-weight:500;font-size:50px;line-height:1.25;color:var(--ink2);margin-top:8px;letter-spacing:-.01em}
 .card{background:#fff;border-radius:30px;box-shadow:0 8px 28px rgba(40,40,90,.06);padding:32px 34px;display:flex;flex-direction:column;gap:22px}
 .card-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
@@ -55,7 +55,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 
 /* 公司徽章 */
 .badge{width:var(--bs,60px);height:var(--bs,60px);flex:none;display:grid;place-items:center;border-radius:50%;overflow:hidden;
-  font-weight:900;font-size:calc(var(--bs,60px)*.42);line-height:1;color:var(--c,#5b4cff);background:#fff;box-shadow:0 0 0 2px var(--g-soft,#e4e6ee);font-family:var(--p-num)}
+  font-weight:900;font-size:calc(var(--bs,60px)*.42);line-height:1;color:var(--c,#5b4cff);background:#fff;border:2px solid var(--g-soft,#e4e6ee);box-sizing:border-box;font-family:var(--p-num)}
 .badge img{width:100%;height:100%;object-fit:cover;display:block}
 .co{display:flex;align-items:center;gap:14px;min-width:0}
 .co-t{display:grid;min-width:0}
@@ -69,6 +69,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .gt-name{font-family:var(--p-title);font-size:30px;font-weight:900;line-height:1.2;background:var(--g);color:#fff;padding:4px 18px;border-radius:999px;white-space:nowrap}
 .gt-desc{font-size:19px;line-height:1.45;color:var(--g-deep);font-weight:700}
 .gt-icon{position:absolute;top:8px;right:22px;width:80px}
+.gt-ico{top:18px;width:auto}
 .grp-list{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:22px 18px}
 
 /* kpis */
@@ -102,7 +103,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .yr{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}
 .yr b{display:block;width:100%;border-radius:12px 12px 0 0}
 .yr span{font-family:var(--p-num);font-weight:800;font-size:22px;color:var(--ink2);white-space:nowrap}
-.yr.hi span{color:var(--accent);font-size:28px}
+.yr.hi span{color:var(--accent-ink);font-size:28px}
 .yrx{display:flex;gap:22px;padding:0 6px;margin-top:-12px}
 .yrx span{flex:1;text-align:center;font-size:17px;color:var(--ink3);font-family:var(--p-num);font-weight:700}
 
@@ -150,18 +151,27 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .pb-name b{font-family:var(--p-title);font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-.01em;white-space:nowrap}
 .pb-name span{font-size:18px;color:var(--ink3);font-family:var(--p-num);font-weight:700}
 .pb-r{display:grid;justify-items:end;gap:4px;text-align:right}
-.pb-r b{font-family:var(--p-num);font-size:24px;font-weight:800;color:var(--accent);letter-spacing:.03em;white-space:nowrap}
+.pb-r b{font-family:var(--p-num);font-size:24px;font-weight:800;color:var(--accent-ink);letter-spacing:.03em;white-space:nowrap}
 .pb-r span{font-size:18px;color:var(--ink2);font-weight:700;white-space:nowrap}
+.pb-mark{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
+.pb-mark img{display:block;width:auto;max-width:620px;object-fit:contain}
+.pb-word{font-family:var(--p-num);line-height:1;letter-spacing:-.02em;white-space:nowrap}
+.cl.hb{display:flex;align-items:center;gap:6px}
+.bl-co{display:flex;align-items:center;gap:12px;min-width:0}
+.kpi .k{display:flex;align-items:center;gap:8px} /* logo 徽章必须在 flex 里：html2canvas 画不出行内的徽章图片 */
+.mcard .badge{margin-bottom:6px}
+.ico{display:inline-grid;width:var(--is,28px);height:var(--is,28px);flex:none;color:var(--g-deep,var(--accent-ink));vertical-align:middle;font-style:normal}
+.ico svg{width:100%;height:100%;display:block}
 /* 标题强调：**文字** */
 .p-title .t1,.p-title .t2{white-space:nowrap}
-.p-title em{font-style:normal;color:var(--accent)}
+.p-title em{font-style:normal;color:var(--accent-ink)}
 .p-title .t2.mixed{color:var(--ink);font-size:76px;line-height:1.15}
 .p-title .t2.mixed em{font-family:var(--p-num);font-size:1.62em;line-height:1;letter-spacing:-.04em}
 .p-title .t3 em{font-weight:900;font-family:var(--p-num)}
 /* 版块标题编号、子块、并排 */
 .card-h h3 .num{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--accent);color:#fff;font-style:normal;
   font-family:var(--p-num);font-size:22px;font-weight:800;margin-right:14px;vertical-align:3px;line-height:1}
-.card-h h3 em,.sub-h h4 em{font-style:normal;color:var(--accent)}
+.card-h h3 em,.sub-h h4 em{font-style:normal;color:var(--accent-ink)}
 .bare{display:grid;gap:18px}
 .sub{display:grid;gap:16px}
 .sub + .sub{border-top:1.5px solid #eef0f5;padding-top:26px}
@@ -187,7 +197,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .cl.xs{font-family:var(--p-body);font-size:13px;font-weight:500;color:var(--ink3)}
 /* kpis 增强 */
 .kpi .d em{font-style:normal;font-weight:800;color:var(--ink2)}
-.kpi.accent .v{color:var(--accent)} .kpi.ink .v{color:var(--ink)}
+.kpi.accent .v{color:var(--accent-ink)} .kpi.ink .v{color:var(--ink)}
 .kpi .rows{display:grid;gap:3px;margin-top:10px}
 .kpi .rows div{display:flex;justify-content:space-between;gap:8px;font-size:16px;color:var(--ink3)}
 .kpi .rows b{font-family:var(--p-num);font-weight:800;color:var(--ink)}
@@ -217,12 +227,12 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .bl{display:grid;min-width:0}
 .bl b{font-size:19px;font-weight:800;line-height:1.3}
 .bl span{font-size:14px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.br-row.hl .bl b{color:var(--accent)} .br-row.dim .bl b{font-weight:500;color:var(--ink2)}
+.br-row.hl .bl b{color:var(--accent-ink)} .br-row.dim .bl b{font-weight:500;color:var(--ink2)}
 .trk{display:flex;height:24px;border-radius:12px;background:var(--track);overflow:hidden}
 .trk b{display:block;height:100%}
 .trk b:first-child{border-radius:12px 0 0 12px} .trk b:last-child{border-radius:0 12px 12px 0} .trk b:only-child{border-radius:12px}
 .br-row .val{font-family:var(--p-num);font-weight:800;font-size:26px;white-space:nowrap}
-.br-row.hl .val{color:var(--accent)}
+.br-row.hl .val{color:var(--accent-ink)}
 .br-row .val small{font-family:var(--p-body);font-size:15px;color:var(--ink3);font-weight:500;margin-left:4px}
 .br-row .ex{font-size:15px;color:var(--ink3);text-align:right;white-space:nowrap}
 /* points：标签 + 一句话 */
@@ -238,7 +248,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .callout > span{font-size:17px;color:var(--ink2);line-height:1.55}
 .p-text{display:grid;gap:10px}
 .p-text h3{margin:0;font-family:var(--p-title);font-size:42px;font-weight:900;letter-spacing:-.015em;line-height:1.2}
-.p-text h3 em{color:var(--accent);font-family:inherit}
+.p-text h3 em{color:var(--accent-ink);font-family:inherit}
 .p-text p{margin:0;font-size:19px;line-height:1.7;color:var(--ink2)}
 .mcards{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:14px}
 .mcard{border-radius:22px;background:var(--g-tint);border:1.5px solid var(--g-soft);padding:18px 20px;display:grid;gap:4px;align-content:start}
@@ -290,6 +300,132 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .kpi{grid-template-columns:minmax(0,1fr)}
 .poster .kpis.list .kpi{border:none!important;box-shadow:none!important}
 
+/* 更多图表 */
+.cl.big{font-size:44px;color:var(--ink)} .cl.sl{font-family:var(--p-body);font-weight:600} .cl.sl b{font-family:var(--p-num);font-weight:800;color:inherit}
+.cl.sl.mid{background:rgba(255,255,255,.85);padding:1px 6px;border-radius:6px} .cl.qlab{font-weight:700;color:var(--ink3)}
+.badge img{width:calc(var(--bs,60px) - 4px);height:calc(var(--bs,60px) - 4px);flex:none} /* 用像素写死：html2canvas 对 inline-grid 里百分比尺寸的图片算错 */
+.lab-co{display:inline-flex;align-items:center;gap:8px;vertical-align:middle}
+.dn{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:36px;align-items:center}
+.row .dn,.sub .dn.narrow{grid-template-columns:1fr}
+.dn-leg{display:grid;gap:12px}
+.dn-it{display:grid;grid-template-columns:16px minmax(0,1fr) auto;gap:12px;align-items:center;font-size:19px;font-weight:600}
+.dn-it i{width:16px;height:16px;border-radius:5px}
+.dn-it span{display:flex;align-items:center;gap:8px;min-width:0}
+.dn-it b{font-family:var(--p-num);font-weight:800;font-size:24px;white-space:nowrap}
+.dn-it b small{font-size:14px;color:var(--ink3);margin-left:3px}
+.sbars{display:grid;gap:14px}
+.sb-row{display:grid;grid-template-columns:var(--lw,200px) minmax(0,1fr) 130px;gap:18px;align-items:center}
+.sbars.pct .sb-row{grid-template-columns:var(--lw,200px) minmax(0,1fr)}
+.sb-trk{display:flex;height:36px;border-radius:10px;overflow:hidden;gap:2px;background:var(--track)}
+.sb-trk div{display:grid;place-items:center;font-family:var(--p-num);font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden}
+.sb-row .val{font-family:var(--p-num);font-weight:800;font-size:24px;text-align:right;white-space:nowrap}
+.sb-row .val small{font-family:var(--p-body);font-size:14px;color:var(--ink3);font-weight:500;margin-left:3px}
+.trk.lol{height:6px;overflow:visible;position:relative;background:#eef0f4;border-radius:3px}
+.trk.lol b{border-radius:3px!important}
+.trk.lol i{position:absolute;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:4px solid #fff;box-sizing:border-box}
+.tm{position:relative}
+.tm-c{position:absolute;border-radius:12px;padding:10px 12px;overflow:hidden;display:flex;flex-direction:column;gap:2px}
+.tm-c b{font-size:18px;font-weight:800;line-height:1.25;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tm-c span{font-family:var(--p-num);font-weight:800;font-size:24px}
+.fun{display:grid;gap:4px}
+.fun-row{display:grid;grid-template-columns:200px minmax(0,1fr);gap:18px;align-items:center}
+.fun-bar{display:flex;justify-content:center}
+.fun-bar div{height:56px;border-radius:12px;display:grid;place-items:center;font-family:var(--p-num);font-weight:800;font-size:22px;white-space:nowrap;padding:0 10px}
+.fun-cv{margin-left:218px;text-align:center;font-size:14px;color:var(--ink3);font-weight:700}
+.rgs{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:20px}
+.rg-it{display:grid;justify-items:center;gap:4px;text-align:center;align-content:start}
+.rg-it b{font-size:19px;font-weight:800;margin-top:8px}
+.rg-it span{font-size:15px;color:var(--ink3);line-height:1.5}
+.cl.rg-v{font-size:36px} .cl.rg-v small{font-size:17px;margin-left:2px}
+.waf{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:36px;align-items:center}
+.row .waf{grid-template-columns:1fr}
+.waf-g{display:grid;grid-template-columns:repeat(var(--c),minmax(0,1fr));gap:5px}
+.waf-g > i{display:block;aspect-ratio:1;border-radius:4px}
+.waf.ic .waf-g{gap:2px}
+.waf.ic .waf-g > .ico{width:100%;height:auto;aspect-ratio:1;border-radius:0}
+.wf-leg{display:grid;gap:16px}
+.wf-leg div{display:grid;grid-template-columns:16px auto minmax(0,1fr);gap:12px;align-items:baseline}
+.wf-leg i{width:16px;height:16px;border-radius:4px;transform:translateY(1px)}
+.wf-leg b{font-family:var(--p-num);font-size:34px;font-weight:800;white-space:nowrap}
+.wf-leg span{font-size:17px;color:var(--ink2);line-height:1.5}
+.spk{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:14px}
+.spk-it{border:1.5px solid #eceef5;border-radius:22px;padding:16px 18px 10px;display:grid;gap:6px;min-width:0}
+.spk-v{display:flex;align-items:baseline;gap:10px}
+.spk-v b{font-family:var(--p-num);font-size:32px;font-weight:800;white-space:nowrap}
+.spk-v small{font-size:15px;color:var(--ink3);margin-left:3px}
+.spk-v em{font-style:normal;font-family:var(--p-num);font-weight:800;font-size:17px;white-space:nowrap}
+.spk-v em.up{color:var(--up)} .spk-v em.down{color:var(--down)}
+/* 信息结构 */
+.dt{display:block;width:30px;height:30px;border-radius:50%;border:5px solid #fff;box-sizing:border-box;position:relative;z-index:1}
+.dt.big{width:52px;height:52px;display:grid;place-items:center;border-width:3px}
+.tlv{display:grid}
+.tlv-it{display:grid;grid-template-columns:var(--tw,150px) 46px minmax(0,1fr);gap:18px;padding-bottom:26px}
+.tlv-it:last-child{padding-bottom:0}
+.tlv-t{font-family:var(--p-num);font-weight:800;font-size:22px;text-align:right;color:var(--ink2);padding-top:8px;line-height:1.3}
+.tlv-it.hl .tlv-t,.tlh-it.hl .tlh-t{color:var(--accent-ink)}
+.tlv-d{display:flex;justify-content:center;align-items:flex-start;position:relative;padding-top:10px}
+.tlv-d .dt.big{margin-top:-10px}
+.tlv-d .ln{position:absolute;top:18px;bottom:-26px;left:50%;width:3px;margin-left:-1.5px;background:#e6e8ef}
+.tlv-c{display:grid;gap:4px;padding-top:4px;justify-items:start}
+.tlv-c b,.tlh-it > b{font-size:22px;font-weight:900;line-height:1.35}
+.tlv-c > span,.tlh-it > span{font-size:17px;color:var(--ink2);line-height:1.6}
+.tlh{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:16px;position:relative}
+.tlh-ln{position:absolute;left:0;right:0;top:56px;height:3px;background:#e6e8ef}
+.tlh-it{display:grid;gap:8px;align-content:start;position:relative;justify-items:start}
+.tlh-t{height:26px;line-height:26px;font-family:var(--p-num);font-weight:800;font-size:20px;color:var(--ink2);white-space:nowrap}
+.tlh-d{height:46px;display:flex;align-items:center}
+.stp{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:18px}
+.stp-it{display:grid;gap:8px;justify-items:start;align-content:start;position:relative}
+.stp-n{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;position:relative;z-index:1;flex:none}
+.stp-n span{font-family:var(--p-num);font-weight:800;font-size:26px}
+.stp-ar{position:absolute;top:28px;left:72px;right:-4px;height:3px;background:var(--accent-soft)}
+.stp-ar em{position:absolute;right:-2px;top:-6px;width:0;height:0;border-top:7.5px solid transparent;border-bottom:7.5px solid transparent;border-left:11px solid var(--accent-soft)}
+.stp-it > b,.stl-c b{font-size:21px;font-weight:900;line-height:1.35;margin-top:6px}
+.stp-it > span,.stl-c span{font-size:16px;color:var(--ink2);line-height:1.6}
+.stl{display:grid}
+.stl-it{display:grid;grid-template-columns:58px minmax(0,1fr);gap:20px;padding-bottom:22px}
+.stl-it:last-child{padding-bottom:0}
+.stl-d{position:relative}
+.stl-d .ln{position:absolute;top:58px;bottom:-22px;left:50%;width:3px;margin-left:-1.5px;background:var(--accent-soft)}
+.stl-c{display:grid;gap:2px;align-content:start;padding-top:8px}
+.cmp{display:grid;gap:18px}
+.cmp-hs{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center}
+.cmp-h{display:flex;align-items:center;gap:14px;border-radius:22px;padding:18px 22px;min-width:0}
+.cmp-h.r{flex-direction:row-reverse;text-align:right}
+.cmp-h b{display:block;font-size:26px;font-weight:900;font-family:var(--p-title);line-height:1.25}
+.cmp-h span{display:block;font-size:15px;color:var(--ink3)}
+.cmp-vs{font-family:var(--p-num);font-weight:800;font-size:22px;color:var(--ink3)}
+.cmp-rows{display:grid}
+.cmp-r{display:grid;grid-template-columns:minmax(0,1fr) 210px minmax(0,1fr);gap:14px;align-items:center;padding:14px 4px;border-bottom:1px solid #eef0f5}
+.cmp-r:last-child{border-bottom:none}
+.cmp-k{text-align:center;font-size:16px;color:var(--ink3);font-weight:700}
+.cmp-v{font-family:var(--p-num);font-weight:600;font-size:21px;color:var(--ink2);line-height:1.4}
+.cmp-v.l{text-align:left} .cmp-v.r{text-align:right} .cmp-v.win{font-weight:800}
+.cmp-lists{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.cmp-lists ul{margin:0;padding:0;list-style:none;display:grid;gap:12px;align-content:start}
+.cmp-lists li{display:grid;grid-template-columns:10px minmax(0,1fr);gap:12px;font-size:18px;line-height:1.55}
+.cmp-lists li i{width:10px;height:10px;border-radius:50%;margin-top:10px}
+.qd{display:grid;gap:8px}
+.qd-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.qd-c{border-radius:22px;padding:22px 24px;display:grid;gap:8px;align-content:start;position:relative;min-height:150px}
+.qd-c em{position:absolute;top:16px;right:18px;font-style:normal;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-family:var(--p-num);font-weight:800;font-size:22px}
+.qd-c b{font-size:22px;font-weight:900;font-family:var(--p-title);padding-right:50px}
+.qd-c ul{margin:0;padding-left:20px;font-size:17px;line-height:1.65;color:var(--ink2)}
+.qd-c span{font-size:16px;color:var(--ink2);line-height:1.6}
+.qd-ylab,.qd-xlab{font-size:15px;font-weight:700;color:var(--ink3)} .qd-xlab{text-align:right}
+.tree{position:relative}
+.tree svg{position:absolute;left:0;top:0}
+.tn{position:absolute;border-radius:14px;display:flex;flex-direction:column;justify-content:center;padding:0 16px;overflow:hidden}
+.tn b{font-size:18px;font-weight:800;line-height:1.25;white-space:nowrap;overflow:hidden}
+.tn span{font-size:13px;opacity:.8;white-space:nowrap;overflow:hidden}
+.cl.pyr{font-family:var(--p-title);font-size:22px;font-weight:900}
+.cl.pyr-t{white-space:normal;font-family:var(--p-body);font-size:17px;font-weight:500;color:var(--ink2);line-height:1.55}
+.cl.cy-n{font-family:var(--p-num);font-size:30px}
+.cl.cy-t{white-space:normal;width:190px;text-align:center;font-family:var(--p-body);display:grid;gap:2px}
+.cl.cy-t b{font-size:19px;font-weight:900;color:var(--ink)} .cl.cy-t small{font-size:14px;font-weight:500;color:var(--ink2);line-height:1.45}
+.cl.cy-c{white-space:normal;width:170px;text-align:center;font-family:var(--p-title);font-size:22px;font-weight:900;color:var(--ink);line-height:1.35}
+.cl.cy-t.l{text-align:left;width:170px} .cl.cy-t.r{text-align:right;width:170px}
+
 /* 版本差异 */
 .poster[data-v="clear"]{background:linear-gradient(180deg,#ffffff 0,#fbfcfe 100%)}
 .poster[data-v="clear"] .card,.poster[data-v="clear"] .kpi{box-shadow:none;border:1.5px solid #eceef5}
@@ -304,6 +440,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 <script>
 const SPEC=/*__SPEC__*/null;
 const LOGOS=/*__LOGOS__*/{};
+const ICONS=/*__ICONS__*/{};
 
 /* ---------- 配色：8 个分类色（已过色盲区分校验），各风格共用 ---------- */
 const CATS=["#5b4cff","#1296f0","#0fb57b","#ff6b2c","#f0347f","#00a8c6","#a04cf5","#4cb82e"];
@@ -374,11 +511,17 @@ const iconPal=g=>({body:tri(g,.8,.62,.45),core:tri(g,.6,.4,.22),pin:tri(g,.75,.6
 function isoSVG(kind,pal,width,shadow,maxH){if(!DRAW[kind])return"";const B=new Iso();DRAW[kind](B,pal);return B.svg(width,shadow,maxH)}
 
 /* ---------- 颜色与文字 ---------- */
-const ACC=SPEC.accent||CATS[0];
-// 强调色若是 8 色之一，分类色从它开始轮转，整张海报的主色一致
-const PAL=CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:CATS;
+const BRANDC=((SPEC.brand&&SPEC.brand.colors)||[]).map(c=>c.toLowerCase());
+const ACC=(SPEC.accent||BRANDC[0]||CATS[0]).toLowerCase();
+// 分类色：强调色（品牌色）和品牌辅色排前面，再接 8 色里和它们不太像的；强调色本身是 8 色之一时直接从它轮转
+const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
+const HEAD=[ACC,...BRANDC.filter(c=>c!==ACC)];
+const PAL=CATS.includes(ACC)&&HEAD.length===1?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[...HEAD,...CATS.filter(c=>HEAD.every(h=>cdist(c,h)>110))];
+// 文字安全色：太浅的颜色（黄、浅青等品牌色）用作文字时自动加深，保证在白底上看得清
+const lum=h=>{const[r,g,b]=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
+function ink(c){let x=c;for(let t=.1;t<.8&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,K,t);return x}
 const UD=UPDOWN[SPEC.updown||"cn"];const GRAY="#b8bdc8",DIM="#a3a9b8";
-const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<em>$1</em>"); // **重点** 显示为强调
+const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<em>$1</em>").replace(/\n/g,"<br>"); // **重点** 显示为强调，\n 换行
 const sign=v=>typeof v!=="number"?esc(v):(v>0?"+":v<0?"−":"")+fmt(Math.abs(v));
 const autoTone=s=>/^\s*\+/.test(String(s))?"up":/^\s*[-−]/.test(String(s))?"down":"";
 function toneHex(t,i){if(t==="up")return UD.up;if(t==="down")return UD.down;if(t==="gray")return DIM;if(t==="dark")return "#23253a";
@@ -403,7 +546,7 @@ function Chart(w,h){this.w=w;this.h=h;this.s=[];this.t=[];this.d=[]}
 Chart.prototype.svg=function(x){this.s.push(x)};
 Chart.prototype.def=function(x){this.d.push(x)};
 // 文字：ax 水平对齐 l/c/r，ay 垂直对齐 t/m/b（相对 x,y 点）
-Chart.prototype.text=function(x,y,html,cls,ax,ay,color){const tx={l:"0",c:"-50%",r:"-100%"}[ax||"c"],ty={t:"0",m:"-50%",b:"-100%"}[ay||"b"];
+Chart.prototype.text=function(x,y,html,cls,ax,ay,color){if(String(html).includes('class="badge"'))cls=(cls||"")+" hb";const tx={l:"0",c:"-50%",r:"-100%"}[ax||"c"],ty={t:"0",m:"-50%",b:"-100%"}[ay||"b"];
   this.t.push(`<span class="cl ${cls||""}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;transform:translate(${tx},${ty})${color?`;color:${color}`:""}">${html}</span>`)};
 Chart.prototype.done=function(el){el.style.height=this.h+"px";
   el.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" width="${this.w}" height="${this.h}" viewBox="0 0 ${this.w} ${this.h}"><defs>${this.d.join("")}</defs>${this.s.join("")}</svg>${this.t.join("")}`};
@@ -444,11 +587,11 @@ const CH={
         segs.forEach(sg=>{const cc=colOf(sg);rect(C,x0,y(sg.b),bw,y(sg.a)-y(sg.b),cc,sg.it.state,cc)})}
       else rect(C,x0,y1,bw,y2-y1,it.total&&it.g==null?`url(#${tid})`:c,st,c);
       if(k<n-1)C.svg(`<line x1="${(x0+bw).toFixed(1)}" x2="${(slot*(k+1.5)-bw/2).toFixed(1)}" y1="${y(b.b).toFixed(1)}" y2="${y(b.b).toFixed(1)}" stroke="#c4c8d4" stroke-width="1.5" stroke-dasharray="3 4"/>`);
-      C.text(cx,y1-8,esc(it.text??(it.total?fmt(b.b):sign(it.value))),"","c","b",st==="plan"?"#16172a":mix(c,K,.15));
+      C.text(cx,y1-8,esc(it.text??(it.total?fmt(b.b):sign(it.value))),"","c","b",st==="plan"?"#16172a":ink(mix(c,K,.15)));
       C.text(cx,top+H+12,esc(it.label),"xl","c","t");if(it.sub)C.text(cx,top+H+37,esc(it.sub),"xs","c","t")});
     C.svg(`<line x1="0" x2="${w}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
     (s.brackets||[]).forEach(r=>{const xa=slot*r.from+(slot-bw)/2,xb=slot*(r.to+1)-(slot-bw)/2,yb=top+H+xl+4;
-      C.svg(`<path d="M${xa.toFixed(1)},${yb}v10H${xb.toFixed(1)}v-10" fill="none" stroke="${ACC}" stroke-width="2"/>`);C.text((xa+xb)/2,yb+16,rich(r.text),"sm","c","t",mix(ACC,K,.15))});
+      C.svg(`<path d="M${xa.toFixed(1)},${yb}v10H${xb.toFixed(1)}v-10" fill="none" stroke="${ACC}" stroke-width="2"/>`);C.text((xa+xb)/2,yb+16,rich(r.text),"sm","c","t",ink(mix(ACC,K,.15)))});
     C.done(el)},
 
   line(el,w,s){const ser=s.series,n=s.x.length,multi=ser.length>1,hl=ser.some(q=>q.highlight),u=s.unit||"";
@@ -468,13 +611,13 @@ const CH={
       C.svg(`<path d="${d}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>`);
       if(de)C.svg(`<path d="${de}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-dasharray="8 7" stroke-linecap="round"/>`);
       if(multi){if(n<=8)ok.forEach(p=>C.svg(`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="${c}"/>`));
-        const lp=ok.at(-1);ends.push({x:lp[0],y:lp[1],c,txt:`${esc(q.name)} ${fmt(lp[2])}${esc(u)}`,hl:q.highlight});return}
+        const lp=ok.at(-1);ends.push({x:lp[0],y:lp[1],c,txt:`${q.company?badge(q.company,26):""}${esc(q.name)} ${fmt(lp[2])}${esc(u)}`,hl:q.highlight});return}
       let idx=Array.isArray(s.labels)?s.labels:s.labels==="all"?ok.map(p=>p[3]):s.labels==="end"?[ok.at(-1)[3]]
         :[...new Set([ok[0][3],ok.at(-1)[3],ok.reduce((a,b)=>b[2]<a[2]?b:a)[3],ok.reduce((a,b)=>b[2]>a[2]?b:a)[3]])];
       idx.forEach(i=>{const p=pts[i];if(!p)return;C.svg(`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="6" fill="${c}" stroke="#fff" stroke-width="2.5"/>`);
-        const neg=p[2]<0,lab=fmt(p[2])+esc(u),cc=mix(c,K,.12);if(neg)C.text(p[0]+12,p[1],lab,"","l","m",cc);else C.text(p[0],p[1]-12,lab,"",i===0?"l":i===n-1?"r":"c","b",cc)})});
+        const neg=p[2]<0,lab=fmt(p[2])+esc(u),cc=ink(mix(c,K,.12));if(neg)C.text(p[0]+12,p[1],lab,"","l","m",cc);else C.text(p[0],p[1]-12,lab,"",i===0?"l":i===n-1?"r":"c","b",cc)})});
     ends.sort((a,b)=>a.y-b.y);for(let k=1;k<ends.length;k++)if(ends[k].y-ends[k-1].y<28)ends[k].y=ends[k-1].y+28;
-    ends.forEach(e=>C.text(e.x+14,e.y,e.txt,e.hl?"":"sm","l","m",e.hl?mix(e.c,K,.1):mix(e.c,K,.25)));
+    ends.forEach(e=>C.text(e.x+14,e.y,e.txt,e.hl?"":"sm","l","m",e.hl?ink(mix(e.c,K,.1)):ink(mix(e.c,K,.25))));
     C.done(el)},
 
   columns(el,w,s){const ser=s.series,n=s.x.length,m=ser.length,hiOf=v=>Array.isArray(v)?v[1]:v,u=s.unit||"";
@@ -488,7 +631,7 @@ const CH={
       ser.forEach((q,j)=>{const v=q.values[i];if(v==null)return;const c0=q.g!=null?PAL[q.g%8]:(s.highlight!=null?(i===s.highlight?ACC:mix(ACC,W,.55)):PAL[j%8]);
         const est=s.est_from!=null&&i>=s.est_from,c=est?mix(c0,W,.5):c0,h=hiOf(v),x=cx-gw/2+j*(bw+gap),y1=Y(Math.max(h,0)),y2=Y(Math.min(h,0));
         rect(C,x,y1,bw,y2-y1,c,"solid",c);
-        C.text(x+bw/2,h>=0?y1-6:y2+6,Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:sign(h).replace(/^\+/,s.signed?"+":"")+(s.unit_on_bars?esc(u):""),small?"sm":"","c",h>=0?"b":"t",mix(c0,K,.2))})});
+        C.text(x+bw/2,h>=0?y1-6:y2+6,Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:sign(h).replace(/^\+/,s.signed?"+":"")+(s.unit_on_bars?esc(u):""),small?"sm":"","c",h>=0?"b":"t",ink(mix(c0,K,.2)))})});
     C.done(el)},
 
   target(el,w,{it}){const C=new Chart(w,78),tps=it.targets.map(t=>t.tp),all=[...tps,it.price];let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo)*.12||hi*.05;lo-=pad;hi+=pad;
@@ -514,13 +657,13 @@ function section(s,ctx){const f=SEC[s.type];if(!f)return "";
   if(s.type==="row")return `<div class="row" style="--n:${s.sections.length}">${s.sections.map(c=>section(c,"row")).join("")}</div>`;
   const body=f(s)+(s.caption?`<div class="cap">${rich(s.caption)}</div>`:"");
   if(ctx==="sub")return `<div class="sub">${head(s,"sub")}${body}</div>`;
-  if(CARD.has(s.type)||(ctx==="row"&&!NOHEAD.has(s.type)))return `<div class="card">${head(s)}${body}</div>`;
+  if(s.card!==false&&(CARD.has(s.type)||(ctx==="row"&&!NOHEAD.has(s.type))))return `<div class="card">${head(s)}${body}</div>`;
   return s.title&&!NOHEAD.has(s.type)?`<div class="bare">${head(s)}${body}</div>`:body}
 
 const SEC={
   group(){},row(){},
-  chain(s){return `<div class="groups">${s.groups.map((g,i)=>`<div class="grp" data-g="${i}"><div class="grp-tag"><div class="gt-name">${esc(g.name)}</div><div class="gt-desc">${esc(g.desc||"")}</div>${g.icon?`<div class="gt-icon" data-icon="${g.icon}" data-g="${i}"></div>`:""}</div><div class="grp-list" style="--cols:${s.cols||4}">${g.companies.map(k=>coItem(k,60)).join("")}</div></div>`).join("")}</div>`},
-  kpis(s){const list=s.layout==="list";return `<div class="kpis${list?" list":""}" style="--n:${list?1:s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone||""}" ${k.tone?"":`data-g="${i}"`}><div class="k">${esc(k.label)}</div><div class="v" data-fit=".5">${rich(k.value)}<small>${esc(k.unit||"")}</small></div>${k.note?`<div class="d">${rich(k.note)}</div>`:""}${k.rows?`<div class="rows">${k.rows.map(r=>`<div><span>${esc(r[0])}</span><b class="${r[2]??autoTone(r[1])}">${esc(r[1])}</b></div>`).join("")}</div>`:""}</div>`).join("")}</div>`},
+  chain(s){return `<div class="groups">${s.groups.map((g,i)=>`<div class="grp" data-g="${i}"><div class="grp-tag"><div class="gt-name">${esc(g.name)}</div><div class="gt-desc">${esc(g.desc||"")}</div>${g.icon?(DRAW[g.icon]?`<div class="gt-icon" data-icon="${g.icon}" data-g="${i}"></div>`:`<div class="gt-icon gt-ico"><i class="ico" data-ico="${esc(g.icon)}" style="--is:52px"></i></div>`):""}</div><div class="grp-list" style="--cols:${s.cols||4}">${g.companies.map(k=>coItem(k,60)).join("")}</div></div>`).join("")}</div>`},
+  kpis(s){const list=s.layout==="list";return `<div class="kpis${list?" list":""}" style="--n:${list?1:s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone||""}" ${k.tone?"":`data-g="${i}"`}><div class="k">${k.company?badge(k.company,30):""}${k.icon?`<i class="ico" data-ico="${esc(k.icon)}" style="--is:26px"></i>`:""}${esc(k.label)}</div><div class="v" data-fit=".5">${rich(k.value)}<small>${esc(k.unit||"")}</small></div>${k.note?`<div class="d">${rich(k.note)}</div>`:""}${k.rows?`<div class="rows">${k.rows.map(r=>`<div><span>${esc(r[0])}</span><b class="${r[2]??autoTone(r[1])}">${esc(r[1])}</b></div>`).join("")}</div>`:""}</div>`).join("")}</div>`},
   holdings(s){const top=s.items.slice(0,6);
     const cards=top.map((h,i)=>{const c=coInfo(h[0]);return `<div class="hc" data-g="${i}">${badge(h[0],54)}<div class="co-t"><b>${esc(c.code)}</b><span>${esc(c.name)}</span></div><div class="pct">${h[1].toFixed(1)}<small>%</small></div></div>`}).join("");
     const rest=(s.items.slice(6).map(h=>`<div class="rc">${badge(h[0],36)}<b>${esc(coInfo(h[0]).code)}</b><em>${h[1].toFixed(1)}%</em></div>`).join(""))+(s.other!=null?`<div class="rc"><span class="badge" style="--bs:36px;--c:#8e91a7">…</span><b>其他</b><em>${s.other.toFixed(1)}%</em></div>`:"");
@@ -561,31 +704,32 @@ const SEC={
     const pc=v=>(Math.max(0,v)/max*100).toFixed(1);
     return `<div class="bars${s.layout==="stack"?" stack":""}" style="${s.label_width?`--lw:${s.label_width}px;`:""}${s.value_width?`--vw:${s.value_width}px`:""}">${s.items.map((b,i)=>{
       const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],g=hl?(b.highlight?"acc":"gray"):s.colors==="cats"?i:(b.tone==="gray"?"gray":"acc");
-      const label=b.company?coItem(b.company,44):`<div class="bl"><b>${rich(b.label)}</b>${b.sub?`<span>${esc(b.sub)}</span>`:""}</div>`;
+      const ci=b.company?coInfo(b.company):null,txt=`<div class="bl"><b>${rich(b.label||(ci&&(ci.name||ci.code))||"")}</b>${b.sub||ci?`<span>${esc(b.sub||(ci&&ci.code)||"")}</span>`:""}</div>`;
+      const label=b.company?`<div class="bl-co">${badge(b.company,40)}${txt}</div>`:txt;
       const val=b.text!=null?rich(b.text):(lo===hi?fmt(lo):`${fmt(lo)}–${fmt(hi)}`)+(s.unit?`<small>${esc(s.unit)}</small>`:"");
-      const bar=lo===hi?`<b data-bar="${g}" style="width:${pc(hi)}%"></b>`:`<b data-bar="${g}" style="width:${pc(lo)}%"></b><b data-bar="${g}" class="rg" style="width:${(pc(hi)-pc(lo)).toFixed(1)}%"></b>`;
-      return `<div class="br-row${ex?" ex":""}${hl?(b.highlight?" hl":" dim"):""}">${label}<div class="trk">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
+      const bar=s.style==="lollipop"?`<b data-bar="${g}" style="width:${pc(hi)}%"></b><i data-dot="${g}" style="left:${pc(hi)}%"></i>`:lo===hi?`<b data-bar="${g}" style="width:${pc(hi)}%"></b>`:`<b data-bar="${g}" style="width:${pc(lo)}%"></b><b data-bar="${g}" class="rg" style="width:${(pc(hi)-pc(lo)).toFixed(1)}%"></b>`;
+      return `<div class="br-row${ex?" ex":""}${hl?(b.highlight?" hl":" dim"):""}">${label}<div class="trk${s.style==="lollipop"?" lol":""}">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
   line(s){const multi=s.series.length>1&&!s.series.some(q=>q.highlight)&&s.legend!==false;
     return `${multi?legendHTML(s.series.map((q,j)=>["line",q.color||PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("line",{s})}"></div>`},
   columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%8]:PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
   // 标签 + 一句话：电话会要点、市场观点、风险提示。tone: up/down/gray/dark/accent 或分类色序号，不写则同名标签同色
   points(s){const tags=[...new Set(s.items.map(p=>p.tag))];return `<div class="pts" style="--cols:${s.cols||1}">${s.items.map(p=>{
     const c=p.tone!=null?toneHex(p.tone):s.colors==="cats"?PAL[tags.indexOf(p.tag)%8]:ACC;return `<div class="pt">${p.tag?`<span class="ptag" style="background:${c}">${esc(p.tag)}</span>`:""}<div>${p.company?`<span class="co-in">${badge(p.company,30)}${esc(coInfo(p.company).name||coInfo(p.company).code)}</span>`:""}${rich(p.text)}${p.sub?`<small>${rich(p.sub)}</small>`:""}</div></div>`}).join("")}</div>`},
-  callout(s){const c=toneHex(s.tone||"accent");return `<div class="callout" style="background:${mix(c,W,.91)}"><b style="color:${mix(c,K,.2)}">${rich(s.title)}</b>${s.text?`<span>${rich(s.text)}</span>`:""}</div>`},
+  callout(s){const c=toneHex(s.tone||"accent");return `<div class="callout" style="background:${mix(c,W,.91)}"><b style="color:${ink(mix(c,K,.2))}">${rich(s.title)}</b>${s.text?`<span>${rich(s.text)}</span>`:""}</div>`},
   text(s){return `<div class="p-text">${s.title?`<h3>${rich(s.title)}</h3>`:""}${s.text?`<p>${rich(s.text)}</p>`:""}</div>`},
-  cards(s){return `<div class="mcards" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((c,i)=>`<div class="mcard" data-g="${s.colors==="cats"?i:"acc"}"><b>${rich(c.title)}</b>${c.value!=null?`<strong>${rich(c.value)}</strong>`:""}${c.sub?`<span>${rich(c.sub)}</span>`:""}</div>`).join("")}</div>`},
+  cards(s){return `<div class="mcards" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((c,i)=>`<div class="mcard" data-g="${s.colors==="cats"?i:"acc"}">${c.company?badge(c.company,44):""}${c.icon?`<i class="ico" data-ico="${esc(c.icon)}" style="--is:40px"></i>`:""}<b>${rich(c.title||(c.company&&coInfo(c.company).name)||"")}</b>${c.value!=null?`<strong>${rich(c.value)}</strong>`:""}${c.sub?`<span>${rich(c.sub)}</span>`:""}</div>`).join("")}</div>`},
   // 热力表：格子颜色按 colors（不给则按 values）相对 center 的方向和幅度
   heatmap(s){const ctr=s.center??0,cv=s.rows.flatMap(r=>(r.colors||r.values).filter(v=>typeof v==="number").map(v=>Math.abs(v-ctr))),m=s.range||Math.max(...cv)||1;
     const f=v=>s.format==="pct"?(v>0?"+":"")+fmt(v)+"%":s.format==="x"?v.toFixed(1)+"×":fmt(v);
     const cell=(v,c)=>{if(v==null)return `<td><span class="hm na">—</span></td>`;const d=(c??v)-ctr,col=d>=0?UD.up:UD.down,t=Math.min(1,Math.abs(d)/m);
-      return `<td><span class="hm" style="background:${mix(col,W,.92-.5*t)};color:${mix(col,K,.25)}">${f(v)}</span></td>`};
+      return `<td><span class="hm" style="background:${mix(col,W,.92-.5*t)};color:${ink(mix(col,K,.25))}">${f(v)}</span></td>`};
     return `<table class="tbl hmt"><thead><tr><th></th>${s.columns.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r.company?coItem(r.company,36):`<b>${esc(r.label)}</b>${r.sub?`<small>${esc(r.sub)}</small>`:""}`}</td>${r.values.map((v,j)=>cell(v,r.colors?r.colors[j]:null)).join("")}</tr>`).join("")}</tbody></table>`},
   // 偏离条：中线为常态/基准，向右为高于、向左为低于
   deviation(s){const r=s.range||Math.max(...s.rows.map(x=>Math.abs(x.value)))*1.15||1,cols=s.columns||[],u=s.unit??"%";
     const gt=`grid-template-columns:${s.label_width||190}px ${cols.map(()=>(s.col_width||120)+"px").join(" ")} minmax(0,1fr) 110px`;
     const hdr=cols.length||s.bar_label?`<div class="dv-row dv-h" style="${gt}"><span></span>${cols.map(c=>`<span>${esc(c)}</span>`).join("")}<span>${esc(s.bar_label||"")}</span><span></span></div>`:"";
     return `<div class="devs">${hdr}${s.rows.map(x=>{const v=x.value,dir=v>=0?"up":"down",w=Math.min(50,Math.abs(v)/r*50);
-      return `<div class="dv-row" style="${gt}">${x.company?coItem(x.company,40):`<div class="bl"><b>${esc(x.label)}</b>${x.sub?`<span>${esc(x.sub)}</span>`:""}</div>`}${(x.cols||[]).map(c=>Array.isArray(c)?`<span class="dv-c">${rich(c[0])}<small>${esc(c[1])}</small></span>`:`<span class="dv-c">${rich(c)}</span>`).join("")}<div class="dv-trk"><i class="q" style="left:25%"></i><i class="q" style="left:75%"></i><b data-dv="${dir}" style="left:${v>=0?50:50-w}%;width:${w.toFixed(2)}%"></b><i></i></div><div class="dv-v" style="color:${mix(UD[dir],K,.1)}">${sign(v)}${esc(u)}</div></div>`}).join("")}</div>`},
+      return `<div class="dv-row" style="${gt}">${x.company?coItem(x.company,40):`<div class="bl"><b>${esc(x.label)}</b>${x.sub?`<span>${esc(x.sub)}</span>`:""}</div>`}${(x.cols||[]).map(c=>Array.isArray(c)?`<span class="dv-c">${rich(c[0])}<small>${esc(c[1])}</small></span>`:`<span class="dv-c">${rich(c)}</span>`).join("")}<div class="dv-trk"><i class="q" style="left:25%"></i><i class="q" style="left:75%"></i><b data-dv="${dir}" style="left:${v>=0?50:50-w}%;width:${w.toFixed(2)}%"></b><i></i></div><div class="dv-v" style="color:${ink(mix(UD[dir],K,.1))}">${sign(v)}${esc(u)}</div></div>`}).join("")}</div>`},
   // 分组名单：每家一个 logo 胶囊，可带方向圆点
   chips(s){return `<div class="chips">${s.groups.map(g=>`<div class="ch-row"><b>${esc(g.label)}</b><div class="ch-list">${g.items.map(it=>{const [k,t]=Array.isArray(it)?it:[it];const c=coInfo(k);
     return `<span class="chip">${badge(k,34)}<b>${esc(c.code)}</b>${s.show_name?`<span>${esc(c.name)}</span>`:""}${t?`<i style="background:${toneHex(t)}"></i>`:""}</span>`}).join("")}</div></div>`).join("")}</div>`},
@@ -594,8 +738,12 @@ const SEC={
     return `<div class="tg-row"><div class="tg-l">${coItem(it.company,56)}${it.rating?`<span class="tg-rt">${rich(it.rating)}</span>`:""}</div><div class="chart" data-chart="${reg("target",{it})}" style="height:78px"></div><div class="tg-r"><span>目标价${t.org?" · "+esc(t.org):""}</span><b>${fmt(t.tp)}<small>${esc(it.unit||"")}</small></b><em class="${up>=0?"up":"down"}">空间 ${up>=0?"+":"−"}${Math.abs(up).toFixed(1)}%</em></div></div>`}).join("")}</div>`}
 };
 
-function brandHTML(){const b=SPEC.brand;if(!b)return "";const c=b.company?coInfo(b.company):{name:""};
-  return `<div class="p-brand">${b.company?badge(b.company,88):""}<div class="pb-name"><b>${esc(b.name||c.name)}</b>${b.en?`<span>${esc(b.en)}</span>`:""}</div><div class="pb-r">${b.label?`<b>${esc(b.label)}</b>`:""}${b.sub?`<span>${esc(b.sub)}</span>`:""}</div></div>`}
+// 品牌头部：优先官方字标图片（image），其次 AI 按品牌色重建的文字字标（wordmark，可配 svg 图形），都没有就用 logo 库的圆形 logo + 公司名
+function brandHTML(){const b=SPEC.brand;if(!b)return "";const c=b.company?coInfo(b.company):{name:""};let mark;
+  if(b.image||b.wordmark){mark=`<div class="pb-mark">${b.svg?`<img class="pb-sym" src="${b.svg}" style="height:${b.height||72}px" alt="">`:""}${b.image?`<img class="pb-img" src="${b.image}" style="height:${b.height||72}px" alt="${esc(b.name||c.name)}">`:""}`
+    +(b.wordmark&&!b.image?`<span class="pb-word" style="font-size:${b.height||72}px">${b.wordmark.map(w=>`<span style="color:${w.color||"#16172a"};font-weight:${w.weight||800}${w.italic?";font-style:italic":""}${w.font==="title"?";font-family:var(--p-title)":""}">${esc(w.text)}</span>`).join("")}</span>`:"")+`</div>`}
+  else mark=`${b.company?badge(b.company,88):""}<div class="pb-name"><b>${esc(b.name||c.name)}</b>${b.en?`<span>${esc(b.en)}</span>`:""}</div>`;
+  return `<div class="p-brand">${mark}<div class="pb-r">${b.label?`<b>${esc(b.label)}</b>`:""}${b.sub?`<span>${esc(b.sub)}</span>`:""}</div></div>`}
 function posterHTML(){
   NUM=0;const t=SPEC.title||[];const mixed=t[1]&&t[1].includes("**");
   return `${OBJ?`<div class="bg-obj" data-bg="${OBJ}"></div>`:""}`+brandHTML()
@@ -605,6 +753,234 @@ function posterHTML(){
    +`<div class="p-foot"><div class="fl">${(SPEC.footer||[]).map((l,i,a)=>i<a.length-1?`<span>${rich(l)}</span>`:`<small>${esc(l)}</small>`).join("")}</div><div class="mark"><b>${esc(SPEC.mark||"pastel-poster")}</b><span>${esc(SPEC.mark_sub||"")}</span></div></div>`;
 }
 
+/* ---------- 更多图表（按 FT 图表词汇的九类补全）与信息结构（时间线、步骤、对比、四象限、树、金字塔、循环） ---------- */
+const onC=c=>lum(c)>.42?"#16172a":"#fff"; // 色块上的文字用黑或白
+const textW=t=>[...String(t||"").replace(/<[^>]+>/g,"")].reduce((a,ch)=>a+(ch.charCodeAt(0)>0x2000?15:8.6),0);
+const nm=it=>it.company?`${badge(it.company,24)}${esc(it.label||coInfo(it.company).code)}`:rich(it.label||"");
+const lblock=(it,size)=>{const ci=it.company?coInfo(it.company):null,t=`<div class="bl"><b>${rich(it.label||(ci&&(ci.name||ci.code))||"")}</b>${it.sub||ci?`<span>${esc(it.sub||(ci&&ci.code)||"")}</span>`:""}</div>`;
+  return it.company?`<div class="bl-co">${badge(it.company,size||36)}${t}</div>`:t};
+function yAxis(C,lo,hi,Y,padL,x2,u){niceTicks(lo,hi).forEach(t=>{C.svg(`<line x1="${padL}" x2="${x2}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}" stroke="#eef0f4" stroke-width="1.5"/>`);C.text(padL-12,Y(t),fmt(t)+esc(u||""),"ax","r","m")})}
+function arcPath(cx,cy,r,ir,a0,a1,c){const f=v=>v.toFixed(2);
+  if(a1-a0>2*Math.PI-.01)return `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f((r+ir)/2)}" fill="none" stroke="${c}" stroke-width="${f(r-ir)}"/>`;
+  a0+=.008;a1-=.008;if(a1<=a0)return "";const L=a1-a0>Math.PI?1:0,p=(R,a)=>`${f(cx+R*Math.cos(a))},${f(cy+R*Math.sin(a))}`;
+  return `<path d="M${p(r,a0)}A${f(r)},${f(r)} 0 ${L} 1 ${p(r,a1)}L${p(ir,a1)}A${f(ir)},${f(ir)} 0 ${L} 0 ${p(ir,a0)}Z" fill="${c}"/>`}
+function squarify(vals,x,y,w,h){const out=[];let i=0;
+  while(i<vals.length){const short=Math.min(w,h),row=[vals[i]];let j=i+1;
+    const worst=r=>{const s=r.reduce((a,b)=>a+b,0),mx=Math.max(...r),mn=Math.min(...r);return Math.max(short*short*mx/(s*s),s*s/(short*short*mn))};
+    while(j<vals.length&&worst([...row,vals[j]])<=worst(row)){row.push(vals[j]);j++}
+    const s=row.reduce((a,b)=>a+b,0);
+    if(w>=h){const rw=s/h;let yy=y;row.forEach(v=>{out.push([x,yy,rw,v/rw]);yy+=v/rw});x+=rw;w-=rw}
+    else{const rh=s/w;let xx=x;row.forEach(v=>{out.push([xx,y,v/rh,rh]);xx+=v/rh});y+=rh;h-=rh}
+    i=j}
+  return out}
+const divColors=n=>{const m=(n-1)/2;return Array.from({length:n},(_,j)=>Math.abs(j-m)<.01?"#c9cdd8":j<m?mix(UD.down,W,j/m*.55):mix(UD.up,W,(n-1-j)/m*.55))};
+const colorOf=(it,i)=>it&&it.tone!=null?toneHex(it.tone):PAL[i%PAL.length];
+
+Object.assign(SEC,{
+  // 部分与整体：环形图（≤6 项，其余并入“其他”）
+  donut(s){const tot=s.items.reduce((a,b)=>a+b.value,0)+(s.other||0),u=s.unit||"",pc=v=>(v/tot*100).toFixed(s.digits??1)+"%";
+    const leg=s.items.map((it,i)=>`<div class="dn-it"><i style="background:${colorOf(it,i)}"></i><span>${nm(it)}</span><b>${s.show==="value"?fmt(it.value)+`<small>${esc(u)}</small>`:pc(it.value)}</b></div>`).join("")
+      +(s.other?`<div class="dn-it"><i style="background:${GRAY}"></i><span>${esc(s.other_label||"其他")}</span><b>${s.show==="value"?fmt(s.other)+`<small>${esc(u)}</small>`:pc(s.other)}</b></div>`:"");
+    return `<div class="dn"><div class="chart" data-chart="${reg("donut",{s})}"></div><div class="dn-leg">${leg}</div></div>`},
+  // 部分与整体 / 偏差：堆叠横条（percent 默认归一到 100%；diverging 为“反对—中立—赞成”色阶）
+  stackbar(s){const pct=s.percent!==false,cols=s.diverging?divColors(s.series.length):s.series.map((n,j)=>PAL[j%PAL.length]);
+    const maxT=s.max||Math.max(...s.rows.map(r=>r.values.reduce((a,b)=>a+b,0)));
+    const rows=s.rows.map(r=>{const tot=r.values.reduce((a,b)=>a+b,0),base=pct?tot:maxT;
+      const segs=r.values.map((v,j)=>{const wd=v/base*100;return `<div style="width:${wd.toFixed(2)}%;background:${cols[j]};color:${onC(cols[j])}">${wd>=(s.min_label??7)?(pct?Math.round(v/tot*100)+"%":fmt(v)):""}</div>`}).join("");
+      return `<div class="sb-row">${lblock(r)}<div class="sb-trk">${segs}</div>${pct?"":`<div class="val">${fmt(+tot.toFixed(2))}${s.unit?`<small>${esc(s.unit)}</small>`:""}</div>`}</div>`}).join("");
+    return legendHTML(s.series.map((n,j)=>["box",cols[j],n]))+`<div class="sbars${pct?" pct":""}" style="${s.label_width?`--lw:${s.label_width}px`:""}">${rows}</div>`},
+  // 相关：散点 / 气泡（size 为面积）；quadrants 画均值或指定值的分界线
+  scatter(s){const g=[...new Set(s.points.map(p=>p.group).filter(Boolean))];return (g.length>1?legendHTML(g.map((x,j)=>["box",PAL[j%PAL.length],x])):"")+`<div class="chart" data-chart="${reg("scatter",{s})}"></div>`},
+  // 排序变化 / 前后对比：坡度图
+  slope(s){return `<div class="chart" data-chart="${reg("slope",{s})}"></div>`},
+  // 两点对比 / 区间：哑铃图
+  dumbbell(s){return legendHTML([["box",DIM,s.a_label||"之前"],["box",ACC,s.b_label||"之后"]])+`<div class="chart" data-chart="${reg("dumbbell",{s})}"></div>`},
+  // 层级占比：矩形树图
+  treemap(s){const g=[...new Set(s.items.map(i=>i.group).filter(Boolean))];return (g.length>1?legendHTML(g.map((x,j)=>["box",PAL[j%PAL.length],x])):"")+`<div class="chart tm" data-chart="${reg("treemap",{s})}"></div>`},
+  // 流程转化：漏斗
+  funnel(s){const mx=Math.max(...s.items.map(i=>i.value)),u=s.unit||"",n=s.items.length;
+    return `<div class="fun">${s.items.map((it,k)=>{const wd=Math.max(16,it.value/mx*100),c=it.tone!=null?toneHex(it.tone):mix(ACC,W,k/Math.max(1,n-1)*.55);
+      const cv=k?`<div class="fun-cv">↓ ${esc(s.conv_label||"转化")} ${(it.value/s.items[k-1].value*100).toFixed(1)}%</div>`:"";
+      return cv+`<div class="fun-row">${lblock(it)}<div class="fun-bar"><div style="width:${wd.toFixed(1)}%;background:${c};color:${onC(c)}">${it.text!=null?rich(it.text):fmt(it.value)+esc(u)}</div></div></div>`}).join("")}</div>`},
+  // 多维对比：雷达（≤3 个系列）
+  radar(s){return (s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.color||(s.series.some(z=>z.highlight)?(q.highlight?ACC:DIM):PAL[j%PAL.length]),q.name])):"")+`<div class="chart" data-chart="${reg("radar",{s})}"></div>`},
+  // 进度 / 百分比：圆环组
+  rings(s){return `<div class="rgs" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((it,i)=>`<div class="rg-it"><div class="chart" data-chart="${reg("ring",{it,i,s})}"></div><b>${rich(it.label)}</b>${it.sub?`<span>${rich(it.sub)}</span>`:""}</div>`).join("")}</div>`},
+  // 象形 / 方格图：每格代表 unit_value（默认 1），总格数 total（默认 100）；icon 写 Lucide 图标名时每格画图标
+  waffle(s){const total=s.total||100,cols=s.cols||(total<=50?10:total<=100?20:25),items=s.items||[{label:s.label,value:s.value}];let k=0;const cells=[];
+    items.forEach((it,i)=>{const c=colorOf(it,i),n=Math.round(it.value/(s.unit_value||1));for(let j=0;j<n&&k<total;j++,k++)cells.push(c)});while(k++<total)cells.push("#e3e6ee");
+    const cell=c=>s.icon?`<i class="ico" data-ico="${esc(s.icon)}" data-sw="2.2" style="color:${c}"></i>`:`<i style="background:${c}"></i>`;
+    const leg=`<div class="wf-leg">${items.map((it,i)=>`<div><i style="background:${colorOf(it,i)}"></i><b>${it.text!=null?rich(it.text):fmt(it.value)+esc(s.unit||"")}</b><span>${rich(it.label||"")}</span></div>`).join("")}</div>`;
+    return `<div class="waf${s.icon?" ic":""}"><div class="waf-g" style="--c:${cols}">${cells.map(cell).join("")}</div>${leg}</div>`},
+  // 流向：桑基图
+  sankey(s){return `<div class="chart" data-chart="${reg("sankey",{s})}"></div>`},
+  // 小多图：一组迷你走势卡片
+  sparks(s){return `<div class="spk" style="--n:${s.cols||3}">${s.items.map(it=>{const ok=it.values.filter(v=>v!=null),last=ok.at(-1),first=ok[0];
+    const ch=it.change??(first?(last/first-1)*100:null),dir=typeof ch==="number"?(ch>=0?"up":"down"):autoTone(ch);
+    return `<div class="spk-it"><div class="spk-h">${lblock(it,30)}</div><div class="spk-v"><b>${it.value_text!=null?rich(it.value_text):fmt(last)}<small>${esc(s.unit||"")}</small></b>${ch!=null?`<em class="${dir}">${typeof ch==="string"?esc(ch):(ch>=0?"+":"−")+Math.abs(ch).toFixed(1)+"%"}</em>`:""}</div><div class="chart" data-chart="${reg("spark",{it,dir,s})}" style="height:64px"></div></div>`}).join("")}</div>`},
+
+  // 时间线：vertical（默认）或 horizontal（≤6 个节点）
+  timeline(s){const it=s.items,dot=(x)=>{const c=x.tone!=null?toneHex(x.tone):x.highlight||s.highlight_all!==false?ACC:DIM;
+      return x.icon?`<i class="dt big" style="background:${c}"><i class="ico" data-ico="${esc(x.icon)}" style="--is:24px;color:#fff"></i></i>`:`<i class="dt" style="background:${c}"></i>`};
+    const body=x=>`${x.company?`<span class="lab-co">${badge(x.company,28)}</span>`:""}<b>${rich(x.title)}</b>${x.text?`<span>${rich(x.text)}</span>`:""}`;
+    if(s.layout==="horizontal")return `<div class="tlh" style="--n:${it.length}"><i class="tlh-ln"></i>${it.map(x=>`<div class="tlh-it${x.highlight?" hl":""}"><div class="tlh-t">${rich(x.time)}</div><div class="tlh-d">${dot(x)}</div>${body(x)}</div>`).join("")}</div>`;
+    return `<div class="tlv">${it.map((x,i)=>`<div class="tlv-it${x.highlight?" hl":""}"><div class="tlv-t">${rich(x.time)}</div><div class="tlv-d">${i<it.length-1?`<i class="ln"></i>`:""}${dot(x)}</div><div class="tlv-c">${body(x)}</div></div>`).join("")}</div>`},
+  // 步骤 / 流程：row（≤5 步横排带箭头）或 list（竖排）
+  steps(s){const it=s.items,lay=s.layout||(it.length<=5?"row":"list"),c=x=>x.tone!=null?toneHex(x.tone):ACC;
+    const num=(x,i)=>x.icon?`<i class="ico" data-ico="${esc(x.icon)}" style="--is:28px;color:${onC(c(x))}"></i>`:`<span style="color:${onC(c(x))}">${i+1}</span>`;
+    if(lay==="row")return `<div class="stp" style="--n:${it.length}">${it.map((x,i)=>`<div class="stp-it">${i<it.length-1?`<i class="stp-ar"><em></em></i>`:""}<div class="stp-n" style="background:${c(x)}">${num(x,i)}</div><b>${rich(x.title)}</b>${x.text?`<span>${rich(x.text)}</span>`:""}</div>`).join("")}</div>`;
+    return `<div class="stl">${it.map((x,i)=>`<div class="stl-it"><div class="stl-d">${i<it.length-1?`<i class="ln"></i>`:""}<div class="stp-n" style="background:${c(x)}">${num(x,i)}</div></div><div class="stl-c"><b>${rich(x.title)}</b>${x.text?`<span>${rich(x.text)}</span>`:""}</div></div>`).join("")}</div>`},
+  // 二元对比：rows 为逐项对比表（winner 标胜出方），否则 left/right 各自的 items 列表（优缺点）
+  compare(s){const L=s.left,R=s.right,cl=L.tone!=null?toneHex(L.tone):ACC,cr=R.tone!=null?toneHex(R.tone):(PAL[1]||DIM);
+    const head=(x,c,side)=>`<div class="cmp-h ${side}" style="background:${mix(c,W,.9)}">${x.company?badge(x.company,56):x.icon?`<i class="ico" data-ico="${esc(x.icon)}" style="--is:44px;color:${ink(c)}"></i>`:""}<div><b style="color:${ink(c)}">${rich(x.title||(x.company&&coInfo(x.company).name)||"")}</b>${x.sub?`<span>${rich(x.sub)}</span>`:""}</div></div>`;
+    const v=(r,side,c)=>`<div class="cmp-v ${side[0]}${r.winner===side?" win":""}"${r.winner===side?` style="color:${ink(c)}"`:""}>${rich(String(r[side]??"—"))}</div>`;
+    const body=s.rows?`<div class="cmp-rows">${s.rows.map(r=>`<div class="cmp-r">${v(r,"left",cl)}<div class="cmp-k">${rich(r.label)}</div>${v(r,"right",cr)}</div>`).join("")}</div>`
+      :`<div class="cmp-lists">${[[L,cl],[R,cr]].map(([x,c])=>`<ul>${(x.items||[]).map(t=>`<li><i style="background:${c}"></i><span>${rich(t)}</span></li>`).join("")}</ul>`).join("")}</div>`;
+    return `<div class="cmp"><div class="cmp-hs">${head(L,cl,"l")}<div class="cmp-vs">${esc(s.vs||"VS")}</div>${head(R,cr,"r")}</div>${body}</div>`},
+  // 四象限 / SWOT：cells 顺序为左上、右上、左下、右下
+  quadrant(s){const def=["优势","劣势","机会","威胁"],cells=s.cells.map((c,i)=>s.swot?{letter:"SWOT"[i],title:def[i],...c}:c);
+    const cell=(c,i)=>{const col=c.tone!=null?toneHex(c.tone):PAL[i%PAL.length];return `<div class="qd-c" style="background:${mix(col,W,.92)}">${c.letter?`<em style="background:${col};color:${onC(col)}">${esc(c.letter)}</em>`:""}<b style="color:${ink(mix(col,K,.1))}">${rich(c.title||"")}</b>${(c.items||[]).length?`<ul>${c.items.map(t=>`<li>${rich(t)}</li>`).join("")}</ul>`:""}${c.text?`<span>${rich(c.text)}</span>`:""}</div>`};
+    return `<div class="qd">${s.y_title?`<div class="qd-ylab">↑ ${esc(s.y_title)}</div>`:""}<div class="qd-g">${cells.map(cell).join("")}</div>${s.x_title?`<div class="qd-xlab">${esc(s.x_title)} →</div>`:""}</div>`},
+  // 层级：横向树（最多 3 层）
+  tree(s){return `<div class="chart tree" data-chart="${reg("tree",{s})}"></div>`},
+  // 层级 / 递进：金字塔（上窄下宽，从上到下写）
+  pyramid(s){return `<div class="chart" data-chart="${reg("pyramid",{s})}"></div>`},
+  // 循环：环形流程
+  cycle(s){return `<div class="chart" data-chart="${reg("cycle",{s})}"></div>`},
+  // 自定义：现有版块表达不了时，自己写 JS 画（见 references/charts.md）
+  draw(s){return `<div class="chart" data-chart="${reg("draw",{s})}" style="height:${s.height||300}px"></div>`}
+});
+["donut","stackbar","scatter","slope","dumbbell","treemap","funnel","radar","rings","waffle","sankey","sparks","timeline","steps","compare","quadrant","tree","pyramid","cycle","draw"].forEach(t=>CARD.add(t));
+
+Object.assign(CH,{
+  donut(el,w,s){const size=Math.min(w,s.size||340),C=new Chart(w,size),cx=w/2,cy=size/2,r=size/2-4,ir=r*(s.hole??.6);
+    const vals=[...s.items.map((it,i)=>[it.value,colorOf(it,i)]),...(s.other?[[s.other,GRAY]]:[])],tot=vals.reduce((a,b)=>a+b[0],0);let a0=-Math.PI/2;
+    vals.forEach(([v,c])=>{const a1=a0+v/tot*2*Math.PI;C.svg(arcPath(cx,cy,r,ir,a0,a1,c));const am=(a0+a1)/2,pr=(r+ir)/2;
+      if(v/tot>=.07)C.text(cx+pr*Math.cos(am),cy+pr*Math.sin(am),Math.round(v/tot*100)+"%","sm","c","m",onC(c));a0=a1});
+    if(s.center_value!=null)C.text(cx,cy+(s.center_label?-2:0),rich(String(s.center_value)),"big",
+      "c",s.center_label?"b":"m","#16172a");if(s.center_label)C.text(cx,cy+4,esc(s.center_label),"xs","c","t");
+    C.done(el)},
+  scatter(el,w,s){const P=s.points,g=[...new Set(P.map(p=>p.group).filter(Boolean))],xs=P.map(p=>p.x),ys=P.map(p=>p.y),pd=(a,b)=>(b-a)*.1||Math.abs(a)*.1||1;
+    let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const px=pd(x0,x1),py=pd(y0,y1);
+    x0=s.xmin??x0-px;x1=s.xmax??x1+px;y0=s.ymin??y0-py;y1=s.ymax??y1+py;
+    const QB=[],top=28,H=s.height||380,padL=60,padR=24,C=new Chart(w,top+H+52),X=v=>padL+(v-x0)/(x1-x0)*(w-padL-padR),Y=v=>top+(y1-v)/(y1-y0)*H;
+    yAxis(C,y0,y1,Y,padL,w-padR,s.y_unit);
+    niceTicks(x0,x1).forEach(t=>{C.svg(`<line x1="${X(t).toFixed(1)}" x2="${X(t).toFixed(1)}" y1="${top}" y2="${top+H}" stroke="#f2f3f7" stroke-width="1.5"/>`);C.text(X(t),top+H+10,fmt(t)+esc(s.x_unit||""),"ax","c","t")});
+    if(s.x_label)C.text(w-padR,top+H+32,esc(s.x_label)+" →","xs","r","t");if(s.y_label)C.text(padL,top-8,"↑ "+esc(s.y_label),"xs","l","b");
+    if(s.quadrants){const q=s.quadrants===true?{}:s.quadrants,mean=a=>a.reduce((x,y)=>x+y,0)/a.length,qx=q.x??mean(xs),qy=q.y??mean(ys);
+      C.svg(`<line x1="${X(qx).toFixed(1)}" x2="${X(qx).toFixed(1)}" y1="${top}" y2="${top+H}" stroke="${DIM}" stroke-width="1.5" stroke-dasharray="6 6"/><line x1="${padL}" x2="${w-padR}" y1="${Y(qy).toFixed(1)}" y2="${Y(qy).toFixed(1)}" stroke="${DIM}" stroke-width="1.5" stroke-dasharray="6 6"/>`);
+      const ql=q.labels||[];[[w-padR-10,top+10,"r","t"],[padL+10,top+10,"l","t"],[padL+10,top+H-10,"l","b"],[w-padR-10,top+H-10,"r","b"]].forEach((p,i)=>{if(!ql[i])return;const tw=textW(ql[i])*.9;C.text(p[0],p[1],esc(ql[i]),"xs qlab",p[2],p[3]);QB.push([p[2]==="r"?p[0]-tw:p[0],p[3]==="b"?p[1]-20:p[1],tw,20])})}
+    const smax=Math.max(1,...P.map(p=>p.size||0)),R=p=>p.size?Math.max(6,Math.sqrt(p.size/smax)*(s.max_r||36)):(s.r||9),hl=P.some(p=>p.highlight);
+    const col=p=>{const gi=g.indexOf(p.group);return p.tone!=null?toneHex(p.tone):hl?(p.highlight?ACC:DIM):gi>=0?PAL[gi%PAL.length]:ACC};
+    [...P].sort((a,b)=>(b.size||0)-(a.size||0)).forEach(p=>C.svg(`<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="${R(p).toFixed(1)}" fill="${col(p)}" fill-opacity="${p.size?.6:.92}" stroke="#fff" stroke-width="2"/>`));
+    const boxes=[...QB],show=s.labels==="none"?[]:P.filter(p=>(p.label||p.company)&&(s.labels!=="highlight"||p.highlight));
+    show.forEach(p=>{const r=R(p),x=X(p.x),y=Y(p.y),tw=textW(p.label||coInfo(p.company).code)+(p.company?30:0)+4,th=24;
+      const cands=[[x+r+5,y-th/2],[x-r-5-tw,y-th/2],[x-tw/2,y-r-3-th],[x-tw/2,y+r+3]];
+      const free=([a,b])=>a>=0&&a+tw<=w&&b>=0&&b+th<=top+H+6&&!boxes.some(q=>a<q[0]+q[2]&&a+tw>q[0]&&b<q[1]+q[3]&&b+th>q[1]);
+      const pick=cands.find(free)||cands[0];boxes.push([pick[0],pick[1],tw,th]);
+      C.text(pick[0],pick[1],nm(p),"sm sl","l","t",p.highlight?ink(ACC):"#444760")});
+    C.done(el)},
+  slope(el,w,s){const it=s.items,u=s.unit||"",vals=it.flatMap(i=>[i.a,i.b]);let lo=s.ymin??Math.min(...vals),hi=s.ymax??Math.max(...vals);const pd=(hi-lo)*.05||1;lo-=pd;hi+=pd;
+    const top=44,H=s.height||Math.max(260,it.length*40),C=new Chart(w,top+H+16),xa=w*(s.left_x||.36),xb=w*(s.right_x||.64),Y=v=>top+(hi-v)/(hi-lo)*H,hl=it.some(i=>i.highlight);
+    C.text(xa,top-20,esc(s.left||""),"xl","c","b");C.text(xb,top-20,esc(s.right||""),"xl","c","b");
+    C.svg(`<line x1="${xa}" x2="${xa}" y1="${top}" y2="${top+H}" stroke="#e6e8ef" stroke-width="2"/><line x1="${xb}" x2="${xb}" y1="${top}" y2="${top+H}" stroke="#e6e8ef" stroke-width="2"/>`);
+    const Ls=[],Rs=[],spread=a=>{a.sort((p,q)=>p.y-q.y);for(let k=1;k<a.length;k++)if(a[k].y-a[k-1].y<26)a[k].y=a[k-1].y+26;return a};
+    it.forEach((i,k)=>{const c=i.tone!=null?toneHex(i.tone):hl?(i.highlight?ACC:DIM):s.colors==="cats"?PAL[k%PAL.length]:(i.b>=i.a?ACC:DIM),sw=hl&&!i.highlight?2.5:4;
+      C.svg(`<line x1="${xa}" y1="${Y(i.a).toFixed(1)}" x2="${xb}" y2="${Y(i.b).toFixed(1)}" stroke="${c}" stroke-width="${sw}" stroke-linecap="round"/><circle cx="${xa}" cy="${Y(i.a).toFixed(1)}" r="6" fill="${c}"/><circle cx="${xb}" cy="${Y(i.b).toFixed(1)}" r="6" fill="${c}"/>`);
+      Ls.push({y:Y(i.a),c,t:`${nm(i)} <b>${fmt(i.a)}${esc(u)}</b>`});Rs.push({y:Y(i.b),c,t:`<b>${fmt(i.b)}${esc(u)}</b>${s.right_names?" "+nm(i):""}`})});
+    spread(Ls).forEach(o=>C.text(xa-14,o.y,o.t,"sm sl","r","m",ink(o.c)));spread(Rs).forEach(o=>C.text(xb+14,o.y,o.t,"sm sl","l","m",ink(o.c)));
+    C.done(el)},
+  dumbbell(el,w,s){const it=s.items,u=s.unit||"",lw=s.label_width||200,rowH=50,vals=it.flatMap(i=>[i.a,i.b]);let lo=s.xmin??Math.min(0,...vals),hi=s.xmax??Math.max(...vals)*1.06;
+    const C=new Chart(w,it.length*rowH),x0=lw+50,x1=w-80,X=v=>x0+(v-lo)/(hi-lo)*(x1-x0);
+    it.forEach((i,k)=>{const y=k*rowH+rowH/2,cb=i.tone!=null?toneHex(i.tone):s.colors==="updown"?(i.b>=i.a?UD.up:UD.down):ACC;
+      C.text(0,y,nm(i),"xl","l","m");C.svg(`<line x1="${x0}" x2="${x1}" y1="${y}" y2="${y}" stroke="#eef0f4" stroke-width="2"/><line x1="${X(i.a).toFixed(1)}" x2="${X(i.b).toFixed(1)}" y1="${y}" y2="${y}" stroke="${mix(cb,W,.45)}" stroke-width="7" stroke-linecap="round"/><circle cx="${X(i.a).toFixed(1)}" cy="${y}" r="9" fill="${DIM}"/><circle cx="${X(i.b).toFixed(1)}" cy="${y}" r="11" fill="${cb}"/>`);
+      const [l,r]=i.a<=i.b?[[i.a,DIM],[i.b,cb]]:[[i.b,cb],[i.a,DIM]];C.text(X(l[0])-16,y,fmt(l[0]),"sm","r","m",ink(l[1]));C.text(X(r[0])+18,y,fmt(r[0])+esc(u),"sm","l","m",ink(r[1]))});
+    C.done(el)},
+  treemap(el,w,s){const H=s.height||400,g=[...new Set(s.items.map(i=>i.group).filter(Boolean))],items=[...s.items].sort((a,b)=>b.value-a.value),tot=items.reduce((a,b)=>a+b.value,0);
+    const rs=squarify(items.map(i=>i.value*w*H/tot),0,0,w,H),cnt={};
+    el.style.height=H+"px";el.innerHTML=items.map((it,k)=>{const[x,y,rw,rh]=rs[k],gi=g.indexOf(it.group);let c=it.tone!=null?toneHex(it.tone):gi>=0?PAL[gi%PAL.length]:PAL[k%PAL.length];
+      if(gi>=0&&it.tone==null){cnt[gi]=(cnt[gi]||0)+1;c=mix(c,W,Math.min(.5,(cnt[gi]-1)*.12))}
+      const big=rw>120&&rh>70,mid=rw>64&&rh>36,val=s.show==="value"?fmt(it.value)+esc(s.unit||""):(it.value/tot*100).toFixed(s.digits??1)+"%";
+      return `<div class="tm-c" style="left:${(x+2).toFixed(1)}px;top:${(y+2).toFixed(1)}px;width:${(rw-4).toFixed(1)}px;height:${(rh-4).toFixed(1)}px;background:${c};color:${onC(c)}">${mid?`<b>${it.company?badge(it.company,26):""}${esc(it.label||(it.company&&coInfo(it.company).code)||"")}</b>`:""}${big?`<span>${val}</span>`:""}</div>`}).join("")},
+  radar(el,w,s){const n=s.axes.length,size=Math.min(w,s.size||460),C=new Chart(w,size),cx=w/2,cy=size/2,r=size/2-62,mx=s.max||Math.max(...s.series.flatMap(q=>q.values)),hl=s.series.some(q=>q.highlight);
+    const pt=(k,v)=>{const a=-Math.PI/2+k*2*Math.PI/n;return[cx+r*v/mx*Math.cos(a),cy+r*v/mx*Math.sin(a)]},P=a=>a.map(x=>x.toFixed(1)).join(",");
+    [.25,.5,.75,1].forEach(f=>C.svg(`<polygon points="${s.axes.map((_,k)=>P(pt(k,mx*f))).join(" ")}" fill="none" stroke="#e6e8ef" stroke-width="1.5"/>`));
+    s.axes.forEach((a,k)=>{const[x,y]=pt(k,mx),[lx,ly]=pt(k,mx*1.14);C.svg(`<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#eef0f4" stroke-width="1.5"/>`);C.text(lx,ly,esc(a),"xl",Math.abs(lx-cx)<10?"c":lx>cx?"l":"r","m")});
+    s.series.forEach((q,j)=>{const c=q.color||(hl?(q.highlight?ACC:DIM):PAL[j%PAL.length]);
+      C.svg(`<polygon points="${q.values.map((v,k)=>P(pt(k,v))).join(" ")}" fill="${c}" fill-opacity="${hl&&!q.highlight?.06:.16}" stroke="${c}" stroke-width="${hl&&!q.highlight?2:3}" stroke-linejoin="round"/>`);
+      q.values.forEach((v,k)=>{const[x,y]=pt(k,v);C.svg(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${c}"/>`);if(s.series.length===1||q.highlight)C.text(x,y-9,fmt(v),"sm","c","b",ink(c))})});
+    C.done(el)},
+  ring(el,w,{it,i,s}){const size=Math.min(w,s.size||160),C=new Chart(w,size),cx=w/2,cy=size/2,sw=s.thickness||15,r=size/2-sw/2-2,c=it.tone!=null?toneHex(it.tone):s.colors==="cats"?PAL[i%PAL.length]:ACC;
+    const f=Math.max(0,Math.min(1,it.value/(it.max||s.max||100))),L=2*Math.PI*r;
+    C.svg(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#eef0f4" stroke-width="${sw}"/>`);
+    if(f>0)C.svg(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${(f*L).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 ${cx} ${cy})"/>`);
+    C.text(cx,cy,`${it.text!=null?rich(it.text):fmt(it.value)}<small>${it.text!=null?"":esc(s.unit??"%")}</small>`,"rg-v","c","m",ink(c));C.done(el)},
+  sankey(el,w,s){const links=s.links,names=[...new Set(links.flatMap(l=>[l.source,l.target]))],layer={};names.forEach(n=>layer[n]=0);
+    for(let t=0;t<names.length;t++)links.forEach(l=>{if(layer[l.target]<=layer[l.source])layer[l.target]=layer[l.source]+1});
+    const Lc=Math.max(...Object.values(layer))+1,inV={},outV={};links.forEach(l=>{outV[l.source]=(outV[l.source]||0)+l.value;inV[l.target]=(inV[l.target]||0)+l.value});
+    const val=n=>Math.max(inV[n]||0,outV[n]||0),H=s.height||400,nw=16,gap=16,cols=[...Array(Lc)].map((_,k)=>names.filter(n=>layer[n]===k));
+    const maxN=Math.max(...cols.map(c=>c.length)),tot=Math.max(...cols.map(c=>c.reduce((a,n)=>a+val(n),0))),sc=(H-gap*(maxN-1))/tot;
+    const lw=s.label_width||170,x0=lw,x1=w-lw,X=k=>Lc===1?x0:x0+(x1-x0-nw)*k/(Lc-1),pos={},color={};
+    names.forEach((n,i)=>color[n]=s.colors&&s.colors[n]!=null?toneHex(s.colors[n]):PAL[i%PAL.length]);
+    cols.forEach((c,k)=>{const used=c.reduce((a,n)=>a+val(n)*sc,0)+gap*(c.length-1);let y=(H-used)/2;c.forEach(n=>{pos[n]={x:X(k),y,h:Math.max(3,val(n)*sc),o:0,i:0};y+=pos[n].h+gap})});
+    const C=new Chart(w,H),f=v=>v.toFixed(1);
+    links.forEach(l=>{const a=pos[l.source],b=pos[l.target],t=l.value*sc,ya=a.y+a.o,yb=b.y+b.i,xa=a.x+nw,xb=b.x,m=(xa+xb)/2;a.o+=t;b.i+=t;
+      C.svg(`<path d="M${f(xa)},${f(ya)}C${f(m)},${f(ya)} ${f(m)},${f(yb)} ${f(xb)},${f(yb)}L${f(xb)},${f(yb+t)}C${f(m)},${f(yb+t)} ${f(m)},${f(ya+t)} ${f(xa)},${f(ya+t)}Z" fill="${color[s.link_color==="target"?l.target:l.source]}" fill-opacity=".26"/>`)});
+    names.forEach(n=>{const p=pos[n],t=`<b>${esc(n)}</b> ${fmt(val(n))}${esc(s.unit||"")}`;C.svg(`<rect x="${f(p.x)}" y="${f(p.y)}" width="${nw}" height="${f(p.h)}" rx="3" fill="${color[n]}"/>`);
+      if(layer[n]===0)C.text(p.x-10,p.y+p.h/2,t,"sm sl","r","m");else if(layer[n]===Lc-1)C.text(p.x+nw+10,p.y+p.h/2,t,"sm sl","l","m");else C.text(p.x+nw+8,p.y+p.h/2,t,"sm sl mid","l","m")});
+    C.done(el)},
+  spark(el,w,{it,dir,s}){const v=it.values,n=v.length,ok=v.filter(x=>x!=null),lo=Math.min(...ok),hi=Math.max(...ok),C=new Chart(w,64),X=i=>4+i/(n-1||1)*(w-8),Y=x=>6+(hi-x)/((hi-lo)||1)*52;
+    const c=it.tone!=null?toneHex(it.tone):s.colors==="updown"&&dir?UD[dir]:ACC,id="sp"+(UID++),pts=v.map((x,i)=>x==null?null:[X(i),Y(x)]).filter(Boolean),f=p=>p[0].toFixed(1)+","+p[1].toFixed(1);
+    C.def(`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>`);
+    C.svg(`<path d="M${pts[0][0].toFixed(1)},62L${pts.map(f).join("L")}L${pts.at(-1)[0].toFixed(1)},62Z" fill="url(#${id})"/><path d="M${pts.map(f).join("L")}" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${pts.at(-1)[0].toFixed(1)}" cy="${pts.at(-1)[1].toFixed(1)}" r="4.5" fill="${c}"/>`);
+    C.done(el)},
+  tree(el,w,s){const leaves=[],walk=(n,d,ci)=>{n._d=d;n._c=ci;(n.children||[]).forEach((c,i)=>walk(c,d+1,d===0?i:ci));if(!(n.children||[]).length)leaves.push(n)};walk(s.root,0,0);
+    const depth=Math.max(...leaves.map(l=>l._d))+1,rowH=s.row_height||60;let y=0;
+    const place=n=>{if((n.children||[]).length){n.children.forEach(place);n._y=(n.children[0]._y+n.children.at(-1)._y)/2}else{n._y=y;y+=rowH}};place(s.root);
+    const gapX=56,colW=(w-gapX*(depth-1))/depth,X=d=>d*(colW+gapX),nodes=[],paths=[],f=v=>v.toFixed(1);
+    const walk2=n=>{nodes.push(n);(n.children||[]).forEach(c=>{const xa=X(n._d)+colW,ya=n._y+rowH/2,xb=X(c._d),yb=c._y+rowH/2,m=(xa+xb)/2;
+      paths.push(`<path d="M${f(xa)},${f(ya)}C${f(m)},${f(ya)} ${f(m)},${f(yb)} ${f(xb)},${f(yb)}" fill="none" stroke="${mix(PAL[c._c%PAL.length],W,.45)}" stroke-width="2.5"/>`);walk2(c)})};walk2(s.root);
+    el.style.height=y+"px";el.innerHTML=`<svg width="${w}" height="${y}" viewBox="0 0 ${w} ${y}">${paths.join("")}</svg>`+nodes.map(n=>{const c=n._d===0?ACC:PAL[n._c%PAL.length],leaf=!(n.children||[]).length&&n._d>0;
+      const st=n._d===0?`background:${c};color:${onC(c)}`:leaf?`background:#fff;border:1.5px solid ${mix(c,W,.55)};color:#16172a`:`background:${mix(c,W,.86)};color:${ink(mix(c,K,.15))}`;
+      return `<div class="tn" style="left:${f(X(n._d))}px;top:${f(n._y+6)}px;width:${f(colW)}px;height:${rowH-12}px;${st}"><b>${rich(n.label)}</b>${n.sub?`<span>${rich(n.sub)}</span>`:""}</div>`}).join("")},
+  pyramid(el,w,s){const it=s.items,n=it.length,rowH=s.row_height||74,gap=6,pw=Math.min(w*(s.width||.46),480),C=new Chart(w,n*(rowH+gap)-gap),cx=pw/2,half=v=>(.14+.86*v)*pw/2,f=v=>v.toFixed(1);
+    it.forEach((x,k)=>{const y0=k*(rowH+gap),y1=y0+rowH,c=x.tone!=null?toneHex(x.tone):mix(ACC,W,k/Math.max(1,n-1)*.62);
+      C.svg(`<polygon points="${f(cx-half(k/n))},${y0} ${f(cx+half(k/n))},${y0} ${f(cx+half((k+1)/n))},${y1} ${f(cx-half((k+1)/n))},${y1}" fill="${c}"/>`);
+      C.text(cx,(y0+y1)/2,rich(x.title),"pyr","c","m",onC(c));
+      if(x.text)C.t.push(`<span class="cl pyr-t" style="left:${f(pw+30)}px;top:${f((y0+y1)/2)}px;width:${f(w-pw-30)}px;transform:translate(0,-50%)">${rich(x.text)}</span>`)});
+    C.done(el)},
+  cycle(el,w,s){const it=s.items,n=it.length,size=Math.min(w,s.size||540),nr=s.node_r||46,R=size/2-nr-44,C=new Chart(w,size),cx=w/2,cy=size/2,f=v=>v.toFixed(1),ang=k=>-Math.PI/2+k*2*Math.PI/n;
+    const da=(nr+12)/R;
+    it.forEach((x,k)=>{const a0=ang(k)+da,a1=ang(k+1)-da;if(a1<=a0)return;const p=a=>`${f(cx+R*Math.cos(a))},${f(cy+R*Math.sin(a))}`;
+      C.svg(`<path d="M${p(a0)}A${f(R)},${f(R)} 0 0 1 ${p(a1)}" fill="none" stroke="${mix(ACC,W,.55)}" stroke-width="3"/>`);
+      const ex=cx+R*Math.cos(a1),ey=cy+R*Math.sin(a1),t=a1+Math.PI/2,hx=Math.cos(t),hy=Math.sin(t),nx=Math.cos(a1),ny=Math.sin(a1);
+      C.svg(`<polygon points="${f(ex+hx*10)},${f(ey+hy*10)} ${f(ex-hx*2+nx*7)},${f(ey-hy*2+ny*7)} ${f(ex-hx*2-nx*7)},${f(ey-hy*2-ny*7)}" fill="${mix(ACC,W,.55)}"/>`)});
+    it.forEach((x,k)=>{const a=ang(k),px=cx+R*Math.cos(a),py=cy+R*Math.sin(a),c=x.tone!=null?toneHex(x.tone):PAL[k%PAL.length];
+      C.svg(`<circle cx="${f(px)}" cy="${f(py)}" r="${nr}" fill="${c}"/>`);
+      C.t.push(`<span class="cl cy-n" style="left:${f(px)}px;top:${f(py)}px;transform:translate(-50%,-50%);color:${onC(c)}">${x.icon?`<i class="ico" data-ico="${esc(x.icon)}" style="--is:30px;color:${onC(c)}"></i>`:k+1}</span>`);
+      const side=Math.abs(Math.cos(a))>.5,below=py>=cy-1,lx=side?px+(Math.cos(a)>0?nr+14:-nr-14):px,ly=side?py:below?py+nr+8:py-nr-8,tf=side?(Math.cos(a)>0?"translate(0,-50%)":"translate(-100%,-50%)"):`translate(-50%,${below?"0":"-100%"})`;
+      C.t.push(`<span class="cl cy-t${side?(Math.cos(a)>0?" l":" r"):""}" style="left:${f(lx)}px;top:${f(ly)}px;transform:${tf}"><b>${rich(x.title)}</b>${x.text?`<small>${rich(x.text)}</small>`:""}</span>`)});
+    if(s.center)C.t.push(`<span class="cl cy-c" style="left:${f(cx)}px;top:${f(cy)}px;transform:translate(-50%,-50%)">${rich(s.center)}</span>`);
+    C.done(el)},
+  draw(el,w,s){new Function("el","w","PK",s.js)(el,w,PK)}
+});
+// 自定义 draw 版块可用的工具：Chart 画布（svg 形状 + text 文字）、配色和格式化函数
+const PK={Chart,PAL,ACC,UD,DIM,GRAY,W,K,mix,ink,onC,tone,esc,fmt,sign,rich,badge,coInfo,niceTicks,yAxis,rect,legendHTML,arcPath};
+
+// 堆叠柱：columns 写 stack:true
+const _columns=CH.columns;
+CH.columns=function(el,w,s){if(!s.stack)return _columns(el,w,s);
+  const ser=s.series,n=s.x.length,u=s.unit||"",tots=s.x.map((_,i)=>ser.reduce((a,q)=>a+(q.values[i]||0),0));
+  const hi=s.ymax??Math.max(...tots)*1.14,top=36,H=s.height||220,padL=s.axis===false?0:52,C=new Chart(w,top+H+44),slot=(w-padL)/n,bw=Math.min(72,slot*.58),Y=v=>top+(hi-v)/hi*H;
+  if(s.axis!==false)yAxis(C,0,hi,Y,padL,w,u);
+  C.svg(`<line x1="${padL}" x2="${w}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
+  s.x.forEach((t,i)=>{const cx=padL+slot*(i+.5);let acc=0;C.text(cx,top+H+14,esc(t),"xl","c","t");
+    ser.forEach((q,j)=>{const v=q.values[i]||0;if(!v)return;const c=q.g!=null?PAL[q.g%PAL.length]:PAL[j%PAL.length],y1=Y(acc+v),y2=Y(acc);
+      C.svg(`<rect x="${(cx-bw/2).toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1,y2-y1-2).toFixed(1)}" rx="3" fill="${c}"/>`);
+      if(y2-y1>24&&s.segment_labels!==false)C.text(cx,(y1+y2)/2,fmt(v),"sm","c","m",onC(c));acc+=v});
+    C.text(cx,Y(tots[i])-6,fmt(+tots[i].toFixed(2)),"","c","b","#16172a")});
+  C.done(el)};
+
 /* ---------- 一行放不下就缩小字号（标题、大数字） ---------- */
 function fitText(p){p.querySelectorAll("[data-fit]").forEach(el=>{el.style.fontSize="";let fs=parseFloat(getComputedStyle(el).fontSize);const min=fs*(+el.dataset.fit||.55);
   for(let k=0;k<60&&el.scrollWidth>el.clientWidth+1&&fs>min;k++){fs-=2;el.style.fontSize=fs+"px"}})}
@@ -612,20 +988,24 @@ function fitText(p){p.querySelectorAll("[data-fit]").forEach(el=>{el.style.fontS
 /* ---------- 上色 ---------- */
 function paint(p,vid){
   const V=VERSIONS[vid];const accent=ACC,accent2=PAL[4];const ud=UD;
-  p.style.setProperty("--accent",accent);p.style.setProperty("--banner",V.banner(accent,accent2));
+  p.style.setProperty("--accent",accent);p.style.setProperty("--accent-ink",ink(accent));p.style.setProperty("--accent-soft",mix(accent,W,.62));p.style.setProperty("--banner",V.banner(accent,accent2));
   p.style.setProperty("--up",ud.up);p.style.setProperty("--down",ud.down);p.style.setProperty("--up-soft",mix(ud.up,W,.88));p.style.setProperty("--down-soft",mix(ud.down,W,.88));
   const gcol=i=>i==="gray"?GRAY:i==="acc"?accent:PAL[+i%PAL.length];
   p.querySelectorAll("[data-g]").forEach(el=>{const g=el.dataset.g;if(g==="-1")return;const c=gcol(g);
     el.style.setProperty("--g",c);el.style.setProperty("--g-tint",mix(c,W,V.tint));
-    el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",mix(c,K,.18));
+    el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",ink(mix(c,K,.18)));
     if(el.tagName==="B"&&el.parentElement.classList.contains("track"))el.style.background=g==="gray"?c:tone(c);
     else if(el.tagName==="B"||el.parentElement.classList.contains("share"))el.style.background=c});
-  p.querySelectorAll("[data-bar]").forEach(el=>{const g=el.dataset.bar,c=g==="gray"?DIM:gcol(g);el.style.background=el.classList.contains("rg")?mix(c,W,.6):tone(c)});
+  // 图标：Lucide 线条图标，描边换成元素当前文字色（导出时 currentColor 不可靠）
+  p.querySelectorAll("[data-ico]").forEach(el=>{const raw=ICONS[el.dataset.ico];if(!raw){el.remove();return}const col=getComputedStyle(el).color;
+    el.innerHTML=raw.replace(/currentColor/g,col).replace(/\swidth="24"/,' width="100%"').replace(/\sheight="24"/,' height="100%"').replace(/stroke-width="2"/,`stroke-width="${el.dataset.sw||2}"`)});
+  p.querySelectorAll("[data-bar]").forEach(el=>{const g=el.dataset.bar,c=g==="gray"?DIM:gcol(g);el.style.background=el.parentElement.classList.contains("lol")?mix(c,W,.35):el.classList.contains("rg")?mix(c,W,.6):tone(c)});
+  p.querySelectorAll("[data-dot]").forEach(el=>{const g=el.dataset.dot;el.style.background=g==="gray"?DIM:gcol(g)});
   p.querySelectorAll("[data-dv]").forEach(el=>{const c=ud[el.dataset.dv];el.style.background=tone(c,el.dataset.dv==="up"?"90deg":"270deg")});
   p.querySelectorAll("[data-yr]").forEach(el=>{el.style.background=el.dataset.yr==="hi"?tone(accent,"0deg"):mix(accent,W,.78)});
   p.querySelectorAll("[data-icon]").forEach(el=>{const g=el.dataset.g;const pal=g==="-1"?bgPal(accent):iconPal(gcol(g));el.innerHTML=isoSVG(el.dataset.icon,pal,parseFloat(getComputedStyle(el).width)||80,null)});
   p.querySelectorAll("[data-bg]").forEach(el=>{el.innerHTML=isoSVG(el.dataset.bg,bgPal(accent),620,bgPal(accent).shadow,430)});
-  p.querySelectorAll("[data-chart]").forEach(el=>{const r=REG[+el.dataset.chart];try{CH[r.kind](el,el.clientWidth,r.s?r.s:r)}catch(e){console.error(e);el.innerHTML=`<div class="cap">图表数据有误：${esc(e.message)}</div>`}});
+  p.querySelectorAll("[data-chart]").forEach(el=>{const r=REG[+el.dataset.chart];try{const{kind,...rest}=r,arg=Object.keys(rest).length===1&&rest.s?rest.s:rest;CH[kind](el,el.clientWidth,arg)}catch(e){console.error(e);el.innerHTML=`<div class="cap">图表数据有误：${esc(e.message)}</div>`}});
   p.querySelectorAll("[data-ring]").forEach(el=>{const d=JSON.parse(el.dataset.ring);const svg=el.querySelector("svg");
     const cx=230,r=178,sw=74,C2=2*Math.PI*r;let off=0,s=`<circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="#eef0f4" stroke-width="${sw}"/>`;const labs=[];
     const segs=d.items.slice(0,6).map((v,i)=>[v,PAL[i],v>=10]);const restSum=d.items.slice(6).reduce((a,b)=>a+b,0);

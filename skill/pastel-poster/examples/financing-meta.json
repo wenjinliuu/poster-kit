@@ -3,6 +3,11 @@
  "brand": {
   "company": "NASDAQ:META",
   "name": "Meta Platforms",
+  "image": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
+  "height": 64,
+  "colors": [
+   "#0081fb"
+  ],
   "label": "NASDAQ: META",
   "sub": "融资速览"
  },
@@ -13,7 +18,6 @@
   "已锁定 **375** 亿美元",
   "加上可选和计划部分，最多约 **1,030** 亿"
  ],
- "accent": "#1296f0",
  "updown": "us",
  "object": "coin",
  "companies": {
@@ -110,10 +114,22 @@
    ]
   },
   {
-   "type": "callout",
-   "tone": "up",
-   "title": "英伟达 30 亿 + AMD 10 亿美元：是已锁定 375 亿里的买家",
-   "text": "它们按同样价格认购，不是额外多出来的钱。"
+   "type": "points",
+   "title": "谁买了已锁定的 375 亿",
+   "items": [
+    {
+     "company": "NASDAQ:NVDA",
+     "tag": "30 亿美元",
+     "tone": 1,
+     "text": "按同样价格认购，是 375 亿里的一部分"
+    },
+    {
+     "company": "NASDAQ:AMD",
+     "tag": "10 亿美元",
+     "tone": 1,
+     "text": "同上，不是额外多出来的钱"
+    }
+   ]
   },
   {
    "type": "group",

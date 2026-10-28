@@ -1,0 +1,42 @@
+{
+  "file": "睡个好觉",
+  "eyebrow": "健康科普 · 睡眠",
+  "tag": "科普示例",
+  "title": ["成年人每晚", "至少睡 **7** 小时", "睡不好，先从这几件小事改起"],
+  "accent": "#a04cf5",
+  "object": {"parts": [["box", 0, 0, 0, 300, 180, 60, "body"], ["box", 0, 0, 60, 60, 180, 90, "pin"], ["box", 80, 20, 60, 110, 140, 22, "core"], ["cyl", 250, 40, 60, 26, 14, "pin"]]},
+  "sections": [
+    {"type": "cards", "cols": 3, "items": [
+      {"icon": "alarm-clock", "title": "固定起床时间", "sub": "周末也尽量不差太多"},
+      {"icon": "coffee", "title": "下午少喝咖啡", "sub": "咖啡因在体内要好几个小时才代谢掉"},
+      {"icon": "smartphone", "title": "睡前放下手机", "sub": "亮光和刷不完的信息都让人更清醒"}]},
+    {"type": "cycle", "title": "一晚要走 4–6 个睡眠周期", "note": "每个周期约 90 分钟", "center": "约 90 分钟\n一个周期", "size": 500,
+     "items": [{"title": "入睡期 N1", "text": "几分钟，容易被叫醒"}, {"title": "浅睡期 N2", "text": "占一晚的一半左右"}, {"title": "深睡期 N3", "text": "身体修复，前半夜多"}, {"title": "快速眼动 REM", "text": "做梦，后半夜多"}]},
+    {"type": "draw", "title": "典型的一晚：深睡在前，做梦在后", "note": "教科书模式图，不是个人数据", "height": 230,
+     "js": "const C=new PK.Chart(w,230),L=['清醒','REM','N1','N2','N3'],st=[0,2,3,4,3,2,1,3,4,3,1,3,3,1,2,3,1,0],X=i=>70+i*(w-80)/(st.length-1),Y=k=>20+k*42;L.forEach((t,k)=>{C.svg(`<line x1='70' x2='${w-10}' y1='${Y(k)}' y2='${Y(k)}' stroke='#eef0f4' stroke-width='1.5'/>`);C.text(56,Y(k),t,'ax','r','m')});let d='';st.forEach((k,i)=>{d+=(i?`H${X(i)}V${Y(k)}`:`M${X(0)},${Y(k)}`)});C.svg(`<path d='${d}' fill='none' stroke='${PK.ACC}' stroke-width='4' stroke-linejoin='round'/>`);st.forEach((k,i)=>{if(k===1)C.svg(`<rect x='${X(i)-2}' y='${Y(1)-7}' width='${X(i+1)-X(i)+4}' height='14' rx='7' fill='${PK.mix(PK.ACC,PK.W,.55)}'/>`)});['23:00','01:00','03:00','05:00','07:00'].forEach((t,i)=>C.text(70+i*(w-80)/4,Y(4)+22,t,'ax','c','t'));C.done(el)"},
+    {"type": "timeline", "title": "睡前时间表", "layout": "horizontal", "items": [
+      {"time": "睡前 6 小时", "title": "最后一杯咖啡", "icon": "coffee"},
+      {"time": "睡前 3 小时", "title": "吃完晚饭", "icon": "utensils"},
+      {"time": "睡前 1 小时", "title": "调暗灯光", "icon": "lamp"},
+      {"time": "上床", "title": "手机放远一点", "icon": "moon", "highlight": true}]},
+    {"type": "steps", "title": "躺了 20 分钟还睡不着？", "items": [
+      {"title": "起床", "text": "离开卧室，别在床上硬躺"}, {"title": "做点安静的事", "text": "暗光下看书、听舒缓的音乐"},
+      {"title": "困了再回床", "text": "让床只和睡觉联系在一起"}, {"title": "第二天照常起", "text": "不补觉，节律才能稳住"}]},
+    {"type": "compare", "title": "周末补觉 vs 规律作息", "left": {"title": "周末补觉", "icon": "bed", "tone": "gray"}, "right": {"title": "规律作息", "icon": "calendar-check"},
+     "rows": [{"label": "周一早上", "left": "像倒时差", "right": "照常清醒", "winner": "right"}, {"label": "生物钟", "left": "被来回拉扯", "right": "稳定", "winner": "right"},
+              {"label": "周末多睡", "left": "当下很爽", "right": "差别不大", "winner": "left"}]},
+    {"type": "quadrant", "title": "先改哪个：效果 × 难度", "y_title": "效果大", "x_title": "越来越难改", "cells": [
+      {"title": "先做", "items": ["固定起床时间", "下午不喝咖啡"]}, {"title": "慢慢来", "items": ["睡前不碰手机", "规律运动"]},
+      {"title": "顺手做", "items": ["卧室遮光", "调低室温"], "tone": 2}, {"title": "可以不急", "items": ["换枕头床垫"], "tone": "gray"}]},
+    {"type": "tree", "title": "什么在影响你的睡眠", "root": {"label": "睡眠质量", "children": [
+      {"label": "环境", "children": [{"label": "光线"}, {"label": "噪音"}, {"label": "温度"}]},
+      {"label": "习惯", "children": [{"label": "咖啡因、酒精"}, {"label": "屏幕时间"}, {"label": "作息不规律"}]},
+      {"label": "身心", "children": [{"label": "压力和焦虑"}, {"label": "疼痛、打鼾"}]}]}},
+    {"type": "pyramid", "title": "好睡眠的三层地基", "items": [
+      {"title": "放松", "text": "睡前留出缓冲时间，不把焦虑带上床"},
+      {"title": "环境", "text": "暗、静、凉的卧室，床只用来睡觉"},
+      {"title": "节律", "text": "固定的起床时间是一切的基础，周末也别差太多"}]},
+    {"type": "callout", "tone": "accent", "title": "长期失眠、打鼾憋醒或白天嗜睡，请去看医生", "text": "以上是一般建议，不能代替诊断和治疗。"}
+  ],
+  "footer": ["参考：美国睡眠医学会（AASM）、美国疾控中心（CDC）等公开科普资料；示例海报，内容为一般性建议", "制图：2026 年 10 月", "不构成医疗建议。"]
+}

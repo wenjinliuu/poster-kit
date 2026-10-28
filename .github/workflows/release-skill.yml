@@ -1,14 +1,12 @@
-# 打 tag（v*）或手动运行时，把 skill/pastel-poster 打包成 zip 并发布到 Releases。
+# 推送到 main（技能目录有改动）时，把 skill/pastel-poster 打包成 zip，更新固定的 latest 发布。
+# 只给第一次安装用：装好后技能每次使用都会自己拉 main 最新版，不需要打 tag、不需要重新上传。
 name: Release skill
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
+    paths: ['skill/pastel-poster/**']
   workflow_dispatch:
-    inputs:
-      tag:
-        description: '版本号（如 v1.1）'
-        required: true
 
 permissions:
   contents: write
@@ -22,10 +20,11 @@ jobs:
         run: |
           cd skill
           zip -r ../pastel-poster.zip pastel-poster -x '*/__pycache__/*' '*.pyc'
-      - name: Publish release
+      - name: Publish latest
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: |
-          gh release create "$TAG" pastel-poster.zip --title "pastel-poster $TAG" --notes "下载 pastel-poster.zip，在 Claude 的技能设置里上传替换旧版本。" \
-            || gh release upload "$TAG" pastel-poster.zip --clobber
+          git tag -f latest && git push -f origin latest
+          gh release view latest >/dev/null 2>&1 \
+            || gh release create latest --title "pastel-poster（最新）" --notes "第一次安装时下载 pastel-poster.zip，在 Claude 的技能设置里上传。之后技能每次使用都会自动拉取 main 分支最新版，不需要重新上传。"
+          gh release upload latest pastel-poster.zip --clobber

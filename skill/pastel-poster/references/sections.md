@@ -14,12 +14,12 @@
 | `eyebrow` | 否 | 标题上方小字，如 `"产业链名单 · AI 光互连"` |
 | `tag` | 否 | 眉题旁的描边小标签，如 `"示意数据"`、`"截至 10.17"` |
 | `title` | 是 | 三段：`[黑色主句, 强调色大字, 灰色副句]`。主句、大字放不下一行会自动缩小字号，建议主句 ≤ 10 字、大字 ≤ 9 字、副句 ≤ 18 字。大字里写 `**数字**` 时变成“黑字 + 特大强调色数字”，如 `"已锁定 **375** 亿美元"` |
-| `brand` | 否 | 品牌头部（个股、公司事件）：`{"company": "NASDAQ:META", "name": "Meta Platforms", "en": "英文名(可选)", "label": "NASDAQ: META", "sub": "融资速览"}`，左边大 logo + 公司名，右边代码和类型 |
+| `brand` | 否 | 品牌头部（个股、公司事件），右边是 `label`（代码）和 `sub`（海报类型）。左边按优先级：`image` 官方字标（URL 或本地 SVG/PNG，生成时内嵌）→ `wordmark` 文字重建字标 `[{"text":"SK","color":"#e31837"},{"text":"hynix","color":"#f58025"}]`（可配 `svg` 图形）→ 圆形 logo + `name`。`colors` 写品牌色（第一个作强调色），`height` 调字标高度。见 `logos.md` |
 | `numbered` | 否 | `true` 时卡片标题前加 1、2、3 编号，适合深度速览 |
 | `object` | 否 | 右上背景物件，见 `style.md`：`chip` `module` `rack` `coin` `globe` `battery` `building` `wafer` `db` `robot`，或 `{"parts": [...]}` 自己拼 |
 | `updown` | 否 | `"cn"`（默认，红涨绿跌）或 `"us"`（绿涨红跌） |
 | `versions` | 否 | 默认 `["clear"]`（雾彩·清透）。新增风格后，需要对比时写多个，如 `["clear","新风格id"]` |
-| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`。个股海报选 8 色里最接近品牌色的一个（如 Meta 天蓝、SK 海力士玫红），分类色会从强调色开始轮转 |
+| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；有 `brand.colors` 时默认用第一个品牌色。可以是任意颜色，太浅的颜色用作文字时会自动加深 |
 | `companies` | 是* | 公司表，键是 `交易所:代码`（或 Yahoo 后缀代码、`市场:代码`），值是 `{"name": "中文名", "code": "显示代码(可选)"}` |
 | `sections` | 是 | 版块数组 |
 | `footer` | 是 | 页脚多行，最后一行是免责声明（小字） |
@@ -198,6 +198,44 @@
 
 ### `html` 自定义
 现有版块放不下时才用，直接写 HTML，可复用 `.card` `.card-h` `.co` 等类。
+
+## 更多图表与信息结构
+
+选哪种先看 `charts.md`。下面只列字段。凡是写 `company` 的地方都会自动带上 logo；写 `icon` 的地方用 Lucide 图标名（https://lucide.dev/icons，如 `coffee`、`train-front`、`shield-check`）。任何版块写 `"card": false` 就不包卡片。
+
+### 数据图表
+
+| 版块 | 字段 |
+|---|---|
+| `donut` 环形 | `items:[{label, value, company?, tone?}]`，`other`，`center_value`，`center_label`，`show:"value"`（图例显示数值而不是占比），`unit` |
+| `stackbar` 堆叠横条 | `series:[类别名]`，`rows:[{label, sub?, company?, values:[…]}]`，`percent`（默认 true 归一到 100%），`diverging:true`（态度色阶），`unit`、`max` |
+| `columns` 堆叠柱 | 在原 `columns` 上加 `stack:true`，柱顶标合计，段内标数值 |
+| `bars` 棒棒糖 | 在原 `bars` 上加 `style:"lollipop"` |
+| `scatter` 散点 / 气泡 | `points:[{label, x, y, size?, group?, company?, highlight?}]`，`x_label`、`y_label`、`x_unit`、`y_unit`，`quadrants:true` 或 `{x, y, labels:[右上,左上,左下,右下]}`，`labels:"all"/"highlight"/"none"` |
+| `slope` 坡度 | `left`、`right`（两个时间点名），`items:[{label, a, b, company?, highlight?}]`，`unit`，`right_names:true` 右侧也写名字 |
+| `dumbbell` 哑铃 | `a_label`、`b_label`，`items:[{label, a, b, company?}]`，`unit`，`xmin`/`xmax`，`colors:"updown"` |
+| `treemap` 矩形树 | `items:[{label, value, group?, company?}]`，`height`，`show:"value"`，`unit` |
+| `funnel` 漏斗 | `items:[{label, value, sub?}]`，`unit`，`conv_label`（默认“转化”） |
+| `radar` 雷达 | `axes:[维度]`，`series:[{name, values, highlight?}]`（≤3），`max`，`size` |
+| `rings` 圆环 | `items:[{label, value, max?, text?, sub?, tone?}]`，`unit`（默认 %），`cols`，`size`，`colors:"cats"` |
+| `waffle` 方格 / 象形 | `items:[{label, value, text?, tone?}]` 或单个 `value`+`label`，`total`（默认 100），`unit_value`（每格代表多少），`icon`（每格画图标），`cols` |
+| `sankey` 桑基 | `links:[{source, target, value}]`，`unit`，`height`，`colors:{节点名: tone}`，`link_color:"target"` |
+| `sparks` 小多图 | `items:[{label, sub?, company?, values, value_text?, change?}]`，`cols`，`unit`，`colors:"updown"` |
+
+### 信息结构
+
+| 版块 | 字段 |
+|---|---|
+| `timeline` 时间线 | `items:[{time, title, text?, icon?, company?, highlight?}]`，`layout:"horizontal"`（≤6 个） |
+| `steps` 步骤 | `items:[{title, text?, icon?}]`，`layout:"row"/"list"`（默认 ≤5 步横排） |
+| `compare` 对比 | `left`/`right`：`{title, sub?, company?, icon?, tone?, items?}`；有 `rows:[{label, left, right, winner?:"left"/"right"}]` 时逐项对比，否则两列列表；`vs` 改中间字 |
+| `quadrant` 四象限 | `cells:[左上, 右上, 左下, 右下]`，每格 `{title, items?, text?, tone?, letter?}`；`x_title`、`y_title`；`swot:true` 自动标 S/W/O/T |
+| `tree` 树 | `root:{label, sub?, children:[…]}`，最多 3 层；`row_height` |
+| `pyramid` 金字塔 | `items:[{title, text?}]`，从上（窄）到下（宽） |
+| `cycle` 循环 | `items:[{title, text?, icon?}]`（3–6 个），`center`（中间文字，`\n` 换行），`size` |
+| `draw` 自定义 | `height`，`js`（见 `charts.md` 第五节） |
+
+`cards` 和 `kpis` 也支持 `icon`、`company`；`cards` 有 `value` 时显示大数字。
 
 ## 常用组合
 

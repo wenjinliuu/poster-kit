@@ -90,6 +90,61 @@ def embed_fonts(chars):
     return "<style>/* 字体子集，由 build_poster.py 内嵌 */\n" + "\n".join(rules) + "</style>"
 
 
+LUCIDE = "https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/{name}.svg"
+ISO_OBJECTS = {"chip", "module", "rack", "coin", "globe", "battery", "building", "wafer", "db", "robot", "custom"}
+UA = {"User-Agent": "poster-kit/1.0 (https://github.com/wenjinliuu/poster-kit)"}
+
+
+def fetch(url, timeout=20):
+    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
+        return r.read()
+
+
+def icon_names(obj):
+    """spec 里所有 icon 字段（不含等距物件名）"""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k == "icon" and isinstance(v, str) and v not in ISO_OBJECTS:
+                yield v
+            else:
+                yield from icon_names(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from icon_names(v)
+
+
+def embed_icons(spec):
+    """按名称从 Lucide 图标库取 SVG（https://lucide.dev/icons），原样交给模板上色"""
+    icons = {}
+    for name in sorted(set(icon_names(spec))):
+        try:
+            svg = fetch(LUCIDE.format(name=urllib.parse.quote(name))).decode()
+            icons[name] = re.sub(r"<!--.*?-->", "", svg, flags=re.S).strip()
+        except Exception:
+            print(f"  提醒：图标“{name}”取不到（名称见 https://lucide.dev/icons），这处不显示图标")
+    return icons
+
+
+def clean_svg(svg):
+    """去掉 SVG 里的脚本和事件属性，只保留图形"""
+    svg = re.sub(r"<script.*?</script>", "", svg, flags=re.S | re.I)
+    return re.sub(r"\son\w+\s*=\s*(\"[^\"]*\"|'[^']*')", "", svg)
+
+
+def to_data_uri(src, base):
+    """brand.image / brand.svg：URL、本地文件或 SVG 文本 → data URI（海报不加载外部图片）"""
+    if not src or src.startswith("data:"):
+        return src
+    if src.lstrip().startswith("<svg"):
+        raw, mime = clean_svg(src).encode(), "image/svg+xml"
+    else:
+        raw = fetch(src) if re.match(r"https?://", src) else (base / src).read_bytes()
+        mime = "image/svg+xml" if raw.lstrip()[:200].lower().find(b"<svg") >= 0 else "image/png"
+        if mime == "image/svg+xml":
+            raw = clean_svg(raw.decode("utf-8", "ignore")).encode()
+    return f"data:{mime};base64," + base64.b64encode(raw).decode()
+
+
 def build(spec_path, logos_path, out_path, standalone=False, embed=True):
     spec = json.load(open(spec_path, encoding="utf-8"))
     errors, warnings = validate(spec)
@@ -101,6 +156,14 @@ def build(spec_path, logos_path, out_path, standalone=False, embed=True):
             print(f"  ✗ {e}")
         sys.exit(2)
     logos = json.load(open(logos_path, encoding="utf-8")) if logos_path and pathlib.Path(logos_path).exists() else {}
+    brand = spec.get("brand") or {}
+    for key in ("image", "svg"):
+        try:
+            brand[key] = to_data_uri(brand.get(key), pathlib.Path(spec_path).resolve().parent)
+        except Exception as e:
+            print(f"  提醒：brand.{key} 取不到（{e.__class__.__name__}），改用文字字标或圆形 logo")
+            brand.pop(key, None)
+    icons = embed_icons(spec)
     html = TEMPLATE.read_text(encoding="utf-8")
     title = spec.get("page_title") or " ".join(t for t in spec.get("title", []) if t) or "海报"
     title = title.replace("<", "").replace(">", "")[:40]
@@ -110,10 +173,11 @@ def build(spec_path, logos_path, out_path, standalone=False, embed=True):
     html = html.replace("__PAGE_TITLE__", title)
     html = html.replace("/*__SPEC__*/null", safe_json(spec))
     html = html.replace("/*__LOGOS__*/{}", safe_json(logos))
+    html = html.replace("/*__ICONS__*/{}", safe_json(icons))
     if standalone:
         html = wrap(html)
     pathlib.Path(out_path).write_text(html, encoding="utf-8")
-    print(f"已生成 {out_path}（{len(html) // 1024} KB，logo {len(logos)} 个，字体{'内嵌' if fonts != FONT_LINK else '外链'}）")
+    print(f"已生成 {out_path}（{len(html) // 1024} KB，logo {len(logos)} 个，图标 {len(icons)} 个，字体{'内嵌' if fonts != FONT_LINK else '外链'}）")
     return out_path
 
 
