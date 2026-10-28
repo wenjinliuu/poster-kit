@@ -29,7 +29,7 @@
 - 股东回报、现金和负债
 - 同行最新一季的同口径指标（标财季区间）
 - 行业周期指标（价格、库存、份额，标来源）
-- 市场反应：股价、主要媒体标题、券商观点（目标价、评级）
+- 市场反应：股价（用 `price` 版块自动取行情画走势，事件日用 `events` 标出来，有目标价就加 `targets` 画喇叭口）、主要媒体标题、券商观点（目标价、评级）
 
 骨架（`numbered: true`，`brand` 放公司 logo 和代码）：
 `kpis`（营收 / 利润 / 利润率 / 净利润，带环比同比 `rows`）→ `group: 超预期多少`（`beat` + `waterfall`）→ `group: 卖了什么`（`mix`）→ `group: 展望与电话会要点`（`bars` 指引 + `points`）→ `row`（`kpis layout:list` 股东回报 | `bars` 需求来源）→ `group: 放到行业看`（`bars` 同行高亮自己 + `line` 份额）→ `group: 周期走到哪了`（`columns` 价格 + `line` 利润率）→ `points: 市场与观点`

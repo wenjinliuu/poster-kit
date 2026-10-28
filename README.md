@@ -11,14 +11,15 @@
 <img src="docs/images/sleep-guide.jpg" width="24%" alt="科普指南">
 </p>
 <p>
-<img src="docs/images/market-daily.jpg" width="19%" alt="行情日报">
-<img src="docs/images/supply-chain.jpg" width="19%" alt="产业链名单">
-<img src="docs/images/global-semis.jpg" width="19%" alt="跨市场名单">
-<img src="docs/images/etf-holdings.jpg" width="19%" alt="持仓占比">
-<img src="docs/images/capex-stats.jpg" width="19%" alt="数据统计">
+<img src="docs/images/stock-trend.jpg" width="16%" alt="股价走势">
+<img src="docs/images/market-daily.jpg" width="16%" alt="行情日报">
+<img src="docs/images/supply-chain.jpg" width="16%" alt="产业链名单">
+<img src="docs/images/global-semis.jpg" width="16%" alt="跨市场名单">
+<img src="docs/images/etf-holdings.jpg" width="16%" alt="持仓占比">
+<img src="docs/images/capex-stats.jpg" width="16%" alt="数据统计">
 </p>
 
-<sub>财报、融资、日报为示例数据，城市生活报告为虚构数据，只演示版式。</sub>
+<sub>财报、融资、日报为示例数据，城市生活报告为虚构数据，股价走势的行情为真实数据、目标价为示例，只演示版式。</sub>
 
 ## 能做什么
 
@@ -31,6 +32,7 @@
   - 见 [`sections.md`](skill/pastel-poster/references/sections.md)
 - **品牌感**：讲某家公司时头部放官方字标（自动从维基共享资源找，找不到按品牌色文字重建），强调色用品牌色；提到其他公司时自动带 logo。
 - **图标**：要点、步骤、时间线、卡片可以写 Lucide 图标名（1500+ 个），生成时内嵌。
+- **行情接口**：`price` 版块只写股票代码，生成时自动取日线（雅虎财经，港股、A 股可回退腾讯行情），画收盘走势或 K 线、均线、成交量、事件标记和目标价喇叭口；多只股票可以自动换算涨跌幅放一张图比较。
 - **主题背景物件**：芯片、光模块、服务器、晶圆、数据库、硬币、柱群、电池、楼群、机器人，或用几何块自己拼。
 - **真实 logo**：A 股、港股、美股、日韩台、欧洲等 68 个市场，代码写 `SZSE:300308`、`7203.T`、`2330.TW` 都行；取不到自动用首字徽章。
 - **先网页、后图片**：海报是一张 1080px 宽的网页，页面上能预览、点按钮下载 2 倍高清 PNG；命令行也能直接导出。
@@ -68,6 +70,7 @@ poster-kit/
 │  │  ├─ render_png.py         海报网页 → PNG
 │  │  ├─ validate_spec.py      检查 spec
 │  │  ├─ find_wordmark.py      找公司官方字标 SVG
+│  │  ├─ fetch_prices.py       取股价日线
 │  │  └─ test_export.py        导出验收
 │  ├─ assets/                  海报模板、html2canvas
 │  └─ examples/                完整示例 spec

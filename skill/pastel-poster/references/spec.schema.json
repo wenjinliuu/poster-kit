@@ -264,6 +264,7 @@
             "mix",
             "notes",
             "points",
+            "price",
             "pyramid",
             "quadrant",
             "radar",
@@ -745,7 +746,6 @@
           },
           "then": {
             "required": [
-              "x",
               "series"
             ]
           }
@@ -1199,6 +1199,62 @@
             "required": [
               "js"
             ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "price"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "range": {
+                "enum": [
+                  "1mo",
+                  "3mo",
+                  "6mo",
+                  "1y",
+                  "2y",
+                  "5y",
+                  "ytd",
+                  "max"
+                ]
+              },
+              "style": {
+                "enum": [
+                  "line",
+                  "candle"
+                ]
+              },
+              "ma": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "events": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "date",
+                    "label"
+                  ]
+                }
+              },
+              "targets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "tp"
+                  ]
+                }
+              }
+            }
           }
         }
       ]

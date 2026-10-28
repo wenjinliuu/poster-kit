@@ -147,6 +147,9 @@ def to_data_uri(src, base):
 
 def build(spec_path, logos_path, out_path, standalone=False, embed=True):
     spec = json.load(open(spec_path, encoding="utf-8"))
+    from fetch_prices import fill_prices
+    for sym in fill_prices(spec):  # price 版块、带 symbol 的 sparks / line：按代码取行情
+        print(f"  提醒：{sym} 的行情取不到")
     errors, warnings = validate(spec)
     for w in warnings:
         print(f"  提醒：{w}")

@@ -1,0 +1,161 @@
+{
+ "file": "股价走势",
+ "brand": {
+  "company": "NASDAQ:NVDA",
+  "name": "英伟达",
+  "en": "NVIDIA",
+  "label": "NASDAQ: NVDA",
+  "sub": "股价走势",
+  "colors": [
+   "#76b900"
+  ]
+ },
+ "eyebrow": "行情 · 走势图示例",
+ "tag": "行情为真实数据，目标价与事件为示例",
+ "title": [
+  "英伟达近一年",
+  "走势与目标价",
+  "行情自动取数，图上数字都由代码算"
+ ],
+ "updown": "us",
+ "object": "chip",
+ "companies": {
+  "NASDAQ:NVDA": {
+   "name": "英伟达"
+  },
+  "NASDAQ:AMD": {
+   "name": "AMD"
+  },
+  "NASDAQ:AVGO": {
+   "name": "博通"
+  },
+  "SZSE:300308": {
+   "name": "中际旭创"
+  },
+  "HKEX:700": {
+   "name": "腾讯控股",
+   "code": "00700"
+  },
+  "2330.TW": {
+   "name": "台积电",
+   "code": "2330"
+  },
+  "7203.T": {
+   "name": "丰田汽车",
+   "code": "7203"
+  },
+  "SSE:688981": {
+   "name": "中芯国际"
+  }
+ },
+ "sections": [
+  {
+   "type": "price",
+   "title": "近一年日收盘",
+   "company": "NASDAQ:NVDA",
+   "range": "1y",
+   "ma": [
+    20,
+    60
+   ],
+   "events": [
+    {
+     "date": "2026-08-27",
+     "label": "示例事件"
+    }
+   ],
+   "targets": [
+    {
+     "org": "甲",
+     "tp": 280,
+     "highlight": true
+    },
+    {
+     "org": "乙",
+     "tp": 250
+    },
+    {
+     "org": "丙",
+     "tp": 230
+    },
+    {
+     "org": "丁",
+     "tp": 300
+    },
+    {
+     "org": "戊",
+     "tp": 205
+    }
+   ]
+  },
+  {
+   "type": "price",
+   "title": "中际旭创近 3 个月 K 线",
+   "company": "SZSE:300308",
+   "range": "3mo",
+   "style": "candle",
+   "height": 220
+  },
+  {
+   "type": "line",
+   "title": "三家芯片股谁涨得多",
+   "note": "相对一年前的涨跌幅",
+   "range": "1y",
+   "series": [
+    {
+     "name": "英伟达",
+     "symbol": "NASDAQ:NVDA",
+     "company": "NASDAQ:NVDA",
+     "highlight": true
+    },
+    {
+     "name": "AMD",
+     "symbol": "NASDAQ:AMD",
+     "company": "NASDAQ:AMD"
+    },
+    {
+     "name": "博通",
+     "symbol": "NASDAQ:AVGO",
+     "company": "NASDAQ:AVGO"
+    }
+   ]
+  },
+  {
+   "type": "sparks",
+   "title": "近 3 个月",
+   "cols": 3,
+   "range": "3mo",
+   "colors": "updown",
+   "items": [
+    {
+     "company": "HKEX:700",
+     "symbol": "HKEX:700"
+    },
+    {
+     "company": "2330.TW",
+     "symbol": "2330.TW"
+    },
+    {
+     "company": "7203.T",
+     "symbol": "7203.T"
+    },
+    {
+     "company": "SSE:688981",
+     "symbol": "SSE:688981"
+    },
+    {
+     "company": "SZSE:300308",
+     "symbol": "SZSE:300308"
+    },
+    {
+     "company": "NASDAQ:AMD",
+     "symbol": "NASDAQ:AMD"
+    }
+   ]
+  }
+ ],
+ "footer": [
+  "行情：Yahoo Finance（港股、A 股取不到时用腾讯行情），未复权；目标价、事件为示例，仅演示画法",
+  "图中徽标仅用于识别，归各自所有者；不构成投资建议。"
+ ]
+}

@@ -426,6 +426,19 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .cl.cy-c{white-space:normal;width:170px;text-align:center;font-family:var(--p-title);font-size:22px;font-weight:900;color:var(--ink);line-height:1.35}
 .cl.cy-t.l{text-align:left;width:170px} .cl.cy-t.r{text-align:right;width:170px}
 
+/* price：股价走势 */
+.pr-h{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.pr-last{display:flex;align-items:center;gap:14px}
+.pr-last b{font-family:var(--p-num);font-size:48px;font-weight:800;line-height:1;white-space:nowrap}
+.pr-last b small{font-size:18px;color:var(--ink3);margin-left:6px;font-weight:600}
+.pr-last span{display:block;font-size:14px;color:var(--ink3);margin-top:6px}
+.pr-st{display:flex;gap:30px}
+.pr-st div{display:grid;gap:2px;text-align:right}
+.pr-st span{font-size:14px;color:var(--ink3);white-space:nowrap}
+.pr-st b{font-family:var(--p-num);font-size:24px;font-weight:800;white-space:nowrap}
+.pr-st b.up{color:var(--up)} .pr-st b.down{color:var(--down)}
+.cl.evt{font-family:var(--p-body);font-size:13px;font-weight:700;color:var(--ink2);background:#fff;padding:2px 7px;border-radius:7px;border:1px solid #e3e6ee}
+.cl.fanl{font-family:var(--p-body);font-size:14px;font-weight:600;color:var(--ink3)} .cl.fanl b{font-family:var(--p-num);font-size:18px;font-weight:800;margin-left:4px}
 /* 版本差异 */
 .poster[data-v="clear"]{background:linear-gradient(180deg,#ffffff 0,#fbfcfe 100%)}
 .poster[data-v="clear"] .card,.poster[data-v="clear"] .kpi{box-shadow:none;border:1.5px solid #eceef5}
@@ -986,6 +999,60 @@ CH.columns=function(el,w,s){if(!s.stack)return _columns(el,w,s);
       C.svg(`<rect x="${(cx-bw/2).toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1,y2-y1-2).toFixed(1)}" rx="3" fill="${c}"/>`);
       if(y2-y1>24&&s.segment_labels!==false)C.text(cx,(y1+y2)/2,fmt(v),"sm","c","m",onC(c));acc+=v});
     C.text(cx,Y(tots[i])-6,fmt(+tots[i].toFixed(2)),"","c","b","#16172a")});
+  C.done(el)};
+
+
+/* ---------- 股价走势：price（数据由 build_poster.py 调 fetch_prices.py 取，海报上的数字都由代码算） ---------- */
+const RANGE_LABEL={"1mo":"近 1 月","3mo":"近 3 月","6mo":"近 6 月","1y":"近 1 年","2y":"近 2 年","5y":"近 5 年","ytd":"年初至今","max":"上市以来"};
+SEC.price=s=>{const r=s.data||[];if(r.length<2)return `<div class="cap">行情数据取不到（${esc(s.symbol||s.company||"")}）</div>`;
+  const last=r.at(-1),ch=(last[4]/r[0][4]-1)*100,cd=s.style==="candle",hv=Math.max(...r.map(x=>cd?x[2]:x[4])),lv=Math.min(...r.map(x=>cd?x[3]:x[4])),dir=ch>=0?"up":"down";
+  const tps=(s.targets||[]).map(t=>t.tp).sort((a,b)=>a-b),med=tps.length?tps[tps.length>>1]:null,ups=med?(med/last[4]-1)*100:null;
+  const st=[[`${RANGE_LABEL[s.range||"1y"]||""}涨跌`,`${ch>=0?"+":"−"}${Math.abs(ch).toFixed(2)}%`,dir],[cd?"区间最高":"最高收盘",fmt(hv),""],[cd?"区间最低":"最低收盘",fmt(lv),""]];
+  if(med!=null)st.push([`目标价中位（${tps.length} 家）`,`${fmt(med)}`,""],["上涨空间",`${ups>=0?"+":"−"}${Math.abs(ups).toFixed(1)}%`,ups>=0?"up":"down"]);
+  const leg=[...(s.ma||[]).map((m,k)=>["line",PAL[(k+1)%PAL.length],`${m} 日均线`]),...((s.events||[]).length?[]:[])];
+  return `<div class="pr-h"><div class="pr-last">${s.company?badge(s.company,48):""}<div><b>${fmt(last[4])}<small>${esc(s.currency||"")}</small></b><span>${esc(last[0])} 收盘</span></div></div><div class="pr-st">${st.map(([k,v,c])=>`<div><span>${esc(k)}</span><b class="${c}">${v}</b></div>`).join("")}</div></div>`
+    +(leg.length?legendHTML(leg):"")+`<div class="chart" data-chart="${reg("price",{s})}"></div>`
+    +(s.caption?"":`<div class="cap">行情：${esc(s.source||"Yahoo Finance")}，${esc(r[0][0])} ~ ${esc(last[0])}${s.adjust?"":"，未复权"}</div>`)};
+CARD.add("price");
+CH.price=(el,w,s)=>{const r=s.data,n=r.length,tg=(s.targets||[]).slice().sort((a,b)=>a.tp-b.tp),tps=tg.map(t=>t.tp),candle=s.style==="candle",vol=s.volume!==false&&r.some(x=>x[5]>0);
+  const top=34,H=s.height||250,VH=vol?54:0,gap=vol?24:0,fanW=tps.length?Math.min(170,w*.2):0,padL=56,padR=tps.length?fanW+110:26;
+  const C=new Chart(w,top+H+gap+VH+30),f=v=>v.toFixed(1);
+  let lo=Math.min(...r.map(x=>candle?x[3]:x[4]),...tps),hi=Math.max(...r.map(x=>candle?x[2]:x[4]),...tps);const pd=(hi-lo)*.08||hi*.05;lo-=pd;hi+=pd;
+  const x0=padL,x1=w-padR,X=i=>x0+(n===1?0:i/(n-1))*(x1-x0),Y=v=>top+(hi-v)/(hi-lo)*H,c0=s.color!=null?toneHex(s.color):ACC;
+  yAxis(C,lo,hi,Y,padL,x1,"");
+  const long=(new Date(r.at(-1)[0])-new Date(r[0][0]))>400*864e5,fd=d=>long?`${d.slice(0,4)}/${+d.slice(5,7)}`:`${+d.slice(5,7)}/${+d.slice(8,10)}`;
+  [0,.25,.5,.75,1].forEach(q=>{const i=Math.round(q*(n-1));C.text(X(i),top+H+gap+VH+10,fd(r[i][0]),"ax",q===0?"l":q===1?"r":"c","t")});
+  // 事件：竖虚线 + 顶部标签（上下错开避免重叠）
+  (s.events||[]).forEach((e,k)=>{const i=r.findIndex(x=>x[0]>=e.date);if(i<0)return;const xx=X(i);
+    C.svg(`<line x1="${f(xx)}" x2="${f(xx)}" y1="${top-6}" y2="${top+H}" stroke="#c4c8d4" stroke-width="1.5" stroke-dasharray="4 4"/><circle cx="${f(xx)}" cy="${f(Y(r[i][4]))}" r="6" fill="#fff" stroke="${c0}" stroke-width="3"/>`);
+    C.text(xx,top-30+(k%2)*24,rich(e.label),"evt","c","t")});
+  if(candle){const bw=Math.max(1.5,Math.min(10,(x1-x0)/n*.62));
+    r.forEach((x,i)=>{const c=x[4]>=x[1]?UD.up:UD.down,xx=X(i),ya=Y(Math.max(x[1],x[4])),yb=Y(Math.min(x[1],x[4]));
+      C.svg(`<line x1="${f(xx)}" x2="${f(xx)}" y1="${f(Y(x[2]))}" y2="${f(Y(x[3]))}" stroke="${c}" stroke-width="1.2"/><rect x="${f(xx-bw/2)}" y="${f(ya)}" width="${f(bw)}" height="${f(Math.max(1,yb-ya))}" fill="${c}"/>`)})}
+  else{const id="pr"+(UID++),pts=r.map((x,i)=>f(X(i))+","+f(Y(x[4])));
+    C.def(`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c0}" stop-opacity=".2"/><stop offset="1" stop-color="${c0}" stop-opacity="0"/></linearGradient>`);
+    C.svg(`<path d="M${f(X(0))},${f(top+H)}L${pts.join("L")}L${f(X(n-1))},${f(top+H)}Z" fill="url(#${id})"/><path d="M${pts.join("L")}" fill="none" stroke="${c0}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`)}
+  (s.ma||[]).forEach((m,k)=>{const pts=[];for(let i=m-1;i<n;i++){let sm=0;for(let j=i-m+1;j<=i;j++)sm+=r[j][4];pts.push(f(X(i))+","+f(Y(sm/m)))}
+    if(pts.length>1)C.svg(`<path d="M${pts.join("L")}" fill="none" stroke="${PAL[(k+1)%PAL.length]}" stroke-width="2" stroke-linejoin="round"/>`)});
+  if(vol){const vmax=Math.max(...r.map(x=>x[5]))||1,vb=top+H+gap+VH,bw=Math.max(1,(x1-x0)/n*.7);
+    r.forEach((x,i)=>{const h=x[5]/vmax*VH,c=x[4]>=(i?r[i-1][4]:x[1])?UD.up:UD.down;C.svg(`<rect x="${f(X(i)-bw/2)}" y="${f(vb-h)}" width="${f(bw)}" height="${f(Math.max(.5,h))}" fill="${mix(c,W,.45)}"/>`)});
+    C.text(x0,top+H+gap+VH-VH-1,"成交量","xs","l","b")}
+  // 区间最高、最低点
+  const hiI=r.reduce((a,x,i)=>x[4]>r[a][4]?i:a,0),loI=r.reduce((a,x,i)=>x[4]<r[a][4]?i:a,0),edge=i=>X(i)<x0+60?"l":X(i)>x1-60?"r":"c";
+  if(!candle){C.svg(`<circle cx="${f(X(hiI))}" cy="${f(Y(r[hiI][4]))}" r="5" fill="${c0}"/><circle cx="${f(X(loI))}" cy="${f(Y(r[loI][4]))}" r="5" fill="${c0}"/>`);
+    C.text(X(hiI),Y(r[hiI][4])-10,`高 ${fmt(r[hiI][4])}`,"sm",edge(hiI),"b",ink(c0));C.text(X(loI),Y(r[loI][4])+10,`低 ${fmt(r[loI][4])}`,"sm",edge(loI),"t",ink(c0))}
+  const lx=X(n-1),ly=Y(r[n-1][4]);C.svg(`<circle cx="${f(lx)}" cy="${f(ly)}" r="6.5" fill="${c0}" stroke="#fff" stroke-width="3"/>`);
+  if(!tps.length)C.text(lx-8,ly-12,fmt(r[n-1][4]),"","r","b",ink(c0));
+  // 喇叭口：从最新收盘向各家目标价的最高 / 中位 / 最低张开，高于现价淡涨色、低于现价淡跌色
+  if(tps.length){const xe=x1+fanW,med=tps[tps.length>>1],th=tps.at(-1),tl=tps[0],tri=(a,b,c)=>`<polygon points="${f(lx)},${f(ly)} ${f(xe)},${f(a)} ${f(xe)},${f(b)}" fill="${c}"/>`;
+    C.svg(`<line x1="${f(lx)}" x2="${f(lx)}" y1="${top}" y2="${top+H}" stroke="#d5d9e2" stroke-dasharray="3 4"/>`);
+    if(tps.length>1)C.svg(tri(Math.min(Y(th),ly),Math.min(Y(tl),ly),mix(UD.up,W,.82))+tri(Math.max(Y(th),ly),Math.max(Y(tl),ly),mix(UD.down,W,.84)));
+    C.svg(`<line x1="${f(lx)}" y1="${f(ly)}" x2="${f(xe)}" y2="${f(Y(med))}" stroke="${ink(mix(ACC,K,.1))}" stroke-width="2" stroke-dasharray="6 5"/>`);
+    tg.forEach(t=>C.svg(`<circle cx="${f(xe)}" cy="${f(Y(t.tp))}" r="${t.highlight?7:4.5}" fill="${t.highlight?ACC:"#fff"}" stroke="${t.highlight?"#fff":DIM}" stroke-width="2"/>`));
+    let labs=tps.length>1?[["最高",th],["中位",med],["最低",tl]]:[["目标",th]];labs=labs.map(([t,v])=>({t,v,y:Y(v)}));
+    if(labs.length===3&&(labs[1].y-labs[0].y<22||labs[2].y-labs[1].y<22))labs=[labs[0],labs[2]];for(let i=1;i<labs.length;i++)labs[i].y=Math.max(labs[i].y,labs[i-1].y+22);
+    labs.forEach(l=>C.text(xe+12,l.y,`${l.t}<b style="color:${ink(l.v>=r[n-1][4]?UD.up:UD.down)}">${fmt(l.v)}</b>`,"fanl","l","m"));
+    C.text(lx,top-8,`现价 ${fmt(r[n-1][4])}`,"sm","c","b",ink(c0))}
   C.done(el)};
 
 /* ---------- 一行放不下就缩小字号（标题、大数字） ---------- */

@@ -37,6 +37,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
    - 个股和公司事件加 `brand`：头部放公司字标（`scripts/find_wordmark.py` 找官方 SVG，找不到就按品牌色文字重建），`brand.colors` 写品牌色作强调色，见 `references/logos.md`。
    - 海报里提到其他公司时，在条、线、点、卡片上写 `company` 带出 logo。
    - 要点、步骤、时间线可以写 `icon`（Lucide 图标名），让海报更形象。
+   - 需要股价走势时用 `price` 版块只写公司代码，行情生成时自动取，不要手抄价格。
    - 深度速览加 `numbered`。
 4. **取 logo**：
    ```bash
@@ -86,6 +87,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 - `scripts/render_png.py`：把已有的海报网页导出成 PNG，和“下载高清图”按钮同一套逻辑
 - `scripts/validate_spec.py`：单独检查 spec
 - `scripts/find_wordmark.py`：在维基共享资源找公司官方字标 SVG
+- `scripts/fetch_prices.py`：取股价日线（雅虎财经，港股、A 股可回退腾讯行情），生成时自动给 `price`、带 `symbol` 的 `sparks` / `line` 取数，也可单独运行看最新价和区间涨跌
 - `scripts/test_export.py`：验收导出，以手机视口和字体回退两种场景检查 PNG 尺寸和页脚（改模板或导出逻辑后跑一次）
 - `assets/poster-template.html`：海报模板（样式、版块渲染、背景物件、下载）
 - `assets/vendor/html2canvas.min.js`：导出用的 html2canvas 1.4.1

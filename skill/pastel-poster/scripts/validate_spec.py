@@ -22,7 +22,7 @@ SECTIONS = {
     "donut": ["items"], "stackbar": ["series", "rows"], "scatter": ["points"], "slope": ["items"], "dumbbell": ["items"],
     "treemap": ["items"], "funnel": ["items"], "radar": ["axes", "series"], "rings": ["items"], "waffle": [],
     "sankey": ["links"], "sparks": ["items"], "timeline": ["items"], "steps": ["items"], "compare": ["left", "right"],
-    "quadrant": ["cells"], "tree": ["root"], "pyramid": ["items"], "cycle": ["items"], "draw": ["js"],
+    "quadrant": ["cells"], "tree": ["root"], "pyramid": ["items"], "cycle": ["items"], "draw": ["js"], "price": [],
 }
 OBJECTS = {"chip", "module", "rack", "coin", "globe", "battery", "building", "wafer", "db", "robot"}
 
@@ -80,7 +80,8 @@ def validate(spec):
                 errors.append(f"{where} 的 type “{t}” 不存在，可选 {sorted(SECTIONS)}")
                 continue
             where += f"（{t}）"
-            missing = [f for f in SECTIONS[t] if f not in s]
+            auto = t in ("line", "columns") and any(q.get("symbol") for q in s.get("series", []))  # 按代码取行情的线，x 和值生成时才填
+            missing = [f for f in SECTIONS[t] if f not in s and not (auto and f == "x")]
             if missing:
                 errors.append(f"{where} 缺少字段 {missing}")
                 continue
@@ -165,12 +166,19 @@ def validate(spec):
             for l in s["links"]:
                 if not {"source", "target", "value"} <= set(l):
                     errors.append(f"{where} 每条 link 要有 source、target、value")
+        elif t == "price":
+            need(s.get("company"), where)
+            if not (s.get("symbol") or s.get("company") or s.get("data")):
+                errors.append(f"{where} 要写 company（公司键）或 symbol（行情代码）")
+            for e in s.get("events", []):
+                if "date" not in e or "label" not in e:
+                    errors.append(f"{where} events 每项要有 date 和 label")
         elif t == "compare":
             for side in ("left", "right"):
                 need(s[side].get("company"), where)
         elif t == "quadrant" and len(s["cells"]) != 4:
             errors.append(f"{where} cells 要正好 4 个（左上、右上、左下、右下）")
-        elif t in ("line", "columns"):
+        elif t in ("line", "columns") and not any(q.get("symbol") for q in s["series"]):
             n = len(s["x"])
             for q in s["series"]:
                 if len(q.get("values", [])) != n:

@@ -139,6 +139,7 @@
 - `layout:"stack"` 标签在条上方（窄卡片、并排时用）；`label_width`、`value_width` 调列宽，`max` 定刻度上限。
 
 ### `line` 折线
+系列写 `symbol`（股票代码）不写 `values` 时自动取行情，`x` 也自动生成；默认换算成相对起点的涨跌幅（`normalize:false` 保留原价），`range` 默认 1y。
 ```json
 {"type":"line","unit":"%","x":["Q2'25","Q3'25","Q4'25"],"series":[{"name":"SK 海力士","values":[62,57,50],"highlight":true},{"name":"三星","values":[17,22,33]}]}
 ```
@@ -221,7 +222,8 @@
 | `rings` 圆环 | `items:[{label, value, max?, text?, sub?, tone?}]`，`unit`（默认 %），`cols`，`size`，`colors:"cats"` |
 | `waffle` 方格 / 象形 | `items:[{label, value, text?, tone?}]` 或单个 `value`+`label`，`total`（默认 100），`unit_value`（每格代表多少），`icon`（每格画图标），`cols` |
 | `sankey` 桑基 | `links:[{source, target, value}]`，`unit`，`height`，`colors:{节点名: tone}`，`link_color:"target"` |
-| `sparks` 小多图 | `items:[{label, sub?, company?, values, value_text?, change?}]`，`cols`，`unit`，`colors:"updown"` |
+| `price` 股价走势 | `company` 或 `symbol`，`range`（1mo 3mo 6mo 1y 2y 5y ytd，默认 1y），`style:"candle"`（K 线，默认收盘折线），`ma:[20,60]`，`volume:false` 关成交量，`events:[{date, label}]`，`targets:[{org, tp, highlight?}]`（目标价喇叭口和上涨空间），`height`。行情由 `build_poster.py` 调 `fetch_prices.py` 自动取（雅虎财经，港股和 A 股取不到用腾讯行情），最新价、涨跌、最高最低、空间都由代码算 |
+| `sparks` 小多图 | `items:[{label, sub?, company?, values, value_text?, change?}]`，`cols`，`unit`，`colors:"updown"`；项里写 `symbol` 不写 `values` 时自动取行情（`range` 默认 3mo） |
 
 ### 信息结构
 
