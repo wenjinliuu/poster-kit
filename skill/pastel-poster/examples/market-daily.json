@@ -1,0 +1,42 @@
+{
+  "file": "美股期权日报",
+  "eyebrow": "期权日报 · 美东 2026-10-23 周五",
+  "tag": "示例数据",
+  "title": ["10月23日 · 大盘中性", "AI 软件放量偏多", "Put 占比上升，小盘股最谨慎"],
+  "updown": "us",
+  "object": "globe",
+  "numbered": true,
+  "companies": {
+    "NASDAQ:CRWD": {"name": "CrowdStrike"}, "NYSE:PLTR": {"name": "Palantir"}, "NASDAQ:SMCI": {"name": "超微电脑"},
+    "NASDAQ:MU": {"name": "美光"}, "NASDAQ:GOOGL": {"name": "谷歌"}, "NYSE:BABA": {"name": "阿里巴巴"}, "NYSE:NOW": {"name": "ServiceNow"},
+    "NASDAQ:NVDA": {"name": "英伟达"}, "NASDAQ:AMD": {"name": "AMD"}, "NYSE:TSM": {"name": "台积电"}
+  },
+  "sections": [
+    {"type": "kpis", "items": [
+      {"label": "全市场 Call/Put", "value": "1.16", "note": "常态 1.26 · 低 **8%**", "tone": "down"},
+      {"label": "最强信号", "value": "CRWD", "note": "偏多 · 量 2.0× · 权利金 1.4×", "tone": "up"},
+      {"label": "最热环节", "value": "AI 软件", "note": "量 1.4× · 在榜 4 只", "tone": "accent"}]},
+    {"type": "deviation", "title": "大盘 Call/Put 对比常态", "note": "低于常态 = Put 占比上升", "columns": ["成交量", "Call/Put"], "bar_label": "偏离 20 日常态（±30%）", "range": 30,
+     "rows": [{"label": "全市场", "sub": "全部期权", "cols": ["1.0×", ["1.16", "常态 1.26"]], "value": -8},
+              {"label": "SPY", "sub": "标普 500", "cols": ["0.8×", ["0.76", "常态 0.90"]], "value": -16},
+              {"label": "QQQ", "sub": "纳指 100", "cols": ["0.8×", ["0.86", "常态 0.94"]], "value": -9},
+              {"label": "IWM", "sub": "罗素 2000", "cols": ["1.0×", ["0.52", "常态 0.76"]], "value": -32}]},
+    {"type": "heatmap", "title": "本周每日 Call/Put 偏离", "note": "绿 = Call 占比高于常态", "format": "pct",
+     "columns": ["10.19 周一", "10.20 周二", "10.21 周三", "10.22 周四", "10.23 周五"],
+     "rows": [{"label": "全市场", "values": [-7, -1, 5, -10, -8]}, {"label": "SPY", "values": [-6, 4, 9, -12, -16]},
+              {"label": "QQQ", "values": [-10, -13, 2, 5, -9]}, {"label": "IWM", "values": [-24, 20, -1, -1, -32]}]},
+    {"type": "columns", "title": "全市场分时成交", "note": "每 30 分钟 · 柱高 = 成交量（百万张）", "height": 170, "highlight": 0,
+     "x": ["9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30"],
+     "series": [{"name": "成交量", "values": [4.1, 3.4, 3.6, 2.6, 2.1, 1.8, 1.9, 1.8, 2.0, 1.9, 2.2, 2.6, 3.0]}]},
+    {"type": "chips", "title": "观察名单", "note": "圆点 = 数据面方向", "groups": [
+      {"label": "偏多", "items": [["NASDAQ:CRWD", "up"], ["NASDAQ:NVDA", "up"], ["NYSE:TSM", "up"]]},
+      {"label": "偏空", "items": [["NYSE:PLTR", "down"], ["NASDAQ:MU", "down"]]},
+      {"label": "方向不明", "items": [["NYSE:BABA", "gray"], ["NYSE:NOW", "gray"], ["NASDAQ:GOOGL", "gray"]]}]},
+    {"type": "target", "title": "研报目标价", "note": "条带 = 各家目标价范围，竖线 = 现价", "items": [
+      {"company": "NASDAQ:SMCI", "price": 38.5, "unit": "美元", "rating": "摩根大通 · 维持中性",
+       "targets": [{"org": "摩根大通", "tp": 42, "highlight": true}, {"org": "瑞银", "tp": 30}, {"org": "花旗", "tp": 45}, {"org": "高盛", "tp": 34}, {"org": "美银", "tp": 60}]},
+      {"company": "NASDAQ:AMD", "price": 236, "unit": "美元", "rating": "花旗 · 上调至买入",
+       "targets": [{"org": "花旗", "tp": 290, "highlight": true}, {"org": "大摩", "tp": 255}, {"org": "高盛", "tp": 270}]}]}
+  ],
+  "footer": ["示例数据：仅演示期权日报类海报的版式，数字为虚构", "成交量与 Call/Put 均对比前 20 个交易日", "图中徽标仅用于识别，归各自所有者；不构成投资建议。"]
+}

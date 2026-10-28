@@ -1,0 +1,279 @@
+{
+ "file": "Meta融资速览",
+ "brand": {
+  "company": "NASDAQ:META",
+  "name": "Meta Platforms",
+  "label": "NASDAQ: META",
+  "sub": "融资速览"
+ },
+ "eyebrow": "公司事件 · 2026-10-27",
+ "tag": "示例数据",
+ "title": [
+  "Meta 这次融了多少钱？",
+  "已锁定 **375** 亿美元",
+  "加上可选和计划部分，最多约 **1,030** 亿"
+ ],
+ "accent": "#1296f0",
+ "updown": "us",
+ "object": "coin",
+ "companies": {
+  "NASDAQ:META": {
+   "name": "Meta"
+  },
+  "NASDAQ:NVDA": {
+   "name": "英伟达"
+  },
+  "NASDAQ:AMD": {
+   "name": "超威半导体"
+  }
+ },
+ "sections": [
+  {
+   "type": "group",
+   "title": "四层口径，一张图看懂",
+   "note": "单位：亿美元",
+   "sections": [
+    {
+     "type": "waterfall",
+     "height": 300,
+     "items": [
+      {
+       "label": "优先股",
+       "sub": "10-29 到账",
+       "value": 125,
+       "g": 4,
+       "text": "125"
+      },
+      {
+       "label": "远期卖股",
+       "sub": "最晚 2027-11",
+       "value": 250,
+       "g": 0
+      },
+      {
+       "label": "绿鞋",
+       "sub": "承销商可选",
+       "value": 56,
+       "state": "option",
+       "g": 2,
+       "text": "+约 56"
+      },
+      {
+       "label": "ATM 计划",
+       "sub": "2027 年起",
+       "value": 600,
+       "state": "plan",
+       "text": "+至多 600"
+      },
+      {
+       "label": "上限",
+       "sub": "合计",
+       "total": true,
+       "stack": true,
+       "text": "约 1,030"
+      }
+     ],
+     "brackets": [
+      {
+       "from": 0,
+       "to": 1,
+       "text": "已锁定 375（10-26 定价包销）"
+      }
+     ],
+     "legend": {
+      "solid": "实色 = 已锁定",
+      "option": "斜纹 = 可选（30 天内由承销商决定）",
+      "plan": "虚线 = 计划（未签约）"
+     }
+    },
+    {
+     "type": "points",
+     "title": "新闻里的数字怎么来的",
+     "items": [
+      {
+       "tag": "950",
+       "tone": "accent",
+       "text": "10-26 公布的融资计划：包销约 350 + ATM 约 600"
+      },
+      {
+       "tag": "975",
+       "tone": "accent",
+       "text": "10-27 普通股上调 225 → 250 后：包销 375 + ATM 600"
+      },
+      {
+       "tag": "1,030",
+       "tone": "accent",
+       "text": "再加绿鞋全部行使约 56（普通股 37.5 + 存托股 18.75）"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "type": "callout",
+   "tone": "up",
+   "title": "英伟达 30 亿 + AMD 10 亿美元：是已锁定 375 亿里的买家",
+   "text": "它们按同样价格认购，不是额外多出来的钱。"
+  },
+  {
+   "type": "group",
+   "title": "钱花在哪",
+   "sections": [
+    {
+     "type": "callout",
+     "tone": "gray",
+     "title": "Meta 没有公布这 375 亿按业务怎么分",
+     "text": "招股书写的用途是“一般公司用途”；按业务、AI / 非 AI 的拆分：未披露。"
+    },
+    {
+     "type": "kpis",
+     "layout": "list",
+     "items": [
+      {
+       "label": "投入重点：2026 年资本开支指引",
+       "value": "1,350–1,450",
+       "unit": "亿美元",
+       "tone": "accent",
+       "note": "公司原话：投向服务器、数据中心和网络，用于 AI 和核心业务"
+      }
+     ]
+    },
+    {
+     "type": "bars",
+     "title": "赚的够不够花？",
+     "note": "2026 年 Q3 单季",
+     "layout": "stack",
+     "unit": "亿美元",
+     "value_width": 150,
+     "items": [
+      {
+       "label": "赚到（经营现金流）",
+       "value": 328
+      },
+      {
+       "label": "花掉（资本开支）",
+       "value": 349
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "tone": "down",
+     "title": "缺口 **21** 亿美元",
+     "text": "花的比赚的多，单季自由现金流转负 → 需要外部融资。"
+    }
+   ]
+  },
+  {
+   "type": "text",
+   "title": "芯片商投钱，也绑定 **Muse**",
+   "text": "Muse 是 Meta 的个人 AI 智能体（每人一台云端虚拟机，能替你购物、订行程），也是 Meta 超级智能实验室同名的模型家族。英伟达、AMD 的投资公告都以 Muse 为合作主题。"
+  },
+  {
+   "type": "kpis",
+   "items": [
+    {
+     "label": "用户",
+     "value": "1,000万+",
+     "tone": "accent",
+     "note": "美国 + 加拿大，约 6 周"
+    },
+    {
+     "label": "日活跃",
+     "value": "25",
+     "unit": "%",
+     "tone": "accent",
+     "note": "每天使用的用户占比"
+    },
+    {
+     "label": "第一用途",
+     "value": "购物",
+     "tone": "accent",
+     "note": "超过 1/4 活跃用户"
+    }
+   ]
+  },
+  {
+   "type": "bars",
+   "title": "模型智能指数",
+   "note": "Artificial Analysis · 10-12",
+   "label_width": 260,
+   "value_width": 80,
+   "max": 64,
+   "items": [
+    {
+     "label": "Claude Opus 5.5",
+     "value": 58,
+     "tone": "gray"
+    },
+    {
+     "label": "Muse Wonder Full",
+     "value": 56,
+     "highlight": true
+    },
+    {
+     "label": "Muse Wonder（API）",
+     "value": 52
+    },
+    {
+     "label": "Muse Spark 1.3",
+     "value": 48
+    }
+   ],
+   "caption": "Wonder Full 只差榜首 2 分，但只给订阅用户；开发者质疑“宣传用 Full，API 只给普通版”。"
+  },
+  {
+   "type": "cards",
+   "items": [
+    {
+     "title": "Muse Spark",
+     "sub": "4 月 · 驱动 Muse"
+    },
+    {
+     "title": "Muse Wonder",
+     "sub": "10-12 · 前沿闭源"
+    },
+    {
+     "title": "Spark Open",
+     "sub": "10-15 · 8160 亿参数开放"
+    },
+    {
+     "title": "Muse Glimmer",
+     "sub": "300 亿参数端侧模型"
+    }
+   ]
+  },
+  {
+   "type": "points",
+   "title": "市场怎么看",
+   "note": "宣布当天盘中最多跌 4–5%，收盘约 +1%",
+   "items": [
+    {
+     "tag": "卖方",
+     "tone": "accent",
+     "text": "悬念落地，稀释小于担心"
+    },
+    {
+     "tag": "担心",
+     "tone": 2,
+     "text": "还有 600 亿美元计划和 2029 年转股"
+    },
+    {
+     "tag": "担心",
+     "tone": 2,
+     "text": "现金流转负，长期租约承诺很大"
+    },
+    {
+     "tag": "担心",
+     "tone": 2,
+     "text": "AI 投入回报周期更长（CFO）"
+    }
+   ]
+  }
+ ],
+ "footer": [
+  "来源：Meta 10-26/27 公告与 SEC 定价条款、Q3 10-Q；路透等报道；英伟达 / AMD 公告；Artificial Analysis",
+  "示例数据：改编自一张 AI 生成的海报，仅演示版式，数字未逐项核实",
+  "图中徽标仅用于识别，归各自所有者；不构成投资建议。"
+ ]
+}

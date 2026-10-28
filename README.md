@@ -5,15 +5,24 @@
 *A Claude skill that turns a JSON spec into a clean Chinese infographic poster (HTML page + high-res PNG), with real company logos from 68 stock markets.*
 
 <p>
+<img src="docs/images/earnings-skhynix.jpg" width="32%" alt="财报速览">
+<img src="docs/images/financing-meta.jpg" width="32%" alt="公司事件速览">
+<img src="docs/images/market-daily.jpg" width="32%" alt="行情日报">
+</p>
+<p>
 <img src="docs/images/supply-chain.jpg" width="24%" alt="产业链名单">
 <img src="docs/images/global-semis.jpg" width="24%" alt="跨市场名单">
 <img src="docs/images/etf-holdings.jpg" width="24%" alt="持仓占比">
 <img src="docs/images/capex-stats.jpg" width="24%" alt="数据统计">
 </p>
 
+<sub>第一排为示例数据，只演示版式。</sub>
+
 ## 能做什么
 
-- **版块自由组合**：产业链名单、大数字、环形持仓、年度柱状、排行条、合计横幅、资金流向、涨跌表格、要点，见 [`sections.md`](skill/pastel-poster/references/sections.md)。
+- **按海报类型出骨架**：财报速览、公司事件、产业链名单、持仓构成、数据统计、行情日报、研报观点七种配方，每种带信息收集清单和叙事规则（大标题回答问题、小标题写结论、口径分层、不画示意图），见 [`recipes.md`](skill/pastel-poster/references/recipes.md)。
+- **20 多种版块**：大数字、实际 vs 预期、真瀑布图（确定 / 可选 / 计划三档）、构成条、通用横条、折线、分组柱、热力表、偏离条、目标价刻度、观察名单、要点标签、提示框，加上产业链网格、环形持仓、排行、流向、表格；用 `group` 合卡、`row` 并排，见 [`sections.md`](skill/pastel-poster/references/sections.md)。
+- **主题背景物件**：芯片、光模块、服务器、晶圆、数据库、硬币、柱群、电池、楼群、机器人，或用几何块自己拼。
 - **真实 logo**：A 股、港股、美股、日韩台、欧洲等 68 个市场，代码写 `SZSE:300308`、`7203.T`、`2330.TW` 都行；取不到自动用首字徽章。
 - **先网页、后图片**：海报是一张 1080px 宽的网页，页面上能预览、点按钮下载 2 倍高清 PNG；命令行也能直接导出。
 - **页面自包含**：字体按用到的字取子集内嵌，html2canvas 内置，不依赖外部资源，国内打开和导出也稳定。

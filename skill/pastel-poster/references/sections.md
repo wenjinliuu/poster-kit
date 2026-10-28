@@ -2,7 +2,9 @@
 
 编辑器里可以用 `spec.schema.json` 做字段补全和校验；`build_poster.py` 生成前也会自动检查。
 
-海报 = 标题区 + 若干版块 + 页脚。版块按 `sections` 数组顺序从上到下排列，可以自由组合。
+海报 = （品牌头部）+ 标题区 + 若干版块 + 页脚。版块按 `sections` 数组顺序从上到下排列，可以自由组合；用 `group` 把几块放进一张卡片，用 `row` 让几块并排。先按 `recipes.md` 选骨架。
+
+所有文字字段都可以用 `**重点**` 标出强调（显示为强调色），标题、小标题、说明、要点里都能用。
 
 ## 顶层字段
 
@@ -11,11 +13,13 @@
 | `file` | 是 | 下载文件名前缀，如 `"AI光互连"` |
 | `eyebrow` | 否 | 标题上方小字，如 `"产业链名单 · AI 光互连"` |
 | `tag` | 否 | 眉题旁的描边小标签，如 `"示意数据"`、`"截至 10.17"` |
-| `title` | 是 | 三段：`[黑色主句, 强调色大字, 灰色副句]`。主句 ≤ 10 字，大字 ≤ 9 字，副句 ≤ 14 字 |
-| `object` | 否 | 右上背景物件：`chip` `module` `rack` `coin` `globe`，或不写 |
+| `title` | 是 | 三段：`[黑色主句, 强调色大字, 灰色副句]`。主句、大字放不下一行会自动缩小字号，建议主句 ≤ 10 字、大字 ≤ 9 字、副句 ≤ 18 字。大字里写 `**数字**` 时变成“黑字 + 特大强调色数字”，如 `"已锁定 **375** 亿美元"` |
+| `brand` | 否 | 品牌头部（个股、公司事件）：`{"company": "NASDAQ:META", "name": "Meta Platforms", "en": "英文名(可选)", "label": "NASDAQ: META", "sub": "融资速览"}`，左边大 logo + 公司名，右边代码和类型 |
+| `numbered` | 否 | `true` 时卡片标题前加 1、2、3 编号，适合深度速览 |
+| `object` | 否 | 右上背景物件，见 `style.md`：`chip` `module` `rack` `coin` `globe` `battery` `building` `wafer` `db` `robot`，或 `{"parts": [...]}` 自己拼 |
 | `updown` | 否 | `"cn"`（默认，红涨绿跌）或 `"us"`（绿涨红跌） |
 | `versions` | 否 | 默认 `["clear"]`（雾彩·清透）。新增风格后，需要对比时写多个，如 `["clear","新风格id"]` |
-| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；系列海报想区分时换成 8 色里的另一色 |
+| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`。个股海报选 8 色里最接近品牌色的一个（如 Meta 天蓝、SK 海力士玫红），分类色会从强调色开始轮转 |
 | `companies` | 是* | 公司表，键是 `交易所:代码`（或 Yahoo 后缀代码、`市场:代码`），值是 `{"name": "中文名", "code": "显示代码(可选)"}` |
 | `sections` | 是 | 版块数组 |
 | `footer` | 是 | 页脚多行，最后一行是免责声明（小字） |
@@ -82,10 +86,122 @@
 ### `notes` 要点
 2–4 条，每条 ≤ 30 字，两列排布。
 
+### 通用字段
+
+每个版块都可以写 `title`（卡片标题，可用 `**强调**`）、`note`（标题右侧灰字：单位、口径、来源）、`caption`（版块底部的灰色小字说明）。
+
+### `group` 一张卡片里放几块
+```json
+{"type":"group","title":"超预期多少","note":"单位：万亿韩元","sections":[{"type":"beat",...},{"type":"waterfall","title":"为什么净利润少了？",...}]}
+```
+子版块的 `title` 显示为小标题，之间用细线分隔。一个问题配一张主图和一张解释图时用它。
+
+### `row` 并排
+```json
+{"type":"row","sections":[{"type":"kpis","title":"股东回报","layout":"list",...},{"type":"bars","title":"需求从哪来","layout":"stack",...}]}
+```
+2–3 块并排，各自成卡片。并排时横条用 `layout:"stack"`（标签在条上方）。
+
+### `kpis` 补充
+- `rows`：卡片底部的对比行，如 `[["环比","+32%"],["同比","+328%"]]`；`+` 开头自动用涨色、`-` 开头用跌色，第三项写 `""` 关掉颜色。
+- `tone`：`up` / `down` / `accent`（强调色）/ `ink`（黑色），不写按分类色。
+- `layout:"list"`：竖排的大数字列表（左数字、右说明），适合放在 `row` 里。
+- 单位很长（“万亿韩元”）时写进 `note`，`unit` 留空，数字会更醒目；数字太宽会自动缩小。
+
+### `beat` 实际 vs 预期
+```json
+{"type":"beat","items":[{"label":"营收","actual":104.62,"estimates":[{"name":"LSEG","value":98.34},{"name":"韩媒汇总","value":98.23}]}]}
+```
+灰点是各家预期，彩点是实际；超预期用涨色，不及预期用跌色（成本类写 `"higher_better": false`）。下方自动写出“超 6.4%”。
+
+### `waterfall` 瀑布（拆解、分层口径）
+```json
+{"type":"waterfall","items":[{"label":"营业利润","value":83.33,"total":true},{"label":"汇兑损失","value":-11.63},{"label":"净利润","total":true}]}
+```
+- `total:true` 的柱从 0 画起，不写 `value` 时取前面累计值；其余项在累计值上浮动。
+- `state`：`solid` 确定（默认）/ `option` 可选（斜纹）/ `plan` 计划（虚线框）。用到多种时自动出图例，图例文字可用 `legend` 改。
+- `stack:true` 的合计柱按前面各项分段上色；`g` 指定分类色序号；`text` 改柱顶文字（如 `"+约 56"`）；`sub` 是柱下小字。
+- 默认增项用浅强调色、减项用灰色；`"colors":"updown"` 改用涨跌色。`brackets: [{"from":0,"to":1,"text":"已锁定 375"}]` 在柱下画括号标注。
+
+### `mix` 构成条 + 分项卡
+```json
+{"type":"mix","items":[{"name":"DRAM","value":75,"rows":[["出货量","约 +10%","up"],["平均售价","+20% 高段","up"]]},{"name":"NAND","value":24}],"other":1}
+```
+100% 条显示各项占比；带 `rows` 的项在下面出一张量价卡片。
+
+### `bars` 通用横条
+```json
+{"type":"bars","unit":"%","max":100,"items":[{"label":"美光","sub":"6–9 月 · GAAP","value":80.7,"extra":"542 亿美元"},{"label":"SK 海力士","value":79.7,"highlight":true}]}
+```
+- `value` 可以是 `[低, 高]` 区间；`text` 改右侧数值文字（如 `"+20% 中段"`）；`company` 用公司 logo 当标签；`extra` 是最右侧灰字。
+- 有 `highlight` 时高亮那行用强调色、其余变灰（同业对比用）；`tone:"gray"` 单独把某行变灰；`colors:"cats"` 每行一种分类色。
+- `layout:"stack"` 标签在条上方（窄卡片、并排时用）；`label_width`、`value_width` 调列宽，`max` 定刻度上限。
+
+### `line` 折线
+```json
+{"type":"line","unit":"%","x":["Q2'25","Q3'25","Q4'25"],"series":[{"name":"SK 海力士","values":[62,57,50],"highlight":true},{"name":"三星","values":[17,22,33]}]}
+```
+- 单条线自动加面积底色，默认标出首、尾、最高、最低点；`labels` 写序号数组指定标哪些点，或 `"all"`、`"end"`。
+- 多条线在线尾标名字和末值；有 `highlight` 时其余线变灰，没有时各用分类色并出图例。超过 4 条线看不清。
+- `ymin` / `ymax` 定纵轴，`est_from` 从该序号起画虚线（预测），`x_every` 隔几个标一次横轴，`height` 改图高，`axis:false` 去掉纵轴。
+
+### `columns` 柱状（可分组、可区间）
+```json
+{"type":"columns","unit":"%","est_from":3,"x":["4Q25","1Q26","2Q26","3Q26E"],"series":[{"name":"DRAM","values":[[45,50],[93,98],[58,63],[13,18]]},{"name":"NAND","values":[33,85,55,18]}]}
+```
+值可以是数字或 `[低, 高]` 区间（柱高取上限，柱顶标“低–高”）；`est_from` 起的柱变淡表示预估；单系列时 `highlight` 写序号只把那根用强调色。
+
+### `points` 标签 + 一句话
+```json
+{"type":"points","items":[{"tag":"HBM4","text":"Q4 出货量将超过 HBM3E"},{"tag":"担心","tone":2,"text":"现金流转负"}]}
+```
+电话会要点、市场观点、风险、“数字怎么来的”对账。默认标签用强调色；`tone` 可写 `up` `down` `gray` `dark` `accent` 或分类色序号；`colors:"cats"` 让同名标签同色。`company` 在句首加 logo 和公司名，`sub` 是第二行小字，`cols:2` 两列。
+
+### `callout` 提示框
+```json
+{"type":"callout","tone":"down","title":"缺口 **21** 亿美元","text":"花的比赚的多 → 需要外部融资"}
+```
+澄清一个容易误读的事实、强调一个结论、标明“未披露”。`tone`：`accent`（默认）`up` `down` `gray`。
+
+### `text` 段落
+大号小标题 + 一段说明，不带卡片。用来在海报中途换话题（“芯片商投钱，也绑定 **Muse**”）。
+
+### `cards` 小卡片
+```json
+{"type":"cards","items":[{"title":"Muse Spark","sub":"4 月 · 驱动 Muse"},{"title":"用户","value":"1,000万+","sub":"约 6 周"}]}
+```
+产品线、时间节点、并列的小概念。默认强调色，`colors:"cats"` 每张一色，`cols` 定列数。
+
+### `heatmap` 热力表
+```json
+{"type":"heatmap","format":"pct","columns":["周一","周二"],"rows":[{"label":"SPY","values":[-6,4]}]}
+```
+格子颜色按值相对 `center`（默认 0）的方向用涨跌色、按幅度定深浅；想显示 A 值、按 B 值上色时写 `colors` 矩阵（如格内写量倍数、颜色表示偏离）。`format`：`pct`（带正负号百分比）、`x`（倍数）或不写。
+
+### `deviation` 偏离条
+```json
+{"type":"deviation","columns":["成交量","Call/Put"],"bar_label":"偏离 20 日常态","range":30,"rows":[{"label":"SPY","sub":"标普 500","cols":["0.8×",["0.76","常态 0.90"]],"value":-16}]}
+```
+中线是常态 / 基准，向右高于、向左低于，刻度为 ±`range`。`cols` 里的项写成 `[值, 小字]` 时小字跟在后面。
+
+### `chips` 分组名单
+```json
+{"type":"chips","groups":[{"label":"偏多","items":[["NASDAQ:CRWD","up"],"NASDAQ:NVDA"]}]}
+```
+观察名单、名单外异动。每家一个 logo 胶囊，第二项是圆点颜色（`up` `down` `gray`）；`show_name:true` 显示名称。
+
+### `target` 目标价刻度
+```json
+{"type":"target","items":[{"company":"NASDAQ:SMCI","price":38.5,"unit":"美元","rating":"摩根大通 · 维持中性","targets":[{"org":"摩根大通","tp":42,"highlight":true},{"org":"瑞银","tp":30}]}]}
+```
+浅色条带是各家目标价范围，竖线是现价，实心点是高亮那家；右侧显示其目标价和相对现价的空间（没有高亮时取中位数）。
+
 ### `html` 自定义
 现有版块放不下时才用，直接写 HTML，可复用 `.card` `.card-h` `.co` 等类。
 
 ## 常用组合
+
+完整的骨架和信息收集清单见 `recipes.md`。
 
 - **产业链名单**：`chain` → 页脚
 - **持仓占比**：`holdings` → `notes`

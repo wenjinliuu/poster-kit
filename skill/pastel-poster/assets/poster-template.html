@@ -35,7 +35,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
   font-family:var(--p-body);color:var(--ink);background:linear-gradient(180deg,#ffffff 0,#fafbfd 560px,#f7f8fc 100%);display:flex;flex-direction:column;gap:30px}
 .poster *{box-sizing:border-box}
 .poster > *:not(.bg-obj){position:relative;z-index:1}
-.bg-obj{position:absolute;top:-20px;right:-90px;width:620px;z-index:0;pointer-events:none}
+.bg-obj{position:absolute;top:-20px;right:-90px;width:620px;display:flex;justify-content:flex-end;z-index:0;pointer-events:none}
 .bg-obj svg,.gt-icon svg,.ri svg{display:block}
 .p-eyebrow{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--ink3);margin-bottom:-14px}
 .p-eyebrow .tag{font-size:14px;padding:4px 10px;border-radius:999px;border:1.5px solid var(--ink3);font-weight:500}
@@ -144,6 +144,152 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .notes div{display:flex;gap:10px}
 .notes div::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:11px;flex:none}
 
+/* 品牌头部（个股、公司事件海报） */
+.p-brand{display:flex;align-items:center;gap:22px;margin-bottom:-8px}
+.pb-name{display:grid;gap:2px;flex:1;min-width:0}
+.pb-name b{font-family:var(--p-title);font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-.01em;white-space:nowrap}
+.pb-name span{font-size:18px;color:var(--ink3);font-family:var(--p-num);font-weight:700}
+.pb-r{display:grid;justify-items:end;gap:4px;text-align:right}
+.pb-r b{font-family:var(--p-num);font-size:24px;font-weight:800;color:var(--accent);letter-spacing:.03em;white-space:nowrap}
+.pb-r span{font-size:18px;color:var(--ink2);font-weight:700;white-space:nowrap}
+/* 标题强调：**文字** */
+.p-title .t1,.p-title .t2{white-space:nowrap}
+.p-title em{font-style:normal;color:var(--accent)}
+.p-title .t2.mixed{color:var(--ink);font-size:76px;line-height:1.15}
+.p-title .t2.mixed em{font-family:var(--p-num);font-size:1.62em;line-height:1;letter-spacing:-.04em}
+.p-title .t3 em{font-weight:900;font-family:var(--p-num)}
+/* 版块标题编号、子块、并排 */
+.card-h h3 .num{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--accent);color:#fff;font-style:normal;
+  font-family:var(--p-num);font-size:22px;font-weight:800;margin-right:14px;vertical-align:3px;line-height:1}
+.card-h h3 em,.sub-h h4 em{font-style:normal;color:var(--accent)}
+.bare{display:grid;gap:18px}
+.sub{display:grid;gap:16px}
+.sub + .sub{border-top:1.5px solid #eef0f5;padding-top:26px}
+.sub-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.sub-h h4{margin:0;font-family:var(--p-title);font-size:23px;font-weight:900}
+.sub-h span{font-size:15px;color:var(--ink3);text-align:right}
+.row{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:16px;align-items:stretch}
+.row > .card{min-width:0}
+.row .card-h{flex-wrap:wrap}
+.cap{font-size:15px;color:var(--ink3);line-height:1.6}
+.cap em,.pt em,.callout em,.p-text em{font-style:normal;font-weight:800;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:15px;color:var(--ink2);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend i{display:inline-block;width:16px;height:16px;border-radius:5px}
+.legend svg{display:block}
+/* 图表：SVG 画形状，文字用绝对定位的 HTML（SVG 里的文字导出时拿不到网页字体） */
+.chart{position:relative;width:100%}
+.chart svg{display:block;overflow:visible}
+.cl{position:absolute;white-space:nowrap;font-family:var(--p-num);font-weight:800;font-size:19px;line-height:1.2;color:var(--ink2)}
+.cl.sm{font-size:15px}
+.cl.ax{font-size:14px;font-weight:600;color:var(--ink3);font-family:var(--p-num)}
+.cl.xl{font-family:var(--p-body);font-size:17px;font-weight:800;color:var(--ink2)}
+.cl.xs{font-family:var(--p-body);font-size:13px;font-weight:500;color:var(--ink3)}
+/* kpis 增强 */
+.kpi .d em{font-style:normal;font-weight:800;color:var(--ink2)}
+.kpi.accent .v{color:var(--accent)} .kpi.ink .v{color:var(--ink)}
+.kpi .rows{display:grid;gap:3px;margin-top:10px}
+.kpi .rows div{display:flex;justify-content:space-between;gap:8px;font-size:16px;color:var(--ink3)}
+.kpi .rows b{font-family:var(--p-num);font-weight:800;color:var(--ink)}
+.kpi .rows b.up{color:var(--up)} .kpi .rows b.down{color:var(--down)}
+.kpis.list{gap:22px}
+.kpis.list .kpi{border:none;padding:0;border-radius:0;background:none;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"k k" "v d";column-gap:22px;align-items:end}
+.kpis.list .kpi .k{grid-area:k;font-weight:700} .kpis.list .kpi .v{grid-area:v} .kpis.list .kpi .d{grid-area:d;padding-bottom:8px;line-height:1.45}
+/* beat：实际 vs 预期 */
+.beat{display:grid;gap:22px}
+.bt-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:start}
+.bt-row > b{font-size:22px;font-weight:900;padding-top:38px}
+/* mix：构成条 + 分项卡 */
+.mixbar{height:54px}
+.mixbar div{place-items:center start;padding:0 18px;font-family:var(--p-body);font-size:20px}
+.mix-cards{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:16px}
+.mxc{border-radius:22px;background:var(--g-tint);padding:20px 24px;display:grid;gap:8px;align-content:start}
+.mxc > b{font-family:var(--p-num);font-size:22px;font-weight:800;color:var(--g-deep)}
+.mxc div{display:flex;justify-content:space-between;gap:12px;font-size:17px;color:var(--ink2)}
+.mxc div em{font-style:normal;font-family:var(--p-num);font-weight:800;color:var(--g-deep);white-space:nowrap}
+.mxc div em.up{color:var(--up)} .mxc div em.down{color:var(--down)}
+/* bars：通用横向条 */
+.bars{display:grid;gap:14px}
+.br-row{display:grid;grid-template-columns:var(--lw,230px) minmax(0,1fr) var(--vw,150px);align-items:center;gap:18px}
+.br-row.ex{grid-template-columns:var(--lw,230px) minmax(0,1fr) var(--vw,150px) 120px}
+.bars.stack .br-row{grid-template-columns:minmax(0,1fr) var(--vw,170px);row-gap:6px}
+.bars.stack .br-row > .bl{grid-column:1 / -1}
+.bl{display:grid;min-width:0}
+.bl b{font-size:19px;font-weight:800;line-height:1.3}
+.bl span{font-size:14px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.br-row.hl .bl b{color:var(--accent)} .br-row.dim .bl b{font-weight:500;color:var(--ink2)}
+.trk{display:flex;height:24px;border-radius:12px;background:var(--track);overflow:hidden}
+.trk b{display:block;height:100%}
+.trk b:first-child{border-radius:12px 0 0 12px} .trk b:last-child{border-radius:0 12px 12px 0} .trk b:only-child{border-radius:12px}
+.br-row .val{font-family:var(--p-num);font-weight:800;font-size:26px;white-space:nowrap}
+.br-row.hl .val{color:var(--accent)}
+.br-row .val small{font-family:var(--p-body);font-size:15px;color:var(--ink3);font-weight:500;margin-left:4px}
+.br-row .ex{font-size:15px;color:var(--ink3);text-align:right;white-space:nowrap}
+/* points：标签 + 一句话 */
+.pts{display:grid;grid-template-columns:repeat(var(--cols,1),minmax(0,1fr));gap:14px 32px}
+.pt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start;font-size:18px;line-height:1.55;color:var(--ink)}
+.ptag{display:inline-block;min-width:92px;text-align:center;padding:3px 12px;border-radius:999px;color:#fff;font-size:15px;font-weight:800;line-height:1.5;white-space:nowrap}
+.pt .co-in{display:inline-flex;align-items:center;gap:8px;font-weight:800;margin-right:8px;vertical-align:-6px}
+.pt small{display:block;font-size:14px;color:var(--ink3)}
+/* callout / text / cards */
+.callout{border-radius:24px;padding:22px 30px;display:grid;gap:4px}
+.callout > b{font-size:22px;font-weight:900}
+.callout > b em{font-family:var(--p-num);font-size:1.15em;color:inherit}
+.callout > span{font-size:17px;color:var(--ink2);line-height:1.55}
+.p-text{display:grid;gap:10px}
+.p-text h3{margin:0;font-family:var(--p-title);font-size:42px;font-weight:900;letter-spacing:-.015em;line-height:1.2}
+.p-text h3 em{color:var(--accent);font-family:inherit}
+.p-text p{margin:0;font-size:19px;line-height:1.7;color:var(--ink2)}
+.mcards{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:14px}
+.mcard{border-radius:22px;background:var(--g-tint);border:1.5px solid var(--g-soft);padding:18px 20px;display:grid;gap:4px;align-content:start}
+.mcard b{font-family:var(--p-num);font-size:22px;font-weight:800;color:var(--g-deep);line-height:1.25}
+.mcard strong{font-family:var(--p-num);font-size:34px;font-weight:800;color:var(--g-deep);line-height:1.1}
+.mcard span{font-size:15px;color:var(--ink3);line-height:1.5}
+/* heatmap */
+.hmt td{padding:6px 5px;border:none} .hmt th{border:none;text-align:center;padding:0 5px 10px}
+.hmt td:first-child{padding-right:14px;white-space:nowrap}
+.hmt td:first-child b{font-family:var(--p-body);font-size:19px;font-weight:800}
+.hmt td:first-child small{display:block;font-family:var(--p-body);font-size:13px;color:var(--ink3);font-weight:500}
+.hm{display:block;border-radius:12px;padding:10px 4px;text-align:center;font-size:19px;font-weight:800}
+.hm.na{background:#f4f5f9;color:var(--ink3)}
+/* deviation：以常态为中线的偏离条 */
+.devs{display:grid;gap:0}
+.dv-row{display:grid;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #eef0f5}
+.dv-row:last-child{border-bottom:none}
+.dv-row.dv-h{padding:0 0 10px;font-size:14px;color:var(--ink3);border-bottom:1px solid #e6e8ef}
+.dv-c{font-family:var(--p-num);font-weight:800;font-size:21px;white-space:nowrap}
+.dv-c small{font-size:14px;color:var(--ink3);font-weight:600;margin-left:3px}
+.dv-trk{position:relative;height:18px;border-radius:9px;background:var(--track)}
+.dv-trk b{position:absolute;top:0;height:100%;border-radius:9px}
+.dv-trk i{position:absolute;top:-7px;left:50%;width:3px;height:32px;margin-left:-1.5px;border-radius:2px;background:var(--ink)}
+.dv-trk i.q{width:1.5px;height:18px;top:0;background:#d8dbe4}
+.dv-v{font-family:var(--p-num);font-weight:800;font-size:26px;text-align:right;white-space:nowrap}
+/* chips：分组名单 */
+.chips{display:grid;gap:14px}
+.ch-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:14px;align-items:center}
+.ch-row > b{font-size:18px;font-weight:800;color:var(--ink2)}
+.ch-list{display:flex;flex-wrap:wrap;gap:10px}
+.chip{display:inline-flex;align-items:center;gap:9px;padding:6px 14px 6px 6px;border-radius:999px;background:#f4f5f9}
+.chip b{font-family:var(--p-num);font-weight:800;font-size:19px}
+.chip span{font-size:15px;color:var(--ink3)}
+.chip i{width:10px;height:10px;border-radius:50%}
+/* target：目标价刻度 */
+.tgs{display:grid;gap:0}
+.tg-row{display:grid;grid-template-columns:250px minmax(0,1fr) 190px;gap:24px;align-items:center;padding:20px 0;border-bottom:1px solid #eef0f5}
+.tg-row:last-child{border-bottom:none}
+.tg-l{display:grid;gap:8px;min-width:0}
+.tg-rt{font-size:15px;color:var(--ink2);font-weight:700}
+.tg-r{display:grid;justify-items:end;gap:2px;text-align:right}
+.tg-r span{font-size:14px;color:var(--ink3)}
+.tg-r b{font-family:var(--p-num);font-size:38px;font-weight:800;line-height:1.1}
+.tg-r b small{font-size:16px;color:var(--ink3);margin-left:3px;font-weight:600}
+.tg-r em{font-style:normal;font-family:var(--p-num);font-weight:800;font-size:20px}
+.tg-r em.up{color:var(--up)} .tg-r em.down{color:var(--down)}
+
+.p-title{grid-template-columns:minmax(0,1fr)}
+.kpi{grid-template-columns:minmax(0,1fr)}
+.poster .kpis.list .kpi{border:none!important;box-shadow:none!important}
+
 /* 版本差异 */
 .poster[data-v="clear"]{background:linear-gradient(180deg,#ffffff 0,#fbfcfe 100%)}
 .poster[data-v="clear"] .card,.poster[data-v="clear"] .kpi{box-shadow:none;border:1.5px solid #eceef5}
@@ -176,14 +322,23 @@ const fmt=n=>typeof n==="number"?n.toLocaleString("en-US"):esc(n);
 const $=s=>document.querySelector(s);
 
 /* ---------- 等距物件（程序绘制） ---------- */
+// 坐标：x 向右下、y 向左下、z 向上；box 画左、右、顶三面，cyl 画竖直圆柱。先画的在后面（画家算法），从后往前写。
 function Iso(){this.s=[];this.b=[1e9,1e9,-1e9,-1e9]}
-Iso.prototype.pt=function(x,y,z){const X=(x-y)*.866,Y=(x+y)*.5-z,b=this.b;if(X<b[0])b[0]=X;if(Y<b[1])b[1]=Y;if(X>b[2])b[2]=X;if(Y>b[3])b[3]=Y;return X.toFixed(1)+","+Y.toFixed(1)};
+Iso.prototype.grow=function(X,Y){const b=this.b;if(X<b[0])b[0]=X;if(Y<b[1])b[1]=Y;if(X>b[2])b[2]=X;if(Y>b[3])b[3]=Y};
+Iso.prototype.xy=function(x,y,z){const X=(x-y)*.866,Y=(x+y)*.5-z;this.grow(X,Y);return[X,Y]};
+Iso.prototype.pt=function(x,y,z){const[X,Y]=this.xy(x,y,z);return X.toFixed(1)+","+Y.toFixed(1)};
 Iso.prototype.poly=function(pts,fill){this.s.push(`<polygon points="${pts.map(q=>this.pt(...q)).join(" ")}" fill="${fill}" stroke-linejoin="round"/>`)};
 Iso.prototype.box=function(x,y,z,w,d,h,c){
   this.poly([[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]],c.l);
   this.poly([[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]],c.r);
   this.poly([[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]],c.t)};
-Iso.prototype.svg=function(width,shadow){const[a,b,c,d]=this.b,pad=12,vw=c-a+pad*2,vh=d-b+pad*2;
+// 竖直圆柱：(x,y) 为底面圆心。地面上的圆投影成横向椭圆，rx = 1.2247r，ry = 0.7071r
+Iso.prototype.cyl=function(x,y,z,r,h,c){const[cx,yb]=this.xy(x,y,z),[,yt]=this.xy(x,y,z+h),rx=r*1.2247,ry=r*.7071,f=v=>v.toFixed(1);
+  this.grow(cx-rx,yt-ry);this.grow(cx+rx,yb+ry);
+  this.s.push(`<path d="M${f(cx-rx)},${f(yt)}L${f(cx-rx)},${f(yb)}A${f(rx)},${f(ry)} 0 0 0 ${f(cx+rx)},${f(yb)}L${f(cx+rx)},${f(yt)}Z" fill="${c.l}"/>`,
+    `<path d="M${f(cx)},${f(yt+ry)}L${f(cx)},${f(yb+ry)}A${f(rx)},${f(ry)} 0 0 0 ${f(cx+rx)},${f(yb)}L${f(cx+rx)},${f(yt)}Z" fill="${c.r}"/>`,
+    `<ellipse cx="${f(cx)}" cy="${f(yt)}" rx="${f(rx)}" ry="${f(ry)}" fill="${c.t}"/>`)};
+Iso.prototype.svg=function(width,shadow,maxH){const[a,b,c,d]=this.b,pad=12,vw=c-a+pad*2,vh=d-b+pad*2;if(maxH&&width*vh/vw>maxH)width=maxH*vw/vh;
   const sh=shadow?`<ellipse cx="${((a+c)/2).toFixed(1)}" cy="${(d-4).toFixed(1)}" rx="${((c-a)*.42).toFixed(1)}" ry="${((c-a)*.09).toFixed(1)}" fill="${shadow}"/>`:"";
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${(width*vh/vw).toFixed(1)}" viewBox="${(a-pad).toFixed(1)} ${(b-pad).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}">${sh}${this.s.join("")}</svg>`};
 const DRAW={
@@ -195,13 +350,39 @@ const DRAW={
   rack(B,p){const L=290,D=180,U=48;for(let k=0;k<3;k++){const z=k*(U+8);B.box(0,0,z,L,D,U,p.body);
     B.poly([[22,D,z+14],[180,D,z+14],[180,D,z+20],[22,D,z+20]],p.dark);B.poly([[22,D,z+28],[180,D,z+28],[180,D,z+34],[22,D,z+34]],p.dark);
     B.poly([[226,D,z+17],[242,D,z+17],[242,D,z+31],[226,D,z+31]],p.core.r);B.poly([[252,D,z+17],[268,D,z+17],[268,D,z+31],[252,D,z+31]],p.core.r)}},
-  coin(B,p){for(let k=0;k<4;k++){const z=k*16;B.box(0,0,z,170,170,12,p.body)}B.box(30,30,64,110,110,6,p.core)},
-  globe(B,p){B.box(0,0,0,220,220,10,p.body);for(let i=0;i<4;i++)B.box(30+i*42,30+i*10,10,30,170-i*20,40+i*34,i%2?p.core:p.pin)}
+  coin(B,p){B.cyl(70,190,0,62,40,p.pin);for(let k=0;k<5;k++)B.cyl(180,120,k*15,88,12,k===4?p.core:p.body);B.cyl(180,120,75,52,2,p.pin)},
+  globe(B,p){B.box(0,0,0,220,220,10,p.body);for(let i=0;i<4;i++)B.box(30+i*42,30+i*10,10,30,170-i*20,40+i*34,i%2?p.core:p.pin)},
+  battery(B,p){const L=330,D=150,H=150;B.box(L,40,40,26,70,70,p.pin);B.box(0,0,0,L,D,H,p.body);
+    for(let k=0;k<4;k++)B.box(26+k*72,24,H,52,D-48,8,k<3?p.core:p.pin)},
+  building(B,p){B.box(150,0,0,110,110,250,p.body);B.box(0,40,0,120,120,150,p.pin);B.box(160,150,0,130,100,100,p.body);
+    for(let z=30;z<240;z+=34)B.poly([[166,110,z],[244,110,z],[244,110,z+12],[166,110,z+12]],p.dark);
+    for(let z=26;z<140;z+=30)B.poly([[14,160,z],[106,160,z],[106,160,z+10],[14,160,z+10]],p.dark)},
+  wafer(B,p){const R=150;B.cyl(R,R,0,R,12,p.body);for(let i=-5;i<5;i++)for(let j=-5;j<5;j++){const x=i*28+14,y=j*28+14;
+    if(Math.hypot(x+14,y+14)<R-22&&Math.hypot(x,y)<R-30)B.box(R+x-11,R+y-11,12,22,22,4,(i+j)%3?p.pin:p.core)}},
+  db(B,p){for(let k=0;k<3;k++)B.cyl(120,120,k*62,110,50,k===2?p.core:p.body);B.cyl(120,120,186,70,2,p.pin)},
+  robot(B,p){B.box(20,70,0,60,50,90,p.pin);B.box(150,70,0,60,50,90,p.pin);B.box(0,40,90,230,110,150,p.body);
+    B.box(40,55,240,150,80,100,p.body);B.poly([[70,135,290],[100,135,290],[100,135,310],[70,135,310]],p.dark);
+    B.poly([[130,135,290],[160,135,290],[160,135,310],[130,135,310]],p.dark);B.box(105,85,340,20,20,40,p.core);B.box(-36,70,120,36,50,110,p.core);B.box(230,70,120,36,50,110,p.core)},
+  custom(B,p){ // spec.object = {parts:[["box",x,y,z,w,d,h,"body"],["cyl",x,y,z,r,h,"core"],...]}，色调 body/core/pin
+    ((SPEC.object&&SPEC.object.parts)||[]).forEach(q=>{const t=p[q[q.length-1]]||p.body;
+      if(q[0]==="box")B.box(q[1],q[2],q[3],q[4],q[5],q[6],t);else if(q[0]==="cyl")B.cyl(q[1],q[2],q[3],q[4],q[5],t)})}
 };
+const OBJ=SPEC.object&&typeof SPEC.object==="object"?"custom":SPEC.object;
 const tri=(c,a,b,d)=>({t:mix(c,W,a),l:mix(c,W,b),r:mix(c,W,d)});
 const bgPal=a=>({body:tri(a,.95,.9,.84),core:tri(a,.88,.8,.72),pin:tri(a,.91,.85,.79),inner:mix(a,W,.84),dark:mix(a,W,.7),shadow:mix(a,W,.95)});
 const iconPal=g=>({body:tri(g,.8,.62,.45),core:tri(g,.6,.4,.22),pin:tri(g,.75,.6,.45),inner:mix(g,W,.5),dark:mix(g,K,.1)});
-function isoSVG(kind,pal,width,shadow){if(!DRAW[kind])return"";const B=new Iso();DRAW[kind](B,pal);return B.svg(width,shadow)}
+function isoSVG(kind,pal,width,shadow,maxH){if(!DRAW[kind])return"";const B=new Iso();DRAW[kind](B,pal);return B.svg(width,shadow,maxH)}
+
+/* ---------- 颜色与文字 ---------- */
+const ACC=SPEC.accent||CATS[0];
+// 强调色若是 8 色之一，分类色从它开始轮转，整张海报的主色一致
+const PAL=CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:CATS;
+const UD=UPDOWN[SPEC.updown||"cn"];const GRAY="#b8bdc8",DIM="#a3a9b8";
+const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<em>$1</em>"); // **重点** 显示为强调
+const sign=v=>typeof v!=="number"?esc(v):(v>0?"+":v<0?"−":"")+fmt(Math.abs(v));
+const autoTone=s=>/^\s*\+/.test(String(s))?"up":/^\s*[-−]/.test(String(s))?"down":"";
+function toneHex(t,i){if(t==="up")return UD.up;if(t==="down")return UD.down;if(t==="gray")return DIM;if(t==="dark")return "#23253a";
+  if(t==="accent")return ACC;if(typeof t==="number")return PAL[t%8];if(typeof t==="string"&&t[0]==="#")return t;return PAL[(i||0)%8]}
 
 /* ---------- 公司 ---------- */
 const CO=SPEC.companies||{};
@@ -215,65 +396,244 @@ function labelItem(it,size){ // 排行里既可以是公司键，也可以是 {l
   if(typeof it==="string"&&CO[it])return coItem(it,size);
   const l=typeof it==="string"?{label:it}:it;return `<div class="co"><span class="badge" style="--bs:${size}px;--c:#8e91a7">${esc((l.label||"·")[0])}</span><div class="co-t"><b>${esc(l.label)}</b><span>${esc(l.sub||"")}</span></div></div>`}
 
-/* ---------- 版块 ---------- */
-const cardH=(t,n)=>t?`<div class="card-h"><h3>${esc(t)}</h3><span>${esc(n||"")}</span></div>`:"";
+/* ---------- 图表（在 paint 时按容器实际宽度画） ---------- */
+const REG=[];const reg=(kind,data)=>{REG.push({kind,...data});return REG.length-1};
+let UID=0;
+function Chart(w,h){this.w=w;this.h=h;this.s=[];this.t=[];this.d=[]}
+Chart.prototype.svg=function(x){this.s.push(x)};
+Chart.prototype.def=function(x){this.d.push(x)};
+// 文字：ax 水平对齐 l/c/r，ay 垂直对齐 t/m/b（相对 x,y 点）
+Chart.prototype.text=function(x,y,html,cls,ax,ay,color){const tx={l:"0",c:"-50%",r:"-100%"}[ax||"c"],ty={t:"0",m:"-50%",b:"-100%"}[ay||"b"];
+  this.t.push(`<span class="cl ${cls||""}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;transform:translate(${tx},${ty})${color?`;color:${color}`:""}">${html}</span>`)};
+Chart.prototype.done=function(el){el.style.height=this.h+"px";
+  el.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" width="${this.w}" height="${this.h}" viewBox="0 0 ${this.w} ${this.h}"><defs>${this.d.join("")}</defs>${this.s.join("")}</svg>${this.t.join("")}`};
+const vgrad=(id,c)=>`<linearGradient id="${id}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="${mix(c,W,.32)}"/><stop offset="1" stop-color="${c}"/></linearGradient>`;
+const hatch=(id,c)=>`<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="12" height="12" fill="${mix(c,W,.8)}"/><rect width="5" height="12" fill="${c}"/></pattern>`;
+function niceTicks(lo,hi){const span=hi-lo||1,step0=span/3,mag=Math.pow(10,Math.floor(Math.log10(step0))),step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=step0);
+  const out=[];for(let v=Math.ceil(lo/step)*step;v<=hi+1e-9;v+=step)out.push(+v.toFixed(10));return out}
+function rect(C,x,y,w,h,fill,state,c){const r=Math.min(7,h/2,w/2);
+  if(state==="plan")C.svg(`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="${r}" fill="#f0f1f5" stroke="${DIM}" stroke-width="2" stroke-dasharray="7 6"/>`);
+  else{if(state==="option"){const id="h"+(UID++);C.def(hatch(id,c));fill=`url(#${id})`}
+    C.svg(`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(h,2).toFixed(1)}" rx="${r}" fill="${fill}"/>`)}}
+function legendHTML(items){return `<div class="legend">${items.map(([kind,c,label])=>{
+  const sw=kind==="plan"?`<svg width="26" height="16"><rect x="1" y="1" width="24" height="14" rx="4" fill="#f0f1f5" stroke="${DIM}" stroke-width="1.5" stroke-dasharray="4 3"/></svg>`
+    :kind==="option"?`<svg width="26" height="16"><defs>${hatch("lg"+(UID),c)}</defs><rect width="26" height="16" rx="4" fill="url(#lg${UID++})"/></svg>`
+    :kind==="line"?`<i style="height:4px;border-radius:2px;background:${c}"></i>`:`<i style="background:${c}"></i>`;
+  return `<span>${sw}${esc(label)}</span>`}).join("")}</div>`}
+
+const CH={
+  beat(el,w,{it}){const C=new Chart(w,72),est=(it.estimates||[]).map(e=>e.value),all=[...est,it.actual];
+    let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo)*.4||Math.abs(hi)*.05||1;lo-=pad;hi+=pad*.7;
+    const L=10,R=w-10,x=v=>L+(v-lo)/(hi-lo)*(R-L),y=52;
+    const med=est.length?est.slice().sort((a,b)=>a-b)[est.length>>1]:it.actual;
+    const good=it.higher_better===false?it.actual<=med:it.actual>=med,c=good?UD.up:UD.down;
+    C.svg(`<rect x="${L}" y="${y-6}" width="${R-L}" height="12" rx="6" fill="#eceef4"/>`);
+    if(est.length){const a=good?Math.min(...est):Math.max(...est);C.svg(`<rect x="${Math.min(x(a),x(it.actual)).toFixed(1)}" y="${y-4}" width="${Math.abs(x(it.actual)-x(a)).toFixed(1)}" height="8" rx="4" fill="${mix(c,W,.5)}"/>`)}
+    est.forEach(v=>C.svg(`<circle cx="${x(v).toFixed(1)}" cy="${y}" r="9" fill="#9aa1ae" stroke="#fff" stroke-width="2.5"/>`));
+    C.svg(`<circle cx="${x(it.actual).toFixed(1)}" cy="${y}" r="13" fill="${c}" stroke="#fff" stroke-width="3"/>`);
+    C.text(Math.min(Math.max(x(it.actual),80),w-80),y-20,`${esc(it.actual_label||"实际")} ${fmt(it.actual)}`,"","c","b",c);
+    C.done(el)},
+
+  waterfall(el,w,s){let run=0;const bars=s.items.map(it=>{let a,b;if(it.total){a=0;b=it.value??run;run=b}else{a=run;b=run+it.value;run=b}return{it,a,b}});
+    const vals=bars.flatMap(b=>[b.a,b.b]),lo=Math.min(0,...vals),hi=Math.max(...vals);
+    const top=44,H=s.height||250,xl=60,bk=(s.brackets||[]).length?48:0,C=new Chart(w,top+H+xl+bk);
+    const y=v=>top+(hi-v)/(hi-lo)*H,n=bars.length,slot=w/n,bw=Math.min(118,slot*.62),tid="t"+(UID++);C.def(vgrad(tid,ACC));
+    const colOf=b=>b.it.g!=null?PAL[b.it.g%8]:b.it.total?ACC:s.colors==="updown"?(b.b>=b.a?UD.up:UD.down):(b.b>=b.a?mix(ACC,W,.3):DIM);
+    bars.forEach((b,k)=>{const it=b.it,cx=slot*(k+.5),x0=cx-bw/2,c=colOf(b),st=it.state||"solid";const y1=y(Math.max(b.a,b.b)),y2=y(Math.min(b.a,b.b));
+      if(it.total&&it.stack){const segs=[];for(let j=k-1;j>=0&&!bars[j].it.total;j--)segs.unshift(bars[j]);
+        segs.forEach(sg=>{const cc=colOf(sg);rect(C,x0,y(sg.b),bw,y(sg.a)-y(sg.b),cc,sg.it.state,cc)})}
+      else rect(C,x0,y1,bw,y2-y1,it.total&&it.g==null?`url(#${tid})`:c,st,c);
+      if(k<n-1)C.svg(`<line x1="${(x0+bw).toFixed(1)}" x2="${(slot*(k+1.5)-bw/2).toFixed(1)}" y1="${y(b.b).toFixed(1)}" y2="${y(b.b).toFixed(1)}" stroke="#c4c8d4" stroke-width="1.5" stroke-dasharray="3 4"/>`);
+      C.text(cx,y1-8,esc(it.text??(it.total?fmt(b.b):sign(it.value))),"","c","b",st==="plan"?"#16172a":mix(c,K,.15));
+      C.text(cx,top+H+12,esc(it.label),"xl","c","t");if(it.sub)C.text(cx,top+H+37,esc(it.sub),"xs","c","t")});
+    C.svg(`<line x1="0" x2="${w}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
+    (s.brackets||[]).forEach(r=>{const xa=slot*r.from+(slot-bw)/2,xb=slot*(r.to+1)-(slot-bw)/2,yb=top+H+xl+4;
+      C.svg(`<path d="M${xa.toFixed(1)},${yb}v10H${xb.toFixed(1)}v-10" fill="none" stroke="${ACC}" stroke-width="2"/>`);C.text((xa+xb)/2,yb+16,rich(r.text),"sm","c","t",mix(ACC,K,.15))});
+    C.done(el)},
+
+  line(el,w,s){const ser=s.series,n=s.x.length,multi=ser.length>1,hl=ser.some(q=>q.highlight),u=s.unit||"";
+    const all=ser.flatMap(q=>q.values).filter(v=>typeof v==="number");let lo=s.ymin??Math.min(0,...all),hi=s.ymax??Math.max(...all);if(s.ymax==null)hi+=(hi-lo)*.15;
+    const top=36,H=s.height||220,padL=s.axis===false?20:52,padR=multi?(s.end_width||190):44,C=new Chart(w,top+H+36);
+    const X=i=>padL+(n===1?0:i/(n-1))*(w-padL-padR),Y=v=>top+(hi-v)/(hi-lo)*H;
+    if(s.axis!==false)niceTicks(lo,hi).forEach(t=>{C.svg(`<line x1="${padL}" x2="${w-padR+10}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}" stroke="${t===0?"#c4c8d4":"#eef0f4"}" stroke-width="1.5"${t===0&&lo<0?' stroke-dasharray="5 5"':""}/>`);C.text(padL-12,Y(t),fmt(t)+u,"ax","r","m")});
+    const every=s.x_every||Math.ceil(n/7);s.x.forEach((t,i)=>{if(i===n-1||(i%every===0&&X(n-1)-X(i)>64))C.text(X(i),top+H+12,esc(t),"ax","c","t")});
+    const grays=["#7d8496","#a3a9b8","#c4c8d4"],ends=[];
+    ser.forEach((q,j)=>{const c=q.color||(hl?(q.highlight?ACC:grays[j%3]):multi?PAL[j%8]:ACC);
+      const pts=q.values.map((v,i)=>typeof v==="number"?[X(i),Y(v),v,i]:null),ok=pts.filter(Boolean);if(!ok.length)return;
+      if(!multi&&s.area!==false){const id="a"+(UID++);C.def(`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".2"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>`);
+        C.svg(`<path d="M${ok[0][0].toFixed(1)},${Y(lo).toFixed(1)}L${ok.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join("L")}L${ok.at(-1)[0].toFixed(1)},${Y(lo).toFixed(1)}Z" fill="url(#${id})"/>`)}
+      const ef=s.est_from??1e9,sw=hl&&!q.highlight?2.5:4;let d="",de="",prev=null;
+      pts.forEach((p,i)=>{if(!p){prev=null;return}const seg=(prev?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1);
+        if(i<=ef)d+=seg;if(i>=ef)de+=(i===ef||!prev?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1);prev=p});
+      C.svg(`<path d="${d}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>`);
+      if(de)C.svg(`<path d="${de}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-dasharray="8 7" stroke-linecap="round"/>`);
+      if(multi){if(n<=8)ok.forEach(p=>C.svg(`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="${c}"/>`));
+        const lp=ok.at(-1);ends.push({x:lp[0],y:lp[1],c,txt:`${esc(q.name)} ${fmt(lp[2])}${esc(u)}`,hl:q.highlight});return}
+      let idx=Array.isArray(s.labels)?s.labels:s.labels==="all"?ok.map(p=>p[3]):s.labels==="end"?[ok.at(-1)[3]]
+        :[...new Set([ok[0][3],ok.at(-1)[3],ok.reduce((a,b)=>b[2]<a[2]?b:a)[3],ok.reduce((a,b)=>b[2]>a[2]?b:a)[3]])];
+      idx.forEach(i=>{const p=pts[i];if(!p)return;C.svg(`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="6" fill="${c}" stroke="#fff" stroke-width="2.5"/>`);
+        const neg=p[2]<0,lab=fmt(p[2])+esc(u),cc=mix(c,K,.12);if(neg)C.text(p[0]+12,p[1],lab,"","l","m",cc);else C.text(p[0],p[1]-12,lab,"",i===0?"l":i===n-1?"r":"c","b",cc)})});
+    ends.sort((a,b)=>a.y-b.y);for(let k=1;k<ends.length;k++)if(ends[k].y-ends[k-1].y<28)ends[k].y=ends[k-1].y+28;
+    ends.forEach(e=>C.text(e.x+14,e.y,e.txt,e.hl?"":"sm","l","m",e.hl?mix(e.c,K,.1):mix(e.c,K,.25)));
+    C.done(el)},
+
+  columns(el,w,s){const ser=s.series,n=s.x.length,m=ser.length,hiOf=v=>Array.isArray(v)?v[1]:v,u=s.unit||"";
+    const all=ser.flatMap(q=>q.values.filter(v=>v!=null).map(hiOf));let hi=s.ymax??Math.max(0,...all)*1.14,lo=s.ymin??Math.min(0,...all)*1.14;
+    const top=36,H=s.height||210,padL=s.axis===false?0:52,C=new Chart(w,top+H+44);
+    const slot=(w-padL)/n,gap=8,bw=Math.min(54,(slot*.74-(m-1)*gap)/m),gw=m*bw+(m-1)*gap,Y=v=>top+(hi-v)/(hi-lo)*H;
+    if(s.axis!==false)niceTicks(lo,hi).forEach(t=>{C.svg(`<line x1="${padL}" x2="${w}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}" stroke="#eef0f4" stroke-width="1.5"/>`);C.text(padL-12,Y(t),fmt(t)+esc(u),"ax","r","m")});
+    C.svg(`<line x1="${padL}" x2="${w}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
+    const small=m*n>10;
+    s.x.forEach((t,i)=>{const cx=padL+slot*(i+.5);C.text(cx,top+H+14,esc(t),"xl","c","t");
+      ser.forEach((q,j)=>{const v=q.values[i];if(v==null)return;const c0=q.g!=null?PAL[q.g%8]:(s.highlight!=null?(i===s.highlight?ACC:mix(ACC,W,.55)):PAL[j%8]);
+        const est=s.est_from!=null&&i>=s.est_from,c=est?mix(c0,W,.5):c0,h=hiOf(v),x=cx-gw/2+j*(bw+gap),y1=Y(Math.max(h,0)),y2=Y(Math.min(h,0));
+        rect(C,x,y1,bw,y2-y1,c,"solid",c);
+        C.text(x+bw/2,h>=0?y1-6:y2+6,Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:sign(h).replace(/^\+/,s.signed?"+":"")+(s.unit_on_bars?esc(u):""),small?"sm":"","c",h>=0?"b":"t",mix(c0,K,.2))})});
+    C.done(el)},
+
+  target(el,w,{it}){const C=new Chart(w,78),tps=it.targets.map(t=>t.tp),all=[...tps,it.price];let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo)*.12||hi*.05;lo-=pad;hi+=pad;
+    const L=8,R=w-8,x=v=>L+(v-lo)/(hi-lo)*(R-L),y=34,mn=Math.min(...tps),mx=Math.max(...tps);
+    C.svg(`<rect x="${L}" y="${y-5}" width="${R-L}" height="10" rx="5" fill="#eceef4"/><rect x="${x(mn).toFixed(1)}" y="${y-5}" width="${(x(mx)-x(mn)).toFixed(1)}" height="10" rx="5" fill="${mix(ACC,W,.72)}"/>`);
+    it.targets.filter(t=>!t.highlight).forEach(t=>C.svg(`<circle cx="${x(t.tp).toFixed(1)}" cy="${y}" r="7" fill="#fff" stroke="${mix(ACC,W,.25)}" stroke-width="3"/>`));
+    it.targets.filter(t=>t.highlight).forEach(t=>C.svg(`<circle cx="${x(t.tp).toFixed(1)}" cy="${y}" r="10" fill="${ACC}" stroke="#fff" stroke-width="3"/>`));
+    C.svg(`<rect x="${(x(it.price)-1.5).toFixed(1)}" y="${y-16}" width="3" height="32" rx="1.5" fill="#16172a"/>`);
+    const px=x(it.price);C.text(px,y+22,`现价 ${fmt(it.price)}`,"sm","c","t","#16172a");
+    if(Math.abs(x(mn)-px)>70)C.text(x(mn),y+22,fmt(mn),"ax","c","t");if(Math.abs(x(mx)-px)>70&&mx!==mn)C.text(x(mx),y+22,fmt(mx),"ax","c","t");
+    C.done(el)}
+};
+
+/* ---------- 版块：每个函数只返回内容，卡片和标题由 section() 统一包 ---------- */
+const CARD=new Set(["holdings","years","ranking","flows","table","beat","waterfall","mix","bars","line","columns","points","heatmap","deviation","chips","target"]);
+const NOHEAD=new Set(["banner","callout","text","group","row"]);
+let NUM=0;
+function head(s,lvl){if(!s.title||NOHEAD.has(s.type))return "";
+  if(lvl==="sub")return `<div class="sub-h"><h4>${rich(s.title)}</h4><span>${esc(s.note||"")}</span></div>`;
+  return `<div class="card-h"><h3>${SPEC.numbered?`<i class="num">${++NUM}</i>`:""}${rich(s.title)}</h3><span>${esc(s.note||"")}</span></div>`}
+function section(s,ctx){const f=SEC[s.type];if(!f)return "";
+  if(s.type==="group")return `<div class="card">${s.title?`<div class="card-h"><h3>${SPEC.numbered?`<i class="num">${++NUM}</i>`:""}${rich(s.title)}</h3><span>${esc(s.note||"")}</span></div>`:""}${s.sections.map(c=>section(c,"sub")).join("")}</div>`;
+  if(s.type==="row")return `<div class="row" style="--n:${s.sections.length}">${s.sections.map(c=>section(c,"row")).join("")}</div>`;
+  const body=f(s)+(s.caption?`<div class="cap">${rich(s.caption)}</div>`:"");
+  if(ctx==="sub")return `<div class="sub">${head(s,"sub")}${body}</div>`;
+  if(CARD.has(s.type)||(ctx==="row"&&!NOHEAD.has(s.type)))return `<div class="card">${head(s)}${body}</div>`;
+  return s.title&&!NOHEAD.has(s.type)?`<div class="bare">${head(s)}${body}</div>`:body}
+
 const SEC={
+  group(){},row(){},
   chain(s){return `<div class="groups">${s.groups.map((g,i)=>`<div class="grp" data-g="${i}"><div class="grp-tag"><div class="gt-name">${esc(g.name)}</div><div class="gt-desc">${esc(g.desc||"")}</div>${g.icon?`<div class="gt-icon" data-icon="${g.icon}" data-g="${i}"></div>`:""}</div><div class="grp-list" style="--cols:${s.cols||4}">${g.companies.map(k=>coItem(k,60)).join("")}</div></div>`).join("")}</div>`},
-  kpis(s){return `<div class="kpis" style="--n:${s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone||""}" ${k.tone?"":`data-g="${i}"`}><div class="k">${esc(k.label)}</div><div class="v">${esc(k.value)}<small>${esc(k.unit||"")}</small></div><div class="d">${esc(k.note||"")}</div></div>`).join("")}</div>`},
+  kpis(s){const list=s.layout==="list";return `<div class="kpis${list?" list":""}" style="--n:${list?1:s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone||""}" ${k.tone?"":`data-g="${i}"`}><div class="k">${esc(k.label)}</div><div class="v" data-fit=".5">${rich(k.value)}<small>${esc(k.unit||"")}</small></div>${k.note?`<div class="d">${rich(k.note)}</div>`:""}${k.rows?`<div class="rows">${k.rows.map(r=>`<div><span>${esc(r[0])}</span><b class="${r[2]??autoTone(r[1])}">${esc(r[1])}</b></div>`).join("")}</div>`:""}</div>`).join("")}</div>`},
   holdings(s){const top=s.items.slice(0,6);
     const cards=top.map((h,i)=>{const c=coInfo(h[0]);return `<div class="hc" data-g="${i}">${badge(h[0],54)}<div class="co-t"><b>${esc(c.code)}</b><span>${esc(c.name)}</span></div><div class="pct">${h[1].toFixed(1)}<small>%</small></div></div>`}).join("");
     const rest=(s.items.slice(6).map(h=>`<div class="rc">${badge(h[0],36)}<b>${esc(coInfo(h[0]).code)}</b><em>${h[1].toFixed(1)}%</em></div>`).join(""))+(s.other!=null?`<div class="rc"><span class="badge" style="--bs:36px;--c:#8e91a7">…</span><b>其他</b><em>${s.other.toFixed(1)}%</em></div>`:"");
-    return `<div class="card">${cardH(s.title,s.note)}<div class="hold"><div class="ring" data-ring='${JSON.stringify({items:s.items.map(h=>h[1]),other:s.other||0})}'><svg class="ring-svg" width="460" height="460" viewBox="0 0 460 460"></svg><div class="ring-c">${SPEC.object?`<div class="ri" data-icon="${SPEC.object}" data-g="-1"></div>`:""}<span>${esc(s.center_label||"合计")}</span><b>${esc(s.center_value||"")}</b></div></div><div class="hold-list">${cards}</div></div>${rest?`<div class="rest">${rest}</div>`:""}</div>`},
+    return `<div class="hold"><div class="ring" data-ring='${JSON.stringify({items:s.items.map(h=>h[1]),other:s.other||0})}'><svg class="ring-svg" width="460" height="460" viewBox="0 0 460 460"></svg><div class="ring-c">${OBJ?`<div class="ri" data-icon="${OBJ}" data-g="-1"></div>`:""}<span>${esc(s.center_label||"合计")}</span><b>${esc(s.center_value||"")}</b></div></div><div class="hold-list">${cards}</div></div>${rest?`<div class="rest">${rest}</div>`:""}`},
   years(s){const max=Math.max(...s.items.map(y=>y[1]));const last=s.items.length-1;
-    return `<div class="card">${cardH(s.title,s.note)}<div class="years">${s.items.map((y,i)=>`<div class="yr${i===last&&s.highlight_last!==false?" hi":""}"><span>${fmt(y[1])}</span><b data-yr="${i===last&&s.highlight_last!==false?"hi":"lo"}" style="height:${(y[1]/max*78).toFixed(1)}%"></b></div>`).join("")}</div><div class="yrx">${s.items.map(y=>`<span>${esc(y[0])}</span>`).join("")}</div></div>`},
+    return `<div class="years">${s.items.map((y,i)=>`<div class="yr${i===last&&s.highlight_last!==false?" hi":""}"><span>${fmt(y[1])}</span><b data-yr="${i===last&&s.highlight_last!==false?"hi":"lo"}" style="height:${(y[1]/max*78).toFixed(1)}%"></b></div>`).join("")}</div><div class="yrx">${s.items.map(y=>`<span>${esc(y[0])}</span>`).join("")}</div>`},
   ranking(s){const max=Math.max(...s.items.map(r=>r[1]));const u=s.unit?`<small>${esc(s.unit)}</small>`:"";
-    const rows=s.items.map((r,i)=>`<div class="rk-row">${labelItem(r[0],50)}<div class="track"><b data-g="${i}" style="width:${(r[1]/max*100).toFixed(1)}%"></b></div><div class="val">${fmt(r[1])}${u}</div></div>`).join("")
-      +(s.other?`<div class="rk-row">${labelItem({label:s.other[0],sub:s.other[2]||""},50)}<div class="track"><b data-g="gray" style="width:${(s.other[1]/max*100).toFixed(1)}%"></b></div><div class="val">${fmt(s.other[1])}${u}</div></div>`:"");
-    return `<div class="card">${cardH(s.title,s.note)}<div class="rank">${rows}</div></div>`},
+    return `<div class="rank">${s.items.map((r,i)=>`<div class="rk-row">${labelItem(r[0],50)}<div class="track"><b data-g="${i}" style="width:${(r[1]/max*100).toFixed(1)}%"></b></div><div class="val">${fmt(r[1])}${u}</div></div>`).join("")
+      +(s.other?`<div class="rk-row">${labelItem({label:s.other[0],sub:s.other[2]||""},50)}<div class="track"><b data-g="gray" style="width:${(s.other[1]/max*100).toFixed(1)}%"></b></div><div class="val">${fmt(s.other[1])}${u}</div></div>`:"")}</div>`},
   banner(s){return `<div class="banner"><span>${esc(s.label)}</span><b>${esc(s.value)}</b><em>${esc(s.note||"")}</em></div>`},
   flows(s){const total=s.items.reduce((a,f)=>a+f.value,0)+(s.other||0);const pct=v=>Math.round(v/total*100);
     const share=s.items.map((f,i)=>`<div data-g="${i}" style="flex:${f.value}">${pct(f.value)}%</div>`).join("")+(s.other?`<div data-g="gray" style="flex:${s.other}">其他 ${pct(s.other)}%</div>`:"");
     const cards=s.items.map((f,i)=>`<div class="flow" data-g="${i}"><div class="flow-h"><span>${esc(f.name)}</span><b>${esc(s.prefix||"")}${fmt(f.value)}${esc(s.suffix||"")}</b><small>占比 ${pct(f.value)}%</small></div><div class="flow-list">${(f.companies||[]).map(k=>coItem(k,44)).join("")}</div></div>`).join("");
-    return `<div class="card">${cardH(s.title,s.note)}<div class="share">${share}</div><div class="flows" style="--n:${s.items.length}">${cards}</div></div>`},
+    return `<div class="share">${share}</div><div class="flows" style="--n:${s.items.length}">${cards}</div>`},
   table(s){const cell=(v,j)=>{const col=s.columns[j]||{};
       if(col.type==="company")return `<td>${coItem(v,44)}</td>`;
       if(col.type==="pct"){const n=+v;return `<td><span class="pill ${n>=0?"up":"down"}">${n>0?"+":""}${n.toFixed(2)}%</span></td>`}
-      return `<td>${fmt(v)}</td>`};
-    return `<div class="card">${cardH(s.title,s.note)}<table class="tbl"><thead><tr>${s.columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr>${r.map(cell).join("")}</tr>`).join("")}</tbody></table></div>`},
-  notes(s){return `<div class="notes">${s.items.map(t=>`<div>${esc(t)}</div>`).join("")}</div>`},
-  html(s){return s.html}
+      return `<td>${typeof v==="string"?rich(v):fmt(v)}</td>`};
+    return `<table class="tbl"><thead><tr>${s.columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr>${r.map(cell).join("")}</tr>`).join("")}</tbody></table>`},
+  notes(s){return `<div class="notes">${s.items.map(t=>`<div>${rich(t)}</div>`).join("")}</div>`},
+  html(s){return s.html},
+
+  // 实际 vs 预期：灰点为各家预期，彩点为实际，超预期用涨色、不及预期用跌色
+  beat(s){return `<div class="beat">${s.items.map(it=>{const est=it.estimates||[];
+    const txt=est.map(e=>{const d=(it.actual/e.value-1)*100;return `${esc(e.name)} ${fmt(e.value)}，${d>=0?"超":"低"} ${Math.abs(d).toFixed(1)}%`}).join("；");
+    return `<div class="bt-row"><b>${esc(it.label)}</b><div><div class="chart" data-chart="${reg("beat",{it})}" style="height:72px"></div>${txt?`<div class="cap">预期（灰点）：${txt}</div>`:""}</div></div>`}).join("")}</div>`},
+  // 瀑布：total 项从 0 画起，其余项在累计值上浮动；state: solid 确定 / option 可选（斜纹）/ plan 计划（虚线框）
+  waterfall(s){const st=[...new Set(s.items.map(i=>i.state||"solid"))],L=Object.assign({solid:"确定",option:"可选",plan:"计划"},s.legend||{});
+    return `<div class="chart" data-chart="${reg("waterfall",{s})}"></div>${st.length>1?legendHTML(st.map(k=>[k,ACC,L[k]])):""}`},
+  // 构成：100% 条 + 每项的量价卡片
+  mix(s){const tot=s.items.reduce((a,b)=>a+b.value,0)+(s.other||0),pc=v=>s.raw?fmt(v)+(s.unit||""):Math.round(v/tot*100)+"%";
+    const bar=`<div class="share mixbar">${s.items.map((it,i)=>`<div data-g="${i}" style="flex:${it.value}${it.value/tot<.05?";padding:0":""}">${it.value/tot>=.1?`${esc(it.name)} ${pc(it.value)}`:it.value/tot>=.05?pc(it.value):""}</div>`).join("")}${s.other?`<div data-g="gray" style="flex:${s.other};padding:0"></div>`:""}</div>`;
+    const withRows=s.items.map((it,i)=>[it,i]).filter(([it])=>it.rows);
+    const cards=withRows.length?`<div class="mix-cards" style="--n:${withRows.length}">${withRows.map(([it,i])=>`<div class="mxc" data-g="${i}"><b>${esc(it.name)}</b>${it.rows.map(r=>`<div><span>${esc(r[0])}</span><em class="${r[2]??""}">${esc(r[1])}</em></div>`).join("")}</div>`).join("")}</div>`:"";
+    return bar+cards},
+  // 通用横向条：value 可以是数字或 [低, 高] 区间；highlight 的一行用强调色，其余变灰
+  bars(s){const hiOf=v=>Array.isArray(v)?v[1]:v,max=s.max||Math.max(...s.items.map(b=>hiOf(b.value)))*1.02,hl=s.items.some(b=>b.highlight),ex=s.items.some(b=>b.extra);
+    const pc=v=>(Math.max(0,v)/max*100).toFixed(1);
+    return `<div class="bars${s.layout==="stack"?" stack":""}" style="${s.label_width?`--lw:${s.label_width}px;`:""}${s.value_width?`--vw:${s.value_width}px`:""}">${s.items.map((b,i)=>{
+      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],g=hl?(b.highlight?"acc":"gray"):s.colors==="cats"?i:(b.tone==="gray"?"gray":"acc");
+      const label=b.company?coItem(b.company,44):`<div class="bl"><b>${rich(b.label)}</b>${b.sub?`<span>${esc(b.sub)}</span>`:""}</div>`;
+      const val=b.text!=null?rich(b.text):(lo===hi?fmt(lo):`${fmt(lo)}–${fmt(hi)}`)+(s.unit?`<small>${esc(s.unit)}</small>`:"");
+      const bar=lo===hi?`<b data-bar="${g}" style="width:${pc(hi)}%"></b>`:`<b data-bar="${g}" style="width:${pc(lo)}%"></b><b data-bar="${g}" class="rg" style="width:${(pc(hi)-pc(lo)).toFixed(1)}%"></b>`;
+      return `<div class="br-row${ex?" ex":""}${hl?(b.highlight?" hl":" dim"):""}">${label}<div class="trk">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
+  line(s){const multi=s.series.length>1&&!s.series.some(q=>q.highlight)&&s.legend!==false;
+    return `${multi?legendHTML(s.series.map((q,j)=>["line",q.color||PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("line",{s})}"></div>`},
+  columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%8]:PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
+  // 标签 + 一句话：电话会要点、市场观点、风险提示。tone: up/down/gray/dark/accent 或分类色序号，不写则同名标签同色
+  points(s){const tags=[...new Set(s.items.map(p=>p.tag))];return `<div class="pts" style="--cols:${s.cols||1}">${s.items.map(p=>{
+    const c=p.tone!=null?toneHex(p.tone):s.colors==="cats"?PAL[tags.indexOf(p.tag)%8]:ACC;return `<div class="pt">${p.tag?`<span class="ptag" style="background:${c}">${esc(p.tag)}</span>`:""}<div>${p.company?`<span class="co-in">${badge(p.company,30)}${esc(coInfo(p.company).name||coInfo(p.company).code)}</span>`:""}${rich(p.text)}${p.sub?`<small>${rich(p.sub)}</small>`:""}</div></div>`}).join("")}</div>`},
+  callout(s){const c=toneHex(s.tone||"accent");return `<div class="callout" style="background:${mix(c,W,.91)}"><b style="color:${mix(c,K,.2)}">${rich(s.title)}</b>${s.text?`<span>${rich(s.text)}</span>`:""}</div>`},
+  text(s){return `<div class="p-text">${s.title?`<h3>${rich(s.title)}</h3>`:""}${s.text?`<p>${rich(s.text)}</p>`:""}</div>`},
+  cards(s){return `<div class="mcards" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((c,i)=>`<div class="mcard" data-g="${s.colors==="cats"?i:"acc"}"><b>${rich(c.title)}</b>${c.value!=null?`<strong>${rich(c.value)}</strong>`:""}${c.sub?`<span>${rich(c.sub)}</span>`:""}</div>`).join("")}</div>`},
+  // 热力表：格子颜色按 colors（不给则按 values）相对 center 的方向和幅度
+  heatmap(s){const ctr=s.center??0,cv=s.rows.flatMap(r=>(r.colors||r.values).filter(v=>typeof v==="number").map(v=>Math.abs(v-ctr))),m=s.range||Math.max(...cv)||1;
+    const f=v=>s.format==="pct"?(v>0?"+":"")+fmt(v)+"%":s.format==="x"?v.toFixed(1)+"×":fmt(v);
+    const cell=(v,c)=>{if(v==null)return `<td><span class="hm na">—</span></td>`;const d=(c??v)-ctr,col=d>=0?UD.up:UD.down,t=Math.min(1,Math.abs(d)/m);
+      return `<td><span class="hm" style="background:${mix(col,W,.92-.5*t)};color:${mix(col,K,.25)}">${f(v)}</span></td>`};
+    return `<table class="tbl hmt"><thead><tr><th></th>${s.columns.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r.company?coItem(r.company,36):`<b>${esc(r.label)}</b>${r.sub?`<small>${esc(r.sub)}</small>`:""}`}</td>${r.values.map((v,j)=>cell(v,r.colors?r.colors[j]:null)).join("")}</tr>`).join("")}</tbody></table>`},
+  // 偏离条：中线为常态/基准，向右为高于、向左为低于
+  deviation(s){const r=s.range||Math.max(...s.rows.map(x=>Math.abs(x.value)))*1.15||1,cols=s.columns||[],u=s.unit??"%";
+    const gt=`grid-template-columns:${s.label_width||190}px ${cols.map(()=>(s.col_width||120)+"px").join(" ")} minmax(0,1fr) 110px`;
+    const hdr=cols.length||s.bar_label?`<div class="dv-row dv-h" style="${gt}"><span></span>${cols.map(c=>`<span>${esc(c)}</span>`).join("")}<span>${esc(s.bar_label||"")}</span><span></span></div>`:"";
+    return `<div class="devs">${hdr}${s.rows.map(x=>{const v=x.value,dir=v>=0?"up":"down",w=Math.min(50,Math.abs(v)/r*50);
+      return `<div class="dv-row" style="${gt}">${x.company?coItem(x.company,40):`<div class="bl"><b>${esc(x.label)}</b>${x.sub?`<span>${esc(x.sub)}</span>`:""}</div>`}${(x.cols||[]).map(c=>Array.isArray(c)?`<span class="dv-c">${rich(c[0])}<small>${esc(c[1])}</small></span>`:`<span class="dv-c">${rich(c)}</span>`).join("")}<div class="dv-trk"><i class="q" style="left:25%"></i><i class="q" style="left:75%"></i><b data-dv="${dir}" style="left:${v>=0?50:50-w}%;width:${w.toFixed(2)}%"></b><i></i></div><div class="dv-v" style="color:${mix(UD[dir],K,.1)}">${sign(v)}${esc(u)}</div></div>`}).join("")}</div>`},
+  // 分组名单：每家一个 logo 胶囊，可带方向圆点
+  chips(s){return `<div class="chips">${s.groups.map(g=>`<div class="ch-row"><b>${esc(g.label)}</b><div class="ch-list">${g.items.map(it=>{const [k,t]=Array.isArray(it)?it:[it];const c=coInfo(k);
+    return `<span class="chip">${badge(k,34)}<b>${esc(c.code)}</b>${s.show_name?`<span>${esc(c.name)}</span>`:""}${t?`<i style="background:${toneHex(t)}"></i>`:""}</span>`}).join("")}</div></div>`).join("")}</div>`},
+  // 目标价刻度：各家目标价分布、现价、高亮那家的目标价和上涨空间
+  target(s){return `<div class="tgs">${s.items.map(it=>{const t=it.targets.find(x=>x.highlight)||it.targets.slice().sort((a,b)=>a.tp-b.tp)[it.targets.length>>1];const up=(t.tp/it.price-1)*100;
+    return `<div class="tg-row"><div class="tg-l">${coItem(it.company,56)}${it.rating?`<span class="tg-rt">${rich(it.rating)}</span>`:""}</div><div class="chart" data-chart="${reg("target",{it})}" style="height:78px"></div><div class="tg-r"><span>目标价${t.org?" · "+esc(t.org):""}</span><b>${fmt(t.tp)}<small>${esc(it.unit||"")}</small></b><em class="${up>=0?"up":"down"}">空间 ${up>=0?"+":"−"}${Math.abs(up).toFixed(1)}%</em></div></div>`}).join("")}</div>`}
 };
 
+function brandHTML(){const b=SPEC.brand;if(!b)return "";const c=b.company?coInfo(b.company):{name:""};
+  return `<div class="p-brand">${b.company?badge(b.company,88):""}<div class="pb-name"><b>${esc(b.name||c.name)}</b>${b.en?`<span>${esc(b.en)}</span>`:""}</div><div class="pb-r">${b.label?`<b>${esc(b.label)}</b>`:""}${b.sub?`<span>${esc(b.sub)}</span>`:""}</div></div>`}
 function posterHTML(){
-  const t=SPEC.title||[];
-  return `${SPEC.object?`<div class="bg-obj" data-bg="${SPEC.object}"></div>`:""}`
+  NUM=0;const t=SPEC.title||[];const mixed=t[1]&&t[1].includes("**");
+  return `${OBJ?`<div class="bg-obj" data-bg="${OBJ}"></div>`:""}`+brandHTML()
    +`<div class="p-eyebrow">${esc(SPEC.eyebrow||"")}${SPEC.tag?`<span class="tag">${esc(SPEC.tag)}</span>`:""}</div>`
-   +`<h2 class="p-title">${t[0]?`<span class="t1">${esc(t[0])}</span>`:""}${t[1]?`<span class="t2">${esc(t[1])}</span>`:""}${t[2]?`<span class="t3">${esc(t[2])}</span>`:""}</h2>`
-   +(SPEC.sections||[]).map(s=>(SEC[s.type]||(()=>""))(s)).join("")
-   +`<div class="p-foot"><div class="fl">${(SPEC.footer||[]).map((l,i,a)=>i<a.length-1?`<span>${esc(l)}</span>`:`<small>${esc(l)}</small>`).join("")}</div><div class="mark"><b>${esc(SPEC.mark||"pastel-poster")}</b><span>${esc(SPEC.mark_sub||"")}</span></div></div>`;
+   +`<h2 class="p-title">${t[0]?`<span class="t1" data-fit=".55">${rich(t[0])}</span>`:""}${t[1]?`<span class="t2${mixed?" mixed":""}" data-fit=".55">${rich(t[1])}</span>`:""}${t[2]?`<span class="t3">${rich(t[2])}</span>`:""}</h2>`
+   +(SPEC.sections||[]).map(s=>section(s,"top")).join("")
+   +`<div class="p-foot"><div class="fl">${(SPEC.footer||[]).map((l,i,a)=>i<a.length-1?`<span>${rich(l)}</span>`:`<small>${esc(l)}</small>`).join("")}</div><div class="mark"><b>${esc(SPEC.mark||"pastel-poster")}</b><span>${esc(SPEC.mark_sub||"")}</span></div></div>`;
 }
+
+/* ---------- 一行放不下就缩小字号（标题、大数字） ---------- */
+function fitText(p){p.querySelectorAll("[data-fit]").forEach(el=>{el.style.fontSize="";let fs=parseFloat(getComputedStyle(el).fontSize);const min=fs*(+el.dataset.fit||.55);
+  for(let k=0;k<60&&el.scrollWidth>el.clientWidth+1&&fs>min;k++){fs-=2;el.style.fontSize=fs+"px"}})}
 
 /* ---------- 上色 ---------- */
 function paint(p,vid){
-  const V=VERSIONS[vid];const accent=SPEC.accent||CATS[0],accent2=CATS[4];const ud=UPDOWN[SPEC.updown||"cn"];
+  const V=VERSIONS[vid];const accent=ACC,accent2=PAL[4];const ud=UD;
   p.style.setProperty("--accent",accent);p.style.setProperty("--banner",V.banner(accent,accent2));
   p.style.setProperty("--up",ud.up);p.style.setProperty("--down",ud.down);p.style.setProperty("--up-soft",mix(ud.up,W,.88));p.style.setProperty("--down-soft",mix(ud.down,W,.88));
-  const gcol=i=>i==="gray"?"#b8bdc8":CATS[+i%CATS.length];
+  const gcol=i=>i==="gray"?GRAY:i==="acc"?accent:PAL[+i%PAL.length];
   p.querySelectorAll("[data-g]").forEach(el=>{const g=el.dataset.g;if(g==="-1")return;const c=gcol(g);
-    el.style.setProperty("--g",c);el.style.setProperty("--g2",CATS[(+g+1)%CATS.length]||c);el.style.setProperty("--g-tint",mix(c,W,V.tint));
+    el.style.setProperty("--g",c);el.style.setProperty("--g-tint",mix(c,W,V.tint));
     el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",mix(c,K,.18));
     if(el.tagName==="B"&&el.parentElement.classList.contains("track"))el.style.background=g==="gray"?c:tone(c);
     else if(el.tagName==="B"||el.parentElement.classList.contains("share"))el.style.background=c});
+  p.querySelectorAll("[data-bar]").forEach(el=>{const g=el.dataset.bar,c=g==="gray"?DIM:gcol(g);el.style.background=el.classList.contains("rg")?mix(c,W,.6):tone(c)});
+  p.querySelectorAll("[data-dv]").forEach(el=>{const c=ud[el.dataset.dv];el.style.background=tone(c,el.dataset.dv==="up"?"90deg":"270deg")});
   p.querySelectorAll("[data-yr]").forEach(el=>{el.style.background=el.dataset.yr==="hi"?tone(accent,"0deg"):mix(accent,W,.78)});
   p.querySelectorAll("[data-icon]").forEach(el=>{const g=el.dataset.g;const pal=g==="-1"?bgPal(accent):iconPal(gcol(g));el.innerHTML=isoSVG(el.dataset.icon,pal,parseFloat(getComputedStyle(el).width)||80,null)});
-  p.querySelectorAll("[data-bg]").forEach(el=>{el.innerHTML=isoSVG(el.dataset.bg,bgPal(accent),620,bgPal(accent).shadow)});
+  p.querySelectorAll("[data-bg]").forEach(el=>{el.innerHTML=isoSVG(el.dataset.bg,bgPal(accent),620,bgPal(accent).shadow,430)});
+  p.querySelectorAll("[data-chart]").forEach(el=>{const r=REG[+el.dataset.chart];try{CH[r.kind](el,el.clientWidth,r.s?r.s:r)}catch(e){console.error(e);el.innerHTML=`<div class="cap">图表数据有误：${esc(e.message)}</div>`}});
   p.querySelectorAll("[data-ring]").forEach(el=>{const d=JSON.parse(el.dataset.ring);const svg=el.querySelector("svg");
     const cx=230,r=178,sw=74,C2=2*Math.PI*r;let off=0,s=`<circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="#eef0f4" stroke-width="${sw}"/>`;const labs=[];
-    const segs=d.items.slice(0,6).map((v,i)=>[v,CATS[i],v>=10]);const restSum=d.items.slice(6).reduce((a,b)=>a+b,0);
+    const segs=d.items.slice(0,6).map((v,i)=>[v,PAL[i],v>=10]);const restSum=d.items.slice(6).reduce((a,b)=>a+b,0);
     if(restSum)segs.push([restSum,"#9aa1ae",false]);if(d.other)segs.push([d.other,"#d5d9e1",false]);
     segs.forEach(([v,c,lab])=>{const len=v/100*C2;s+=`<circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-dasharray="${Math.max(len-4,0).toFixed(2)} ${C2.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cx})"/>`;
       if(lab){const a=(off+len/2)/C2*2*Math.PI-Math.PI/2;labs.push(`<span class="ring-lab" style="left:${(cx+r*Math.cos(a)).toFixed(1)}px;top:${(cx+r*Math.sin(a)).toFixed(1)}px">${v.toFixed(1)}%</span>`)}off+=len});
     svg.innerHTML=s;el.querySelectorAll(".ring-lab").forEach(e=>e.remove());svg.insertAdjacentHTML("afterend",labs.join(""))});
+  fitText(p);
 }
 
 /* ---------- 页面 ---------- */
@@ -326,7 +686,7 @@ function init(){
     const fr=document.createElement("div");fr.className="frame";const p=document.createElement("div");p.className="poster";p.dataset.v=vid;p.innerHTML=posterHTML();
     fr.appendChild(p);sec.appendChild(fr);main.appendChild(sec);paint(p,vid);
     sec.querySelector(".dl").addEventListener("click",()=>download(p,vid,sec.querySelector(".dl"),sec.querySelector(".dl-msg")))});
-  requestAnimationFrame(fitAll);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitAll);
+  requestAnimationFrame(fitAll);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{document.querySelectorAll(".frame > .poster").forEach(fitText);fitAll()});
   new ResizeObserver(fitAll).observe(document.body);
 }
 init();
