@@ -1,18 +1,38 @@
 #!/usr/bin/env python3
-"""把 spec.json 和 logos.json 填进海报模板，生成可发布的 HTML 页面。
+"""把 spec.json 和 logos.json 填进海报模板，生成海报网页，可选直接导出 PNG。
 
 用法：
-    python3 build_poster.py spec.json logos.json out.html [--preview preview.png]
+    python3 build_poster.py spec.json logos.json out.html [--png out.png] [--scale 2] [--standalone] [--no-embed-fonts]
 
---preview 会用无头浏览器把第一个版本截成 PNG，方便发布前检查一次版式
-（需要 playwright；没有就跳过，不影响生成）。
+    --png         生成网页后用无头浏览器按“下载高清图”同一套逻辑导出 PNG（需要 playwright）
+    --scale       导出倍率，默认 2（1080 宽 → 2160 宽）
+    --standalone  输出完整 HTML 文档（本地打开、自己部署用）；默认输出 Artifact 页面片段
+    --no-embed-fonts  不内嵌字体，改为链接 Google Fonts
+
+logos.json 不存在时所有公司用首字徽章。生成前会检查 spec，有错误时列出并退出。
+页面完全自包含：html2canvas 内置，字体按海报实际用到的字从 Google Fonts 取子集内嵌（取不到就回退为链接）。
 """
+import base64
 import json
 import pathlib
+import re
 import sys
+import urllib.parse
+import urllib.request
 
 HERE = pathlib.Path(__file__).resolve().parent
-TEMPLATE = HERE.parent / "assets" / "poster-template.html"
+sys.path.insert(0, str(HERE))
+from validate_spec import validate  # noqa: E402
+
+ASSETS = HERE.parent / "assets"
+TEMPLATE = ASSETS / "poster-template.html"
+HTML2CANVAS = ASSETS / "vendor" / "html2canvas.min.js"
+FONT_CJK = "family=Noto+Sans+SC:wght@400;500;700;900"
+FONT_NUM = "family=Plus+Jakarta+Sans:wght@500;700;800"  # 只有拉丁字符，数字和代码用
+FONT_LINK = f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?{FONT_CJK}&{FONT_NUM}&display=swap">'
+# 请求 Google Fonts 时用现代浏览器的 UA，才会拿到 woff2
+FONT_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
+BASE_CHARS = "".join(chr(c) for c in range(0x20, 0x7F)) + "，。：；、！？“”‘’（）《》【】·—…％×→↑↓±≈≤≥°￥€£"
 
 
 def safe_json(obj):
@@ -20,53 +40,111 @@ def safe_json(obj):
     return json.dumps(obj, ensure_ascii=False).replace("</", "<\\/")
 
 
-def build(spec_path, logos_path, out_path):
+def strings(obj):
+    if isinstance(obj, str):
+        yield obj
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            yield from strings(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from strings(v)
+    elif isinstance(obj, (int, float)):
+        yield str(obj)
+
+
+def used_chars(spec, template):
+    chars = set(BASE_CHARS)
+    for s in strings(spec):
+        chars.update(s)
+    chars.update(re.findall(r"[⺀-鿿＀-￯]", template))  # 模板里写死的中文（“其他”“合计”等）
+    return sorted(c for c in chars if c.isprintable())
+
+
+def embed_fonts(chars):
+    """按用到的字从 Google Fonts 取子集，转成 base64 内嵌的 @font-face。失败返回 None。"""
+    latin = [c for c in chars if ord(c) < 0x2000]
+    # 两个字体分开请求（text 里有某个字体完全没有的字时 Google Fonts 会返回 400）；中文分批，避免 URL 太长
+    batches = [(FONT_NUM, latin)] + [(FONT_CJK, chars[i:i + 400]) for i in range(0, len(chars), 400)]
+    faces = {}  # (字体, 文件) → 字重列表。子集是可变字体，几个字重共用一个文件，合并成一条 @font-face 只内嵌一次
+    try:
+        for family, part in batches:
+            text = urllib.parse.quote("".join(part))
+            url = f"https://fonts.googleapis.com/css2?{family}&text={text}&display=swap"
+            with urllib.request.urlopen(urllib.request.Request(url, headers=FONT_UA), timeout=20) as r:
+                css = r.read().decode()
+            for block in re.findall(r"@font-face\s*{([^}]+)}", css):
+                name = re.search(r"font-family:\s*'([^']+)'", block).group(1)
+                weight = int(re.search(r"font-weight:\s*(\d+)", block).group(1))
+                src = re.search(r"url\((https://[^)]+)\)", block).group(1)
+                faces.setdefault((name, src), []).append(weight)
+        rules = []
+        for (name, src), weights in faces.items():
+            with urllib.request.urlopen(urllib.request.Request(src, headers=FONT_UA), timeout=30) as r:
+                data = base64.b64encode(r.read()).decode()
+            rules.append(f"@font-face{{font-family:'{name}';font-style:normal;font-weight:{min(weights)} {max(weights)};"
+                         f"font-display:swap;src:url(data:font/woff2;base64,{data}) format('woff2')}}")
+    except Exception as e:
+        print(f"字体内嵌失败（{e.__class__.__name__}），改为链接 Google Fonts")
+        return None
+    return "<style>/* 字体子集，由 build_poster.py 内嵌 */\n" + "\n".join(rules) + "</style>"
+
+
+def build(spec_path, logos_path, out_path, standalone=False, embed=True):
     spec = json.load(open(spec_path, encoding="utf-8"))
+    errors, warnings = validate(spec)
+    for w in warnings:
+        print(f"  提醒：{w}")
+    if errors:
+        print("spec 有错误，未生成：")
+        for e in errors:
+            print(f"  ✗ {e}")
+        sys.exit(2)
     logos = json.load(open(logos_path, encoding="utf-8")) if logos_path and pathlib.Path(logos_path).exists() else {}
     html = TEMPLATE.read_text(encoding="utf-8")
     title = spec.get("page_title") or " ".join(t for t in spec.get("title", []) if t) or "海报"
     title = title.replace("<", "").replace(">", "")[:40]
+    fonts = (embed and embed_fonts(used_chars(spec, html))) or FONT_LINK
+    html = html.replace("<!--__FONTS__-->", fonts)
+    html = html.replace("<!--__HTML2CANVAS__-->", "<script>" + HTML2CANVAS.read_text(encoding="utf-8") + "</script>")
     html = html.replace("__PAGE_TITLE__", title)
     html = html.replace("/*__SPEC__*/null", safe_json(spec))
     html = html.replace("/*__LOGOS__*/{}", safe_json(logos))
+    if standalone:
+        html = wrap(html)
     pathlib.Path(out_path).write_text(html, encoding="utf-8")
-    print(f"已生成 {out_path}（{len(html) // 1024} KB，logo {len(logos)} 个）")
+    print(f"已生成 {out_path}（{len(html) // 1024} KB，logo {len(logos)} 个，字体{'内嵌' if fonts != FONT_LINK else '外链'}）")
+    return out_path
 
 
-def preview(out_html, png):
-    try:
-        import asyncio
-        from playwright.async_api import async_playwright
-    except ImportError:
-        print("未安装 playwright，跳过预览")
-        return
-    wrapped = pathlib.Path(out_html).with_suffix(".preview.html")
-    wrapped.write_text('<!doctype html><html><head><meta charset="utf-8"></head><body>'
-                       + pathlib.Path(out_html).read_text(encoding="utf-8") + "</body></html>", encoding="utf-8")
+def wrap(fragment):
+    """Artifact 页面片段 → 完整 HTML 文档"""
+    if fragment.lstrip().lower().startswith("<!doctype"):
+        return fragment
+    return ('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1"></head><body>'
+            + fragment + "</body></html>")
 
-    async def run():
-        async with async_playwright() as p:
-            b = await p.chromium.launch()
-            pg = await b.new_page(viewport={"width": 1200, "height": 900})
-            errors = []
-            pg.on("pageerror", lambda e: errors.append(str(e)))
-            await pg.goto("file://" + str(wrapped.resolve()))
-            await pg.wait_for_timeout(1200)
-            el = await pg.query_selector(".poster")
-            await pg.evaluate("e => e.style.transform = 'none'", el)
-            await el.screenshot(path=png)
-            await b.close()
-            print(f"预览图 {png}" + (f"；页面报错：{errors}" if errors else ""))
-    asyncio.run(run())
-    wrapped.unlink(missing_ok=True)
+
+def arg(name, default=None):
+    return sys.argv[sys.argv.index(name) + 1] if name in sys.argv and sys.argv.index(name) + 1 < len(sys.argv) else default
 
 
 if __name__ == "__main__":
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    opts_with_value = {"--png", "--preview", "--scale"}
+    args, skip = [], False
+    for a in sys.argv[1:]:
+        if skip:
+            skip = False
+        elif a in opts_with_value:
+            skip = True
+        elif not a.startswith("--"):
+            args.append(a)
     if len(args) < 3:
         print(__doc__)
         sys.exit(1)
-    build(*args[:3])
-    if "--preview" in sys.argv:
-        i = sys.argv.index("--preview")
-        preview(args[2], sys.argv[i + 1] if i + 1 < len(sys.argv) else "preview.png")
+    out = build(*args[:3], standalone="--standalone" in sys.argv, embed="--no-embed-fonts" not in sys.argv)
+    png = arg("--png") or arg("--preview")  # --preview 是旧写法
+    if png:
+        from render_png import render
+        render(out, png, scale=float(arg("--scale", 2)))

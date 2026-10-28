@@ -1,5 +1,7 @@
 # 版块库与 spec.json 字段
 
+编辑器里可以用 `spec.schema.json` 做字段补全和校验；`build_poster.py` 生成前也会自动检查。
+
 海报 = 标题区 + 若干版块 + 页脚。版块按 `sections` 数组顺序从上到下排列，可以自由组合。
 
 ## 顶层字段
@@ -13,13 +15,14 @@
 | `object` | 否 | 右上背景物件：`chip` `module` `rack` `coin` `globe`，或不写 |
 | `updown` | 否 | `"cn"`（默认，红涨绿跌）或 `"us"`（绿涨红跌） |
 | `versions` | 否 | 默认 `["clear"]`（雾彩·清透）。新增风格后，需要对比时写多个，如 `["clear","新风格id"]` |
-| `companies` | 是* | 公司表，键是 `交易所:代码`，值是 `{"name": "中文名", "code": "显示代码(可选)"}` |
+| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；系列海报想区分时换成 8 色里的另一色 |
+| `companies` | 是* | 公司表，键是 `交易所:代码`（或 Yahoo 后缀代码、`市场:代码`），值是 `{"name": "中文名", "code": "显示代码(可选)"}` |
 | `sections` | 是 | 版块数组 |
 | `footer` | 是 | 页脚多行，最后一行是免责声明（小字） |
 | `page_title` / `page_sub` | 否 | 网页标题和说明（不进海报） |
 | `mark` / `mark_sub` | 否 | 页脚右侧署名，默认 `pastel-poster` |
 
-*只要版块里引用了公司就必须写。交易所：`SSE` 上交所、`SZSE` 深交所、`HKEX` 港交所、`NASDAQ`、`NYSE`、`AMEX`。
+*只要版块里引用了公司就必须写。常用交易所：`SSE` 上交所、`SZSE` 深交所、`HKEX` 港交所、`NASDAQ`、`NYSE`、`AMEX`、`TSE` 东京、`KRX` 韩国、`TWSE` 台湾、`LSE` 伦敦；也可以写 `7203.T`、`2330.TW` 这类 Yahoo 代码。完整写法见 `logos.md`。
 港股 `code` 建议写 5 位，如 `"06869"`；A 股、美股可省略 `code`，自动取键里的代码。
 
 ## 版块类型

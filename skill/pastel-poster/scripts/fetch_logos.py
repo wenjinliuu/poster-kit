@@ -2,43 +2,81 @@
 """按 spec.json 里的公司列表取 logo，输出可直接内嵌的 logos.json。
 
 用法：
-    python3 fetch_logos.py spec.json logos.json
+    python3 fetch_logos.py spec.json logos.json [--tradingview]
 
-公司键写成 "交易所:代码"，例如 "SZSE:300308"、"HKEX:700"、"NASDAQ:NVDA"。
-只写代码也可以（"300308"、"00700"、"NVDA"），脚本会自动推断交易所。
+公司键支持三种写法（覆盖 global-stock-logos 的 68 个市场）：
+    交易所:代码     SZSE:300308  HKEX:700  NASDAQ:NVDA  TSE:7203  KRX:005930  TWSE:2330  LSE:AZN
+    Yahoo 后缀      300308.SZ  688008.SH  0700.HK  7203.T  005930.KS  2330.TW  AZN.L  SAP.DE
+    市场:代码       japan:7203  korea:005930（市场名即 logo 仓库的目录名）
+只写代码也可以：6 位数字按首位判断沪/深，1–5 位数字为港股，字母为美股。
 
 取用顺序（找到即停）：
-    1. poster-kit 仓库里的手工修正版   assets/logo-overrides/{交易所}_{代码}.svg|png
-    2. 自己的 fork（每日同步上游）       wenjinliuu/global-stock-logos
-    3. TradingView 源头                  行情扫描接口查 logoid → 官方 logo 地址
-    4. 上游仓库                          MrChartist/global-stock-logos
-    5. 都没有 → 不输出，海报里用首字徽章兜底
+    1. 手工修正版   本地或仓库里的 assets/logo-overrides/{交易所或市场}_{代码}.png|svg
+    2. logo 仓库    默认 MrChartist/global-stock-logos（先走 jsDelivr，再走 raw.githubusercontent）
+    3. TradingView  只有加 --tradingview 或设 POSTER_LOGO_TRADINGVIEW=1 才用（网页内部接口，少量按需）
+    4. 都没有       不输出，海报里用首字徽章兜底
 
-输出：{"SZSE:300308": {"src": "data:image/png;base64,...", "from": "fork"}, ...}
-所有图片都转成 256px PNG 内嵌，因为海报页面不允许加载外部图片。
+可用环境变量改来源（逗号分隔，按顺序尝试）：
+    POSTER_LOGO_OVERRIDES   修正版位置，本地目录或 URL 前缀
+    POSTER_LOGO_REPOS       logo 仓库，写成 owner/repo@分支，如 "me/global-stock-logos@main,MrChartist/global-stock-logos@main"
+
+输出：{"SZSE:300308": {"src": "data:image/png;base64,...", "from": "repo"}, ...}
+SVG 在装了 cairosvg 时转成 256px PNG，否则原样内嵌；海报页面不加载外部图片，外链会导致导出空白。
 """
 import base64
 import io
 import json
+import os
+import pathlib
 import re
-import subprocess
 import sys
 import time
 import urllib.error
 import urllib.request
 
-OVERRIDES = "https://raw.githubusercontent.com/wenjinliuu/poster-kit/main/assets/logo-overrides/{name}"
-FORK = "https://raw.githubusercontent.com/wenjinliuu/global-stock-logos/main/logos/{dir}/{code}.{ext}"
-UPSTREAM = "https://raw.githubusercontent.com/MrChartist/global-stock-logos/main/logos/{dir}/{code}.{ext}"
+HERE = pathlib.Path(__file__).resolve().parent
+LOCAL_OVERRIDES = HERE.parent.parent.parent / "assets" / "logo-overrides"  # 在仓库里直接运行时
+DEFAULT_OVERRIDES = "https://raw.githubusercontent.com/wenjinliuu/poster-kit/main/assets/logo-overrides"
+DEFAULT_REPOS = "MrChartist/global-stock-logos@main"
+REPO_URLS = ("https://cdn.jsdelivr.net/gh/{repo}@{ref}/logos/{dir}/{code}.{ext}",
+             "https://raw.githubusercontent.com/{repo}/{ref}/logos/{dir}/{code}.{ext}")
 TV_SCAN = "https://scanner.tradingview.com/{market}/scan"
 TV_LOGO = "https://s3-symbol-logo.tradingview.com/{logoid}.svg"
 
-# 交易所 → (logo 仓库目录, TradingView 扫描市场)
+# 交易所代码（TradingView 写法）→ logo 仓库目录
 EXCHANGES = {
-    "SSE": ("china", "china"), "SZSE": ("china", "china"),
-    "HKEX": ("hongkong", "hongkong"),
-    "NASDAQ": ("us", "america"), "NYSE": ("us", "america"), "AMEX": ("us", "america"),
+    "SSE": "china", "SZSE": "china", "HKEX": "hongkong",
+    "NASDAQ": "us", "NYSE": "us", "AMEX": "us", "NYSEARCA": "us", "ARCA": "us", "OTC": "us", "CBOE": "us",
+    "TSE": "japan", "TYO": "japan", "KRX": "korea", "KOSDAQ": "korea", "TWSE": "taiwan", "TPEX": "taiwan",
+    "LSE": "uk", "LSIN": "uk", "AQUIS": "uk", "XETR": "germany", "FWB": "germany", "GETTEX": "germany", "TRADEGATE": "germany",
+    "SIX": "switzerland", "BX": "switzerland", "MIL": "italy", "BME": "spain", "VIE": "austria", "GPW": "poland",
+    "OMXSTO": "sweden", "NGM": "sweden", "OSL": "norway", "OMXCOP": "denmark", "OMXHEX": "finland", "OMXICE": "iceland",
+    "ATHEX": "greece", "BET": "hungary", "PSECZ": "czech", "BVB": "romania", "BIST": "turkey", "RUS": "russia", "MOEX": "russia",
+    "ASX": "australia", "NZX": "newzealand", "TSX": "canada", "TSXV": "canada", "NEO": "canada", "CSE": "canada",
+    "NSE": "in", "BSE": "in", "SGX": "singapore", "SET": "thailand", "IDX": "indonesia", "MYX": "malaysia",
+    "PSE": "philippines", "HOSE": "vietnam", "HNX": "vietnam", "UPCOM": "vietnam", "PSX": "pakistan", "DSEBD": "bangladesh",
+    "BMFBOVESPA": "brazil", "B3": "brazil", "BMV": "mexico", "BIVA": "mexico", "BCBA": "argentina", "BCS": "chile",
+    "BVC": "colombia", "BVL": "peru", "TADAWUL": "ksa", "ADX": "uae", "DFM": "uae", "QSE": "qatar", "KSE": "kuwait",
+    "TASE": "israel", "EGX": "egypt", "JSE": "southafrica", "NSENG": "nigeria", "NSEKE": "kenya",
 }
+# Yahoo 代码后缀 → (logo 仓库目录, 交易所)
+SUFFIXES = {
+    "SS": ("china", "SSE"), "SH": ("china", "SSE"), "SZ": ("china", "SZSE"), "HK": ("hongkong", "HKEX"),
+    "T": ("japan", "TSE"), "KS": ("korea", "KRX"), "KQ": ("korea", "KRX"), "TW": ("taiwan", "TWSE"), "TWO": ("taiwan", "TPEX"),
+    "L": ("uk", "LSE"), "DE": ("germany", "XETR"), "F": ("germany", "FWB"), "PA": ("france", "EURONEXT"),
+    "AS": ("netherlands", "EURONEXT"), "BR": ("belgium", "EURONEXT"), "LS": ("portugal", "EURONEXT"), "IR": ("ireland", "EURONEXT"),
+    "MI": ("italy", "MIL"), "MC": ("spain", "BME"), "SW": ("switzerland", "SIX"), "VI": ("austria", "VIE"),
+    "ST": ("sweden", "OMXSTO"), "OL": ("norway", "OSL"), "CO": ("denmark", "OMXCOP"), "HE": ("finland", "OMXHEX"),
+    "IC": ("iceland", "OMXICE"), "WA": ("poland", "GPW"), "AT": ("greece", "ATHEX"), "IS": ("turkey", "BIST"),
+    "AX": ("australia", "ASX"), "NZ": ("newzealand", "NZX"), "TO": ("canada", "TSX"), "V": ("canada", "TSXV"),
+    "NS": ("in", "NSE"), "BO": ("in", "BSE"), "SI": ("singapore", "SGX"), "BK": ("thailand", "SET"),
+    "JK": ("indonesia", "IDX"), "KL": ("malaysia", "MYX"), "PS": ("philippines", "PSE"), "SA": ("brazil", "BMFBOVESPA"),
+    "MX": ("mexico", "BMV"), "BA": ("argentina", "BCBA"), "SN": ("chile", "BCS"), "SR": ("ksa", "TADAWUL"),
+    "TA": ("israel", "TASE"), "JO": ("southafrica", "JSE"), "QA": ("qatar", "QSE"), "KW": ("kuwait", "KSE"), "CA": ("egypt", "EGX"),
+}
+# logo 仓库目录 → TradingView 扫描市场（只列常用的；其余市场不走 TradingView）
+TV_MARKETS = {"china": "china", "hongkong": "hongkong", "us": "america", "japan": "japan", "korea": "korea",
+              "taiwan": "taiwan", "uk": "uk", "germany": "germany", "in": "india"}
 UA = {"User-Agent": "Mozilla/5.0 (poster-kit logo fetcher)"}
 SIZE = 256
 
@@ -55,7 +93,7 @@ def http(url, data=None, timeout=15, tries=2):
                 if r.status == 200:
                     return r.read()
         except urllib.error.HTTPError as e:
-            if e.code == 404:
+            if e.code in (403, 404):
                 return None  # 文件不存在，不必重试
         except Exception:
             pass
@@ -64,74 +102,90 @@ def http(url, data=None, timeout=15, tries=2):
 
 
 def normalize_key(raw):
-    """把用户写法统一成 (交易所, 代码)。"""
-    raw = raw.strip().upper()
+    """把各种写法统一成 (logo 仓库目录, 交易所, 代码)。交易所未知时为 None。"""
+    raw = raw.strip()
+    up = raw.upper()
     if ":" in raw:
         ex, code = raw.split(":", 1)
-    else:
-        code = raw
-        if re.fullmatch(r"\d{6}", code):
-            ex = "SSE" if code[0] in "69" else "SZSE"
-        elif re.fullmatch(r"\d{1,5}", code):
-            ex = "HKEX"
+        code = code.strip().upper()
+        if ex.lower() in set(EXCHANGES.values()) | {m for m, _ in SUFFIXES.values()}:
+            market, ex = ex.lower(), None  # 市场:代码
         else:
-            ex = "NASDAQ"  # 美股：仓库目录不区分交易所；TV 查询时两个都试
-    if ex == "HKEX":
+            ex = ex.strip().upper()
+            market = EXCHANGES.get(ex, "us")
+    elif re.fullmatch(r"[0-9A-Z\-]+\.[A-Z]{1,3}", up) and up.rsplit(".", 1)[1] in SUFFIXES:
+        code, suf = up.rsplit(".", 1)
+        market, ex = SUFFIXES[suf]
+    else:
+        code = up
+        if re.fullmatch(r"\d{6}", code):
+            market, ex = "china", ("SSE" if code[0] in "69" else "SZSE")
+        elif re.fullmatch(r"\d{1,5}", code):
+            market, ex = "hongkong", "HKEX"
+        else:
+            market, ex = "us", None  # 美股：仓库目录不区分交易所；TradingView 查询时几个都试
+    if market == "hongkong":
         code = code.lstrip("0") or "0"
-    return ex, code
+    return market, ex, code
 
 
-def tv_logoid(ex, code):
-    market = EXCHANGES.get(ex, (None, None))[1]
-    if not market:
-        return None
-    tickers = [f"{ex}:{code}"]
-    if market == "america":
-        tickers = [f"{e}:{code}" for e in ("NASDAQ", "NYSE", "AMEX")]
-    body = {"symbols": {"tickers": tickers}, "columns": ["logoid"]}
-    raw = http(TV_SCAN.format(market=market), body)
-    if not raw:
-        return None
-    try:
-        for row in json.loads(raw).get("data", []):
-            if row["d"] and row["d"][0]:
-                return row["d"][0]
-    except Exception:
-        return None
+def sources(env, default):
+    return [s.strip() for s in os.environ.get(env, default).split(",") if s.strip()]
+
+
+def from_overrides(market, ex, code):
+    bases = sources("POSTER_LOGO_OVERRIDES", "")
+    if not bases:
+        bases = ([str(LOCAL_OVERRIDES)] if LOCAL_OVERRIDES.is_dir() else []) + [DEFAULT_OVERRIDES]
+    names = [f"{p}_{code}" for p in dict.fromkeys(x for x in (ex, market) if x)]
+    for base in bases:
+        for name in names:
+            for ext in ("png", "svg"):
+                if re.match(r"https?://", base):
+                    b = http(f"{base.rstrip('/')}/{name}.{ext}")
+                else:
+                    f = pathlib.Path(base) / f"{name}.{ext}"
+                    b = f.read_bytes() if f.is_file() else None
+                if b:
+                    return b, ext
     return None
 
 
-_cairo = None
+def from_repos(market, code):
+    for spec in sources("POSTER_LOGO_REPOS", DEFAULT_REPOS):
+        repo, _, ref = spec.partition("@")
+        for ext in ("svg", "png"):
+            for tpl in REPO_URLS:
+                b = http(tpl.format(repo=repo, ref=ref or "main", dir=market, code=code, ext=ext))
+                if b:
+                    return b, ext
+    return None
 
 
-def svg_to_png(svg_bytes):
-    global _cairo
-    if _cairo is None:
-        try:
-            import cairosvg  # noqa
-            _cairo = cairosvg
-        except ImportError:
-            subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--break-system-packages", "cairosvg"],
-                           capture_output=True)
-            try:
-                import cairosvg  # noqa
-                _cairo = cairosvg
-            except ImportError:
-                _cairo = False
-    if not _cairo:
+def from_tradingview(market, ex, code):
+    tv = TV_MARKETS.get(market)
+    if not tv:
         return None
+    tickers = [f"{e}:{code}" for e in ("NASDAQ", "NYSE", "AMEX")] if market == "us" else [f"{ex}:{code}"] if ex else []
+    if not tickers:
+        return None
+    raw = http(TV_SCAN.format(market=tv), {"symbols": {"tickers": tickers}, "columns": ["logoid"]})
     try:
-        return _cairo.svg2png(bytestring=svg_bytes, output_width=SIZE, output_height=SIZE)
-    except Exception:
+        logoid = next(row["d"][0] for row in json.loads(raw or "{}").get("data", []) if row["d"] and row["d"][0])
+    except (StopIteration, ValueError, KeyError):
         return None
+    b = http(TV_LOGO.format(logoid=logoid))
+    return (b, "svg") if b else None
 
 
 def to_data_uri(content, ext):
     if ext == "svg":
-        png = svg_to_png(content)
-        if png:
+        try:
+            import cairosvg
+            png = cairosvg.svg2png(bytestring=content, output_width=SIZE, output_height=SIZE)
             return "data:image/png;base64," + base64.b64encode(png).decode()
-        return "data:image/svg+xml;base64," + base64.b64encode(content).decode()
+        except Exception:  # 没装 cairosvg 或这张 SVG 转不了：原样内嵌，浏览器同样能画
+            return "data:image/svg+xml;base64," + base64.b64encode(content).decode()
     try:  # PNG：统一缩放到 SIZE
         from PIL import Image
         im = Image.open(io.BytesIO(content)).convert("RGBA")
@@ -144,47 +198,44 @@ def to_data_uri(content, ext):
     return "data:image/png;base64," + base64.b64encode(content).decode()
 
 
-def fetch_one(ex, code):
-    repo_dir = EXCHANGES.get(ex, ("us", None))[0]
-    for ext in ("png", "svg"):
-        b = http(OVERRIDES.format(name=f"{ex}_{code}.{ext}"))
-        if b:
-            return to_data_uri(b, ext), "override"
-    for ext in ("svg", "png"):
-        b = http(FORK.format(dir=repo_dir, code=code, ext=ext))
-        if b:
-            return to_data_uri(b, ext), "fork"
-    logoid = tv_logoid(ex, code)
-    if logoid:
-        b = http(TV_LOGO.format(logoid=logoid))
-        if b:
-            return to_data_uri(b, "svg"), "tradingview"
-    for ext in ("svg", "png"):
-        b = http(UPSTREAM.format(dir=repo_dir, code=code, ext=ext))
-        if b:
-            return to_data_uri(b, ext), "upstream"
+def fetch_one(key, tradingview=False):
+    market, ex, code = normalize_key(key)
+    steps = [("override", lambda: from_overrides(market, ex, code)), ("repo", lambda: from_repos(market, code))]
+    if tradingview:
+        steps.append(("tradingview", lambda: from_tradingview(market, ex, code)))
+    for origin, step in steps:
+        hit = step()
+        if hit:
+            return to_data_uri(*hit), origin
     return None, "missing"
 
 
-def main():
-    if len(sys.argv) < 3:
-        print(__doc__)
-        sys.exit(1)
-    spec = json.load(open(sys.argv[1], encoding="utf-8"))
-    keys = list((spec.get("companies") or {}).keys())
+def fetch_all(keys, tradingview=False):
     out, report = {}, {}
     for key in keys:
-        ex, code = normalize_key(key)
-        src, origin = fetch_one(ex, code)
+        src, origin = fetch_one(key, tradingview)
         report[key] = origin
         if src:
             out[key] = {"src": src, "from": origin}
-    json.dump(out, open(sys.argv[2], "w", encoding="utf-8"))
-    hit = sum(1 for v in report.values() if v != "missing")
-    print(f"logo：{hit}/{len(keys)} 命中")
+    return out, report
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if len(args) < 2:
+        print(__doc__)
+        sys.exit(1)
+    tv = "--tradingview" in sys.argv or os.environ.get("POSTER_LOGO_TRADINGVIEW") == "1"
+    spec = json.load(open(args[0], encoding="utf-8"))
+    keys = list((spec.get("companies") or {}).keys())
+    out, report = fetch_all(keys, tv)
+    json.dump(out, open(args[1], "w", encoding="utf-8"))
+    print(f"logo：{len(out)}/{len(keys)} 命中")
     for k, v in report.items():
-        if v != "fork":
+        if v != "repo":
             print(f"  {k:<16} {v}")
+    if "missing" in report.values() and not tv:
+        print("  没取到的会用首字徽章；新上市的股票可以加 --tradingview 再试一次")
 
 
 if __name__ == "__main__":

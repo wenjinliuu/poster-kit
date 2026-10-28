@@ -1,0 +1,39 @@
+# 每次推送和 PR：校验示例 spec，生成海报并在手机视口下验收“下载高清图”导出
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skill/pastel-poster
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Validate examples
+        run: python scripts/validate_spec.py examples/*.json
+      - name: Schema
+        run: |
+          python -c "import json,glob,jsonschema; s=json.load(open('references/spec.schema.json')); [jsonschema.validate(json.load(open(f)), s) for f in glob.glob('examples/*.json')]"
+      - name: Fetch logos for every market in the examples
+        run: |
+          for f in examples/*.json; do python scripts/fetch_logos.py "$f" "/tmp/$(basename "$f" .json).logos.json"; done
+      - name: Export test
+        run: python scripts/test_export.py --out export-check
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: export-check
+          path: skill/pastel-poster/export-check/*.png

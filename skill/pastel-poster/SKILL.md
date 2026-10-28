@@ -1,29 +1,13 @@
 ---
 name: pastel-poster
-description: Use when the user asks for a poster, infographic, or table-style visual summary (海报/信息图/表格海报/产业链图/持仓占比/数据统计图), especially for stocks, sectors, supply chains or AI weekly reports. Builds a light "雾彩·清透" Chinese poster page with real company logos, and high-res PNG download.
+description: Use when the user asks for a poster, infographic, or table-style visual summary (海报/信息图/表格海报/产业链图/持仓占比/数据统计图), especially for stocks, sectors, supply chains or AI weekly reports. Builds a light "雾彩·清透" Chinese poster page with real company logos (68 markets), and high-res PNG download.
 ---
 
 # pastel-poster · 雾彩·清透海报
 
-把一个话题做成可下载的中文海报。风格、配色、logo 来源都已定好，不要每次再问风格。
+把一个话题做成可下载的中文海报：先生成海报网页，再从网页导出高清 PNG。风格、配色、logo 来源都已定好，不要每次再问风格。
 
-## 第 0 步：取最新版（每次使用先做）
-
-技能的源头在 GitHub 仓库 `wenjinliuu/poster-kit`，已安装的这份可能不是最新的。先拉取最新版：
-
-```bash
-rm -rf /tmp/poster-kit-main /tmp/poster-kit.tgz
-curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenjinliuu/poster-kit/tar.gz/refs/heads/main \
-  && tar xzf /tmp/poster-kit.tgz -C /tmp && test -f /tmp/poster-kit-main/skill/pastel-poster/SKILL.md \
-  || { rm -rf /tmp/poster-kit-main && git clone -q --depth 1 https://github.com/wenjinliuu/poster-kit /tmp/poster-kit-main; } \
-  && test -f /tmp/poster-kit-main/skill/pastel-poster/SKILL.md && echo OK || echo FAIL
-```
-
-- 输出 `OK`：读 `/tmp/poster-kit-main/skill/pastel-poster/SKILL.md`，按**那一份**的流程做，之后所有 `scripts/`、`assets/`、`references/`、`examples/` 都用 `/tmp/poster-kit-main/skill/pastel-poster/` 下的文件。
-- 输出 `FAIL`（常见原因：会话的网络只放行已接入的仓库，代理把请求挡了，返回的不是压缩包）：
-  1. 有接入 GitHub 仓库的工具（如 `add_repo`）就先把 `wenjinliuu/poster-kit` 接入本会话，再重跑上面的命令一次。
-  2. 还是失败，才用本技能目录里的文件，并**在开始做之前告诉用户一句**：“没能拉到海报技能最新版，这次用的是已安装版本，可能缺最近的修复。”不要悄悄用旧版本——旧模板的导出曾有手机上底部被截掉的问题。
-- 如果你正在读的就是 `/tmp/poster-kit-main/` 下的这份，跳过本步。
+下文的 `scripts/`、`assets/`、`references/`、`examples/` 都指本技能目录下的文件。
 
 ## 流程
 
@@ -34,22 +18,26 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
    - 统计、资金来源与流向 → `kpis` + `years` + `ranking` + `banner` + `flows`
    - 板块行情、涨跌表 → `kpis` + `table`
 2. **收集并核实数据**：数字、公司名单先上网核实，写清口径和日期。拿不准的不放。
-3. **写 spec.json**：标题、背景物件、公司表（`交易所:代码` → 中文名）、版块、页脚。字段见 `references/sections.md`，可从 `examples/` 复制改写。
+3. **写 spec.json**：标题、背景物件、公司表（键写 `交易所:代码`、Yahoo 后缀代码如 `7203.T`，或 `市场:代码`）、版块、页脚。字段见 `references/sections.md`，可从 `examples/` 复制改写。
 4. **取 logo**：
    ```bash
    python3 scripts/fetch_logos.py spec.json logos.json
    ```
-   命中情况会打印出来；没取到的公司自动用首字徽章，不要手画 logo。规则见 `references/logos.md`。
-5. **生成页面并检查一次**：
+   命中情况会打印出来；没取到的公司自动用首字徽章，不要手画 logo。新上市股票没取到时可加 `--tradingview` 再试一次。规则见 `references/logos.md`。
+5. **生成网页和预览图**：
    ```bash
-   python3 scripts/build_poster.py spec.json logos.json poster.html --preview preview.png
+   python3 scripts/build_poster.py spec.json logos.json poster.html --png preview.png
    ```
-   看一眼预览图，按 `references/gates.md` 的版式关卡检查，有问题改 spec 后重新生成。只检查一轮。
+   生成前会自动检查 spec：有错误会列出并停止，有提醒（标题过长、分类过多等）照着改。看一眼预览图，按 `references/gates.md` 的版式关卡检查，有问题改 spec 后重新生成。只检查一轮。
+   没有 playwright 时去掉 `--png`，网页照样生成。
 6. **验收导出**：发布前跑一次，确认手机窄屏下载的 PNG 尺寸和页脚完整（出现 ✗ 就先修再发）：
    ```bash
    python3 scripts/test_export.py spec.json --out export-check
    ```
-7. **发布**：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。默认只出“雾彩·清透”一个版本，带“下载高清图”按钮，导出约 2160px 宽 PNG。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
+7. **交付**：
+   - 在 claude.ai 里：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。页面带“下载高清图”按钮，导出约 2160px 宽 PNG。
+   - 不在 claude.ai 里：加 `--standalone` 生成完整网页，直接把网页和 `--png` 导出的 PNG 交给用户；网页里的下载按钮走浏览器普通下载。
+   默认只出“雾彩·清透”一个版本。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
 
 ## 风格要点（详细见 `references/style.md`、`references/palette.md`）
 
@@ -72,9 +60,13 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 
 ## 文件
 
-- `scripts/fetch_logos.py`：取 logo（修正版 → 自己的 fork → TradingView → 上游 → 兜底）
-- `scripts/build_poster.py`：把 spec 填进模板，可选生成预览图
-- `scripts/test_export.py`：验收“下载高清图”，以手机视口和字体加载失败两种场景导出，检查 PNG 尺寸和页脚是否完整（改模板或导出逻辑后跑一次）
+- `scripts/fetch_logos.py`：取 logo（手工修正版 → logo 仓库 → 可选 TradingView → 首字徽章兜底），支持 68 个市场
+- `scripts/build_poster.py`：检查 spec，把 spec 填进模板生成网页（字体子集和 html2canvas 都内嵌，页面不依赖外部资源），`--png` 直接导出图片
+- `scripts/render_png.py`：把已有的海报网页导出成 PNG，和“下载高清图”按钮同一套逻辑
+- `scripts/validate_spec.py`：单独检查 spec
+- `scripts/test_export.py`：验收导出，以手机视口和字体回退两种场景检查 PNG 尺寸和页脚（改模板或导出逻辑后跑一次）
 - `assets/poster-template.html`：海报模板（样式、版块渲染、背景物件、下载）
-- `examples/`：产业链名单、资本开支统计两个完整示例
-- `references/`：版块、配色、风格、版式关卡、logo 规则
+- `assets/vendor/html2canvas.min.js`：导出用的 html2canvas 1.4.1
+- `examples/`：产业链名单、跨市场名单、持仓占比、资本开支统计四个完整示例
+- `references/`：版块、配色、风格、版式关卡、logo 规则、`spec.schema.json`
+- `requirements.txt`：可选依赖（cairosvg、Pillow、playwright）

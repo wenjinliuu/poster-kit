@@ -1,0 +1,5 @@
+# 生成海报网页只需要 Python 标准库；下面是可选依赖
+cairosvg>=2.7      # 把 SVG logo 转成 PNG 内嵌（没有就原样内嵌 SVG）
+Pillow>=10         # 缩放 PNG logo；test_export.py 检查导出图
+playwright>=1.40   # 导出 PNG（--png、render_png.py、test_export.py）；装完运行 playwright install chromium
+jsonschema>=4      # 可选：用 references/spec.schema.json 校验

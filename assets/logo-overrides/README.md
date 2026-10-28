@@ -2,7 +2,7 @@
 
 只放“自动来源不满意或缺失”的 logo，优先级最高。
 
-- 命名：`{交易所}_{代码}.png` 或 `.svg`，交易所用 `SSE` `SZSE` `HKEX` `NASDAQ` `NYSE` `AMEX`。
+- 命名：`{交易所}_{代码}.png` 或 `.svg`，交易所用 `SSE` `SZSE` `HKEX` `NASDAQ` `NYSE` `AMEX` `TSE` `KRX` `TWSE` `LSE` 等；也可以用市场名，如 `japan_7203.svg`。
 - 港股代码不带前导零：`HKEX_700.png`。
 - 建议正方形、透明或白底、至少 256px，图形居中并适合放进圆形。
 - 推送后立即生效，不需要重新上传技能。

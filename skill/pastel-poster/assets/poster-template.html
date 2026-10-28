@@ -1,9 +1,7 @@
 <title>__PAGE_TITLE__</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!--__FONTS__-->
+<!--__HTML2CANVAS__-->
 <style>
 /* pastel-poster 模板 · 雾彩·清透。页面外壳安静，海报 1080 宽固定；由 build_poster.py 注入 SPEC 与 LOGOS */
 :root{
@@ -308,10 +306,14 @@ async function renderPoster(p,scale=2){
 window.__renderPoster=renderPoster; // 给 scripts/test_export.py 用：和按钮走同一套逻辑
 async function download(p,vid,btn,msg){
   btn.disabled=true;msg.textContent="正在生成…";
-  try{await dlReady;if(!dlNS){msg.textContent="请在 claude.ai 中打开此页面再下载";return}
+  try{await dlReady;
     const {canvas}=await renderPoster(p);
     const blob=await new Promise(r=>canvas.toBlob(r,"image/png"));if(!blob)throw new Error("toBlob 返回空（图片太大）");
-    await dlNS.save({filename:`${SPEC.file||"poster"}-${VERSIONS[vid].name.replace(/\s|·/g,"")}.png`,data:blob});msg.textContent="已保存";
+    const filename=`${SPEC.file||"poster"}-${VERSIONS[vid].name.replace(/\s|·/g,"")}.png`;
+    if(dlNS){await dlNS.save({filename,data:blob});msg.textContent="已保存";return}
+    // 不在 claude.ai 里（本地打开、自己部署的网页）：走浏览器普通下载
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),10000);msg.textContent="已下载";
   }catch(e){const c=e&&e.code;msg.textContent=c==="declined"?"已取消":c==="rate_limited"?"已有一个保存窗口，稍后再试":(c==="unavailable"||c==="not_granted")?"当前页面不支持下载，请在 claude.ai 中打开":"生成失败，请重试"}
   finally{btn.disabled=false}}
 function init(){

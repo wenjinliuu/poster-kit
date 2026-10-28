@@ -1,0 +1,21 @@
+{
+  "file": "全球半导体设备",
+  "eyebrow": "产业链名单 · 全球半导体",
+  "tag": "示例",
+  "title": ["全球半导体", "设备与制造", "跨市场代表公司"],
+  "object": "chip",
+  "companies": {
+    "ASML.AS": {"name": "阿斯麦", "code": "ASML"}, "8035.T": {"name": "东京电子", "code": "8035"}, "NASDAQ:AMAT": {"name": "应用材料"},
+    "NASDAQ:LRCX": {"name": "泛林集团"}, "NASDAQ:KLAC": {"name": "科磊"}, "6857.T": {"name": "爱德万测试", "code": "6857"},
+    "2330.TW": {"name": "台积电", "code": "2330"}, "005930.KS": {"name": "三星电子", "code": "005930"}, "000660.KS": {"name": "SK 海力士", "code": "000660"},
+    "NASDAQ:MU": {"name": "美光科技"}, "688981.SH": {"name": "中芯国际", "code": "688981"}, "NASDAQ:INTC": {"name": "英特尔"}
+  },
+  "sections": [
+    {"type": "chain", "cols": 3, "groups": [
+      {"name": "光刻与刻蚀", "desc": "决定制程能走多细", "icon": "chip", "companies": ["ASML.AS", "NASDAQ:LRCX", "8035.T"]},
+      {"name": "沉积与检测", "desc": "薄膜沉积、量测和芯片测试", "icon": "module", "companies": ["NASDAQ:AMAT", "NASDAQ:KLAC", "6857.T"]},
+      {"name": "晶圆制造", "desc": "代工与存储的产能大户", "icon": "rack", "companies": ["2330.TW", "005930.KS", "000660.KS", "NASDAQ:MU", "688981.SH", "NASDAQ:INTC"]}
+    ]}
+  ],
+  "footer": ["筛选：按环节选取美、日、韩、台、欧与 A 股代表公司（示例）", "制图时间：2026 年 10 月 28 日", "图中徽标仅用于识别，归各自所有者；不构成投资建议。"]
+}
