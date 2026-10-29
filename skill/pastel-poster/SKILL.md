@@ -57,13 +57,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 7. **交付**：
    - 在 claude.ai 里：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。页面带“下载高清图”按钮，导出约 2160px 宽 PNG。
    - 不在 claude.ai 里：加 `--standalone` 生成完整网页，直接把网页和 `--png` 导出的 PNG 交给用户；网页里的下载按钮走浏览器普通下载。
-   - **发布到海报图库**（用户要发到图库，或给了图库密钥时）：在 spec 里写 `gallery` 字段（图库卡片的标题、副标题、标签、大数字，见 `references/sections.md`），然后
-     ```bash
-     GALLERY_KEY=<用户给的密钥> python3 scripts/publish_gallery.py spec.json logos.json [--slug googl-q3-2026] [--replace]
-     ```
-     脚本用图库模式生成（字体、logo 引用图库，不内嵌；图库自带下载高清图和缩略图），发布后把返回的网址给用户。
-     发布前先看图库已有的（`GET https://poster-gallery.wenjinuu.workers.dev/api/posters`）：同一事件已经有一张就加 `--replace` 更新它，不要另起一张。
-     图库的完整规范：`https://poster-gallery.wenjinuu.workers.dev/api/guide`
+   - 发到自己部署的海报站点（图库）：加 `--hosted` 生成托管模式的网页（字体、logo 引用站点地址，不内嵌；由站点提供下载），再按站点自己的发布方式提交。
    默认只出“雾彩·清透”一个版本。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
 
 ## 风格要点（详细见 `references/style.md`、`references/palette.md`）
@@ -90,12 +84,11 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 ## 文件
 
 - `scripts/fetch_logos.py`：取 logo（手工修正版 → logo 仓库 → 可选 TradingView → 首字徽章兜底），支持 68 个市场
-- `scripts/build_poster.py`：检查 spec，把 spec 填进模板生成网页（字体子集和 html2canvas 都内嵌，页面不依赖外部资源），`--png` 直接导出图片
+- `scripts/build_poster.py`：检查 spec，把 spec 填进模板生成网页（字体子集和 html2canvas 都内嵌，页面不依赖外部资源），`--png` 直接导出图片；`--hosted` 生成托管模式（字体、logo 引用站点地址）
 - `scripts/render_png.py`：把已有的海报网页导出成 PNG，和“下载高清图”按钮同一套逻辑
 - `scripts/validate_spec.py`：单独检查 spec
 - `scripts/find_wordmark.py`：在维基共享资源找公司官方字标 SVG
 - `scripts/fetch_prices.py`：取股价日线（雅虎财经，港股、A 股可回退腾讯行情），生成时自动给 `price`、带 `symbol` 的 `sparks` / `line` 取数，也可单独运行看最新价和区间涨跌
-- `scripts/publish_gallery.py`：发布到海报图库（图库模式生成 → 本地预检 → POST，撞名时提示 `--replace`；`--dry-run` 只生成 `gallery.html`）。`build_poster.py --gallery` 单独生成图库模式的网页
 - `scripts/test_export.py`：验收导出，以手机视口和字体回退两种场景检查 PNG 尺寸和页脚（改模板或导出逻辑后跑一次）
 - `assets/poster-template.html`：海报模板（样式、版块渲染、背景物件、下载）
 - `assets/vendor/html2canvas.min.js`：导出用的 html2canvas 1.4.1
