@@ -525,11 +525,17 @@ function isoSVG(kind,pal,width,shadow,maxH){if(!DRAW[kind])return"";const B=new 
 
 /* ---------- 颜色与文字 ---------- */
 const BRANDC=((SPEC.brand&&SPEC.brand.colors)||[]).map(c=>c.toLowerCase());
-const ACC=(SPEC.accent||BRANDC[0]||CATS[0]).toLowerCase();
+// 主题色吸附：品牌色只用来判断色系，换成 8 色里色相最接近的那个（品牌色偏淡、偏灰时直接画会发土）；
+// 发灰、近黑近白的颜色用默认靛紫。确实要原色时写 "exact_color": true
+function hsl(h){const[r,g,b]=hex2rgb(h).map(v=>v/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;
+  if(!d)return[0,0,l];const s=d/(1-Math.abs(2*l-1));let H=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;return[(H*60+360)%360,s,l]}
+function snapTheme(c){if(!c)return CATS[0];c=c.toLowerCase();if(SPEC.exact_color||CATS.includes(c))return c;const[h,sat,l]=hsl(c);
+  if(sat<.2||l<.12||l>.93)return CATS[0];let best=CATS[0],bd=1e9;
+  CATS.forEach(k=>{const[h2,,l2]=hsl(k),dh=Math.min(Math.abs(h-h2),360-Math.abs(h-h2)),d=dh+Math.abs(l-l2)*60;if(d<bd){bd=d;best=k}});return best}
+const ACC=snapTheme(SPEC.accent||BRANDC[0]);
 // 分类色：强调色（品牌色）和品牌辅色排前面，再接 8 色里和它们不太像的；强调色本身是 8 色之一时直接从它轮转
 const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
-const HEAD=[ACC,...BRANDC.filter(c=>c!==ACC)];
-const PAL=CATS.includes(ACC)&&HEAD.length===1?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[...HEAD,...CATS.filter(c=>HEAD.every(h=>cdist(c,h)>110))];
+const PAL=CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)];
 // 文字安全色：太浅的颜色（黄、浅青等品牌色）用作文字时自动加深，保证在白底上看得清
 const lum=h=>{const[r,g,b]=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
 function ink(c){let x=c;for(let t=.1;t<.8&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,K,t);return x}
@@ -601,7 +607,7 @@ const CH={
     const vals=bars.flatMap(b=>[b.a,b.b]),lo=Math.min(0,...vals),hi=Math.max(...vals);
     const top=44,H=s.height||250,xl=60,bk=(s.brackets||[]).length?48:0,C=new Chart(w,top+H+xl+bk);
     const y=v=>top+(hi-v)/(hi-lo)*H,n=bars.length,slot=w/n,bw=Math.min(118,slot*.62),tid="t"+(UID++);C.def(vgrad(tid,ACC));
-    const colOf=b=>b.it.g!=null?PAL[b.it.g%8]:b.it.total?ACC:s.colors==="updown"?(b.b>=b.a?UD.up:UD.down):(b.b>=b.a?mix(ACC,W,.3):DIM);
+    const colOf=b=>b.it.g!=null?PAL[b.it.g%8]:b.it.total?ACC:s.colors==="updown"?(b.b>=b.a?UD.up:UD.down):(b.b>=b.a?PAL[1]:DIM);
     bars.forEach((b,k)=>{const it=b.it,cx=slot*(k+.5),x0=cx-bw/2,c=colOf(b),st=it.state||"solid";const y1=y(Math.max(b.a,b.b)),y2=y(Math.min(b.a,b.b));
       if(it.total&&it.stack){const segs=[];for(let j=k-1;j>=0&&!bars[j].it.total;j--)segs.unshift(bars[j]);
         segs.forEach(sg=>{const cc=colOf(sg);rect(C,x0,y(sg.b),bw,y(sg.a)-y(sg.b),cc,sg.it.state,cc)})}
@@ -723,7 +729,7 @@ const SEC={
   bars(s){const hiOf=v=>Array.isArray(v)?v[1]:v,max=s.max||Math.max(...s.items.map(b=>hiOf(b.value)))*1.02,hl=s.items.some(b=>b.highlight),ex=s.items.some(b=>b.extra);
     const pc=v=>(Math.max(0,v)/max*100).toFixed(1);
     return `<div class="bars${s.layout==="stack"?" stack":""}" style="${s.label_width?`--lw:${s.label_width}px;`:""}${s.value_width?`--vw:${s.value_width}px`:""}">${s.items.map((b,i)=>{
-      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],g=hl?(b.highlight?"acc":"gray"):s.colors==="cats"?i:(b.tone==="gray"?"gray":"acc");
+      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],g=hl?(b.highlight?"acc":"gray"):b.tone==="gray"?"gray":s.colors==="accent"?"acc":i;
       const ci=b.company?coInfo(b.company):null,txt=`<div class="bl"><b>${rich(b.label||(ci&&(ci.name||ci.code))||"")}</b>${b.sub||ci?`<span>${esc(b.sub||(ci&&ci.code)||"")}</span>`:""}</div>`;
       const label=b.company?`<div class="bl-co">${badge(b.company,40)}${txt}</div>`:txt;
       const val=b.text!=null?rich(b.text):(lo===hi?fmt(lo):`${fmt(lo)}–${fmt(hi)}`)+(s.unit?`<small>${esc(s.unit)}</small>`:"");
@@ -734,10 +740,10 @@ const SEC={
   columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%8]:PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
   // 标签 + 一句话：电话会要点、市场观点、风险提示。tone: up/down/gray/dark/accent 或分类色序号，不写则同名标签同色
   points(s){const tags=[...new Set(s.items.map(p=>p.tag))];return `<div class="pts" style="--cols:${s.cols||1}">${s.items.map(p=>{
-    const c=p.tone!=null?toneHex(p.tone):s.colors==="cats"?PAL[tags.indexOf(p.tag)%8]:ACC;return `<div class="pt">${p.tag?`<span class="ptag" style="background:${c}">${esc(p.tag)}</span>`:""}<div>${p.company?`<span class="co-in">${badge(p.company,30)}${esc(coInfo(p.company).name||coInfo(p.company).code)}</span>`:""}${rich(p.text)}${p.sub?`<small>${rich(p.sub)}</small>`:""}</div></div>`}).join("")}</div>`},
+    const c=p.tone!=null?toneHex(p.tone):s.colors==="accent"?ACC:PAL[tags.indexOf(p.tag)%PAL.length];return `<div class="pt">${p.tag?`<span class="ptag" style="background:${c}">${esc(p.tag)}</span>`:""}<div>${p.company?`<span class="co-in">${badge(p.company,30)}${esc(coInfo(p.company).name||coInfo(p.company).code)}</span>`:""}${rich(p.text)}${p.sub?`<small>${rich(p.sub)}</small>`:""}</div></div>`}).join("")}</div>`},
   callout(s){const c=toneHex(s.tone||"accent");return `<div class="callout" style="background:${mix(c,W,.91)}"><b style="color:${ink(mix(c,K,.2))}">${rich(s.title)}</b>${s.text?`<span>${rich(s.text)}</span>`:""}</div>`},
   text(s){return `<div class="p-text">${s.title?`<h3>${rich(s.title)}</h3>`:""}${s.text?`<p>${rich(s.text)}</p>`:""}</div>`},
-  cards(s){return `<div class="mcards" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((c,i)=>`<div class="mcard" data-g="${s.colors==="cats"?i:"acc"}">${c.company?badge(c.company,44):""}${c.icon?`<i class="ico" data-ico="${esc(c.icon)}" style="--is:40px"></i>`:""}<b>${rich(c.title||(c.company&&coInfo(c.company).name)||"")}</b>${c.value!=null?`<strong>${rich(c.value)}</strong>`:""}${c.sub?`<span>${rich(c.sub)}</span>`:""}</div>`).join("")}</div>`},
+  cards(s){return `<div class="mcards" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((c,i)=>`<div class="mcard" data-g="${s.colors==="accent"?"acc":i}">${c.company?badge(c.company,44):""}${c.icon?`<i class="ico" data-ico="${esc(c.icon)}" style="--is:40px"></i>`:""}<b>${rich(c.title||(c.company&&coInfo(c.company).name)||"")}</b>${c.value!=null?`<strong>${rich(c.value)}</strong>`:""}${c.sub?`<span>${rich(c.sub)}</span>`:""}</div>`).join("")}</div>`},
   // 热力表：格子颜色按 colors（不给则按 values）相对 center 的方向和幅度
   heatmap(s){const ctr=s.center??0,cv=s.rows.flatMap(r=>(r.colors||r.values).filter(v=>typeof v==="number").map(v=>Math.abs(v-ctr))),m=s.range||Math.max(...cv)||1;
     const f=v=>s.format==="pct"?(v>0?"+":"")+fmt(v)+"%":s.format==="x"?v.toFixed(1)+"×":fmt(v);
@@ -819,7 +825,7 @@ Object.assign(SEC,{
   treemap(s){const g=[...new Set(s.items.map(i=>i.group).filter(Boolean))];return (g.length>1?legendHTML(g.map((x,j)=>["box",PAL[j%PAL.length],x])):"")+`<div class="chart tm" data-chart="${reg("treemap",{s})}"></div>`},
   // 流程转化：漏斗
   funnel(s){const mx=Math.max(...s.items.map(i=>i.value)),u=s.unit||"",n=s.items.length;
-    return `<div class="fun">${s.items.map((it,k)=>{const wd=Math.max(16,it.value/mx*100),c=it.tone!=null?toneHex(it.tone):mix(ACC,W,k/Math.max(1,n-1)*.55);
+    return `<div class="fun">${s.items.map((it,k)=>{const wd=Math.max(16,it.value/mx*100),c=it.tone!=null?toneHex(it.tone):s.colors==="accent"?mix(ACC,W,k/Math.max(1,n-1)*.55):PAL[k%PAL.length];
       const cv=k?`<div class="fun-cv">↓ ${esc(s.conv_label||"转化")} ${(it.value/s.items[k-1].value*100).toFixed(1)}%</div>`:"";
       return cv+`<div class="fun-row">${lblock(it)}<div class="fun-bar"><div style="width:${wd.toFixed(1)}%;background:${c};color:${onC(c)}">${it.text!=null?rich(it.text):fmt(it.value)+esc(u)}</div></div></div>`}).join("")}</div>`},
   // 多维对比：雷达（≤3 个系列）
@@ -835,18 +841,18 @@ Object.assign(SEC,{
   // 流向：桑基图
   sankey(s){return `<div class="chart" data-chart="${reg("sankey",{s})}"></div>`},
   // 小多图：一组迷你走势卡片
-  sparks(s){return `<div class="spk" style="--n:${s.cols||3}">${s.items.map(it=>{const ok=it.values.filter(v=>v!=null),last=ok.at(-1),first=ok[0];
+  sparks(s){return `<div class="spk" style="--n:${s.cols||3}">${s.items.map((it,i)=>{const ok=it.values.filter(v=>v!=null),last=ok.at(-1),first=ok[0];
     const ch=it.change??(first?(last/first-1)*100:null),dir=typeof ch==="number"?(ch>=0?"up":"down"):autoTone(ch);
-    return `<div class="spk-it"><div class="spk-h">${lblock(it,30)}</div><div class="spk-v"><b>${it.value_text!=null?rich(it.value_text):fmt(last)}<small>${esc(s.unit||"")}</small></b>${ch!=null?`<em class="${dir}">${typeof ch==="string"?esc(ch):(ch>=0?"+":"−")+Math.abs(ch).toFixed(1)+"%"}</em>`:""}</div><div class="chart" data-chart="${reg("spark",{it,dir,s})}" style="height:64px"></div></div>`}).join("")}</div>`},
+    return `<div class="spk-it"><div class="spk-h">${lblock(it,30)}</div><div class="spk-v"><b>${it.value_text!=null?rich(it.value_text):fmt(last)}<small>${esc(s.unit||"")}</small></b>${ch!=null?`<em class="${dir}">${typeof ch==="string"?esc(ch):(ch>=0?"+":"−")+Math.abs(ch).toFixed(1)+"%"}</em>`:""}</div><div class="chart" data-chart="${reg("spark",{it,dir,s,i})}" style="height:64px"></div></div>`}).join("")}</div>`},
 
   // 时间线：vertical（默认）或 horizontal（≤6 个节点）
-  timeline(s){const it=s.items,dot=(x)=>{const c=x.tone!=null?toneHex(x.tone):x.highlight||s.highlight_all!==false?ACC:DIM;
+  timeline(s){const it=s.items,dot=(x)=>{const i=it.indexOf(x),c=x.tone!=null?toneHex(x.tone):s.colors==="accent"?ACC:PAL[i%PAL.length];
       return x.icon?`<i class="dt big" style="background:${c}"><i class="ico" data-ico="${esc(x.icon)}" style="--is:24px;color:#fff"></i></i>`:`<i class="dt" style="background:${c}"></i>`};
     const body=x=>`${x.company?`<span class="lab-co">${badge(x.company,28)}</span>`:""}<b>${rich(x.title)}</b>${x.text?`<span>${rich(x.text)}</span>`:""}`;
     if(s.layout==="horizontal")return `<div class="tlh" style="--n:${it.length}"><i class="tlh-ln"></i>${it.map(x=>`<div class="tlh-it${x.highlight?" hl":""}"><div class="tlh-t">${rich(x.time)}</div><div class="tlh-d">${dot(x)}</div>${body(x)}</div>`).join("")}</div>`;
     return `<div class="tlv">${it.map((x,i)=>`<div class="tlv-it${x.highlight?" hl":""}"><div class="tlv-t">${rich(x.time)}</div><div class="tlv-d">${i<it.length-1?`<i class="ln"></i>`:""}${dot(x)}</div><div class="tlv-c">${body(x)}</div></div>`).join("")}</div>`},
   // 步骤 / 流程：row（≤5 步横排带箭头）或 list（竖排）
-  steps(s){const it=s.items,lay=s.layout||(it.length<=5?"row":"list"),c=x=>x.tone!=null?toneHex(x.tone):ACC;
+  steps(s){const it=s.items,lay=s.layout||(it.length<=5?"row":"list"),c=x=>x.tone!=null?toneHex(x.tone):s.colors==="accent"?ACC:PAL[it.indexOf(x)%PAL.length];
     const num=(x,i)=>x.icon?`<i class="ico" data-ico="${esc(x.icon)}" style="--is:28px;color:${onC(c(x))}"></i>`:`<span style="color:${onC(c(x))}">${i+1}</span>`;
     if(lay==="row")return `<div class="stp" style="--n:${it.length}">${it.map((x,i)=>`<div class="stp-it">${i<it.length-1?`<i class="stp-ar"><em></em></i>`:""}<div class="stp-n" style="background:${c(x)}">${num(x,i)}</div><b>${rich(x.title)}</b>${x.text?`<span>${rich(x.text)}</span>`:""}</div>`).join("")}</div>`;
     return `<div class="stl">${it.map((x,i)=>`<div class="stl-it"><div class="stl-d">${i<it.length-1?`<i class="ln"></i>`:""}<div class="stp-n" style="background:${c(x)}">${num(x,i)}</div></div><div class="stl-c"><b>${rich(x.title)}</b>${x.text?`<span>${rich(x.text)}</span>`:""}</div></div>`).join("")}</div>`},
@@ -930,7 +936,7 @@ Object.assign(CH,{
       C.svg(`<polygon points="${q.values.map((v,k)=>P(pt(k,v))).join(" ")}" fill="${c}" fill-opacity="${hl&&!q.highlight?.06:.16}" stroke="${c}" stroke-width="${hl&&!q.highlight?2:3}" stroke-linejoin="round"/>`);
       q.values.forEach((v,k)=>{const[x,y]=pt(k,v);C.svg(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${c}"/>`);if(s.series.length===1||q.highlight)C.text(x,y-9,fmt(v),"sm","c","b",ink(c))})});
     C.done(el)},
-  ring(el,w,{it,i,s}){const size=Math.min(w,s.size||160),C=new Chart(w,size),cx=w/2,cy=size/2,sw=s.thickness||15,r=size/2-sw/2-2,c=it.tone!=null?toneHex(it.tone):s.colors==="cats"?PAL[i%PAL.length]:ACC;
+  ring(el,w,{it,i,s}){const size=Math.min(w,s.size||160),C=new Chart(w,size),cx=w/2,cy=size/2,sw=s.thickness||15,r=size/2-sw/2-2,c=it.tone!=null?toneHex(it.tone):s.colors==="accent"?ACC:PAL[i%PAL.length];
     const f=Math.max(0,Math.min(1,it.value/(it.max||s.max||100))),L=2*Math.PI*r;
     C.svg(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#eef0f4" stroke-width="${sw}"/>`);
     if(f>0)C.svg(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${(f*L).toFixed(1)} ${L.toFixed(1)}" transform="rotate(-90 ${cx} ${cy})"/>`);
@@ -949,8 +955,8 @@ Object.assign(CH,{
     names.forEach(n=>{const p=pos[n],t=`<b>${esc(n)}</b> ${fmt(val(n))}${esc(s.unit||"")}`;C.svg(`<rect x="${f(p.x)}" y="${f(p.y)}" width="${nw}" height="${f(p.h)}" rx="3" fill="${color[n]}"/>`);
       if(layer[n]===0)C.text(p.x-10,p.y+p.h/2,t,"sm sl","r","m");else if(layer[n]===Lc-1)C.text(p.x+nw+10,p.y+p.h/2,t,"sm sl","l","m");else C.text(p.x+nw+8,p.y+p.h/2,t,"sm sl mid","l","m")});
     C.done(el)},
-  spark(el,w,{it,dir,s}){const v=it.values,n=v.length,ok=v.filter(x=>x!=null),lo=Math.min(...ok),hi=Math.max(...ok),C=new Chart(w,64),X=i=>4+i/(n-1||1)*(w-8),Y=x=>6+(hi-x)/((hi-lo)||1)*52;
-    const c=it.tone!=null?toneHex(it.tone):s.colors==="updown"&&dir?UD[dir]:ACC,id="sp"+(UID++),pts=v.map((x,i)=>x==null?null:[X(i),Y(x)]).filter(Boolean),f=p=>p[0].toFixed(1)+","+p[1].toFixed(1);
+  spark(el,w,{it,dir,s,i}){const v=it.values,n=v.length,ok=v.filter(x=>x!=null),lo=Math.min(...ok),hi=Math.max(...ok),C=new Chart(w,64),X=i=>4+i/(n-1||1)*(w-8),Y=x=>6+(hi-x)/((hi-lo)||1)*52;
+    const c=it.tone!=null?toneHex(it.tone):s.colors==="updown"&&dir?UD[dir]:s.colors==="accent"?ACC:PAL[(i||0)%PAL.length],id="sp"+(UID++),pts=v.map((x,i)=>x==null?null:[X(i),Y(x)]).filter(Boolean),f=p=>p[0].toFixed(1)+","+p[1].toFixed(1);
     C.def(`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>`);
     C.svg(`<path d="M${pts[0][0].toFixed(1)},62L${pts.map(f).join("L")}L${pts.at(-1)[0].toFixed(1)},62Z" fill="url(#${id})"/><path d="M${pts.map(f).join("L")}" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${pts.at(-1)[0].toFixed(1)}" cy="${pts.at(-1)[1].toFixed(1)}" r="4.5" fill="${c}"/>`);
     C.done(el)},
@@ -964,7 +970,7 @@ Object.assign(CH,{
       const st=n._d===0?`background:${c};color:${onC(c)}`:leaf?`background:#fff;border:1.5px solid ${mix(c,W,.55)};color:#16172a`:`background:${mix(c,W,.86)};color:${ink(mix(c,K,.15))}`;
       return `<div class="tn" style="left:${f(X(n._d))}px;top:${f(n._y+6)}px;width:${f(colW)}px;height:${rowH-12}px;${st}"><b>${rich(n.label)}</b>${n.sub?`<span>${rich(n.sub)}</span>`:""}</div>`}).join("")},
   pyramid(el,w,s){const it=s.items,n=it.length,rowH=s.row_height||74,gap=6,pw=Math.min(w*(s.width||.46),480),C=new Chart(w,n*(rowH+gap)-gap),cx=pw/2,half=v=>(.14+.86*v)*pw/2,f=v=>v.toFixed(1);
-    it.forEach((x,k)=>{const y0=k*(rowH+gap),y1=y0+rowH,c=x.tone!=null?toneHex(x.tone):mix(ACC,W,k/Math.max(1,n-1)*.62);
+    it.forEach((x,k)=>{const y0=k*(rowH+gap),y1=y0+rowH,c=x.tone!=null?toneHex(x.tone):s.colors==="accent"?mix(ACC,W,k/Math.max(1,n-1)*.62):PAL[k%PAL.length];
       C.svg(`<polygon points="${f(cx-half(k/n))},${y0} ${f(cx+half(k/n))},${y0} ${f(cx+half((k+1)/n))},${y1} ${f(cx-half((k+1)/n))},${y1}" fill="${c}"/>`);
       C.text(cx,(y0+y1)/2,rich(x.title),"pyr","c","m",onC(c));
       if(x.text)C.t.push(`<span class="cl pyr-t" style="left:${f(pw+30)}px;top:${f((y0+y1)/2)}px;width:${f(w-pw-30)}px;transform:translate(0,-50%)">${rich(x.text)}</span>`)});

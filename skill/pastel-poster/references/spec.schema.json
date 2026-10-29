@@ -207,6 +207,10 @@
     "numbered": {
       "type": "boolean",
       "description": "卡片标题前加编号"
+    },
+    "exact_color": {
+      "type": "boolean",
+      "description": "true 时强调色用原色，不吸附到 8 色"
     }
   },
   "$defs": {

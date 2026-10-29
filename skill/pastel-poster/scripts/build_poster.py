@@ -95,9 +95,16 @@ ISO_OBJECTS = {"chip", "module", "rack", "coin", "globe", "battery", "building",
 UA = {"User-Agent": "poster-kit/1.0 (https://github.com/wenjinliuu/poster-kit)"}
 
 
-def fetch(url, timeout=20):
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
-        return r.read()
+def fetch(url, timeout=20, tries=3):
+    import time
+    for k in range(tries):  # 维基等站点偶尔超时或限流，稍等重试
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
+                return r.read()
+        except Exception:
+            if k == tries - 1:
+                raise
+            time.sleep(2 * (k + 1))
 
 
 def icon_names(obj):
