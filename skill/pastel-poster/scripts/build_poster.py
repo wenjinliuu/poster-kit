@@ -2,12 +2,15 @@
 """把 spec.json 和 logos.json 填进海报模板，生成海报网页，可选直接导出 PNG。
 
 用法：
-    python3 build_poster.py spec.json logos.json out.html [--png out.png] [--scale 2] [--standalone] [--no-embed-fonts]
+    python3 build_poster.py spec.json logos.json out.html [--png out.png] [--scale 2] [--standalone] [--no-embed-fonts] [--gallery]
 
     --png         生成网页后用无头浏览器按“下载高清图”同一套逻辑导出 PNG（需要 playwright）
     --scale       导出倍率，默认 2（1080 宽 → 2160 宽）
     --standalone  输出完整 HTML 文档（本地打开、自己部署用）；默认输出 Artifact 页面片段
     --no-embed-fonts  不内嵌字体，改为链接 Google Fonts
+    --gallery     图库模式：生成符合海报图库（poster-gallery）交付规范的完整 HTML —— 字体引用图库的 /fonts.css，
+                  logo 引用图库的 /logo/交易所:代码，不内嵌 html2canvas（图库自带下载高清图），隐藏模板自带的标题栏和下载按钮。
+                  发布用 publish_gallery.py（会自动用图库模式生成）
 
 logos.json 不存在时所有公司用首字徽章。生成前会检查 spec，有错误时列出并退出。
 页面完全自包含：html2canvas 内置，字体按海报实际用到的字从 Google Fonts 取子集内嵌（取不到就回退为链接）。
@@ -30,6 +33,7 @@ HTML2CANVAS = ASSETS / "vendor" / "html2canvas.min.js"
 FONT_CJK = "family=Noto+Sans+SC:wght@400;500;700;900"
 FONT_NUM = "family=Plus+Jakarta+Sans:wght@500;700;800"  # 只有拉丁字符，数字和代码用
 FONT_LINK = f'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?{FONT_CJK}&{FONT_NUM}&display=swap">'
+GALLERY_FONTS = '<link rel="stylesheet" href="/fonts.css">'  # 海报图库自托管的思源黑体全套切片 + Plus Jakarta Sans
 # 请求 Google Fonts 时用现代浏览器的 UA，才会拿到 woff2
 FONT_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 BASE_CHARS = "".join(chr(c) for c in range(0x20, 0x7F)) + "，。：；、！？“”‘’（）《》【】·—…％×→↑↓±≈≤≥°￥€£"
@@ -138,6 +142,34 @@ def clean_svg(svg):
     return re.sub(r"\son\w+\s*=\s*(\"[^\"]*\"|'[^']*')", "", svg)
 
 
+GALLERY_EMBED_MAX = 2800  # 图库不收超过约 3KB 的 base64 内嵌图片（logo 走 /logo，SVG 改成文本形式内嵌）
+GALLERY_LOGO_FROM = {"override", "repo"}  # 图库的 /logo 只从这两处取；TradingView 来的 logo 图库取不到
+
+
+def gallery_data_uri(uri):
+    """图库模式：SVG 的 data URI 改成文本形式（不是 base64，不受内嵌图片大小限制）；大于约 3KB 的 PNG 放弃"""
+    if not uri or not uri.startswith("data:"):
+        return uri
+    head, data = uri.split(",", 1)
+    if "svg" in head:
+        raw = base64.b64decode(data).decode("utf-8", "ignore") if ";base64" in head else urllib.parse.unquote(data)
+        return "data:image/svg+xml;utf8," + urllib.parse.quote(clean_svg(raw), safe="=:/;,.-_()")  # 引号、#、空格都转义（放在 src="..." 里）
+    return uri if len(data) <= GALLERY_EMBED_MAX else None
+
+
+def gallery_logos(logos):
+    """图库模式：logo 改成图库的 /logo/交易所:代码 地址（图库按同样顺序取、存一份共用），保留品牌色；图库取不到的去掉，显示首字"""
+    out, dropped = {}, []
+    for key, v in logos.items():
+        if v.get("from") in GALLERY_LOGO_FROM:
+            out[key] = {"src": "/logo/" + urllib.parse.quote(key, safe=":"), "from": v["from"], **({"color": v["color"]} if v.get("color") else {})}
+        else:
+            dropped.append(key)
+    if dropped:
+        print(f"  提醒：这些 logo 来自 TradingView，图库取不到，海报上显示首字：{'、'.join(dropped)}")
+    return out
+
+
 def to_data_uri(src, base):
     """brand.image / brand.svg：URL、本地文件或 SVG 文本 → data URI（海报不加载外部图片）"""
     if not src or src.startswith("data:"):
@@ -152,7 +184,7 @@ def to_data_uri(src, base):
     return f"data:{mime};base64," + base64.b64encode(raw).decode()
 
 
-def build(spec_path, logos_path, out_path, standalone=False, embed=True):
+def build(spec_path, logos_path, out_path, standalone=False, embed=True, gallery=False):
     spec = json.load(open(spec_path, encoding="utf-8"))
     from fetch_prices import fill_prices
     for sym in fill_prices(spec):  # price 版块、带 symbol 的 sparks / line：按代码取行情
@@ -170,6 +202,11 @@ def build(spec_path, logos_path, out_path, standalone=False, embed=True):
     for key in ("image", "svg"):
         try:
             brand[key] = to_data_uri(brand.get(key), pathlib.Path(spec_path).resolve().parent)
+            if gallery and brand.get(key):
+                brand[key] = gallery_data_uri(brand[key])
+                if not brand[key]:
+                    print(f"  提醒：brand.{key} 是较大的位图，图库不收内嵌大图，改用文字字标或圆形 logo")
+                    brand.pop(key)
         except Exception as e:
             print(f"  提醒：brand.{key} 取不到（{e.__class__.__name__}），改用文字字标或圆形 logo")
             brand.pop(key, None)
@@ -177,9 +214,17 @@ def build(spec_path, logos_path, out_path, standalone=False, embed=True):
     html = TEMPLATE.read_text(encoding="utf-8")
     title = spec.get("page_title") or " ".join(t for t in spec.get("title", []) if t) or "海报"
     title = title.replace("<", "").replace(">", "")[:40]
-    fonts = (embed and embed_fonts(used_chars(spec, html))) or FONT_LINK
-    html = html.replace("<!--__FONTS__-->", fonts)
-    html = html.replace("<!--__HTML2CANVAS__-->", "<script>" + HTML2CANVAS.read_text(encoding="utf-8") + "</script>")
+    if gallery:
+        # 图库模式：字体用图库的全套切片，html2canvas 由图库的下载按钮按需加载，模板自带的标题栏和下载按钮隐藏（图库有工具条）
+        logos = gallery_logos(logos)
+        fonts = GALLERY_FONTS
+        html = html.replace("<!--__FONTS__-->", fonts + "<style>.page-h,.ver-h{display:none!important}</style>")
+        html = html.replace("<!--__HTML2CANVAS__-->", "")
+        standalone = True
+    else:
+        fonts = (embed and embed_fonts(used_chars(spec, html))) or FONT_LINK
+        html = html.replace("<!--__FONTS__-->", fonts)
+        html = html.replace("<!--__HTML2CANVAS__-->", "<script>" + HTML2CANVAS.read_text(encoding="utf-8") + "</script>")
     html = html.replace("__PAGE_TITLE__", title)
     html = html.replace("/*__SPEC__*/null", safe_json(spec))
     html = html.replace("/*__LOGOS__*/{}", safe_json(logos))
@@ -187,7 +232,8 @@ def build(spec_path, logos_path, out_path, standalone=False, embed=True):
     if standalone:
         html = wrap(html)
     pathlib.Path(out_path).write_text(html, encoding="utf-8")
-    print(f"已生成 {out_path}（{len(html) // 1024} KB，logo {len(logos)} 个，图标 {len(icons)} 个，字体{'内嵌' if fonts != FONT_LINK else '外链'}）")
+    print(f"已生成 {out_path}（{len(html) // 1024} KB，logo {len(logos)} 个，图标 {len(icons)} 个，"
+          f"字体{'用图库的' if gallery else '内嵌' if fonts != FONT_LINK else '外链'}{'，图库模式' if gallery else ''}）")
     return out_path
 
 
@@ -217,7 +263,7 @@ if __name__ == "__main__":
     if len(args) < 3:
         print(__doc__)
         sys.exit(1)
-    out = build(*args[:3], standalone="--standalone" in sys.argv, embed="--no-embed-fonts" not in sys.argv)
+    out = build(*args[:3], standalone="--standalone" in sys.argv, embed="--no-embed-fonts" not in sys.argv, gallery="--gallery" in sys.argv)
     png = arg("--png") or arg("--preview")  # --preview 是旧写法
     if png:
         from render_png import render
