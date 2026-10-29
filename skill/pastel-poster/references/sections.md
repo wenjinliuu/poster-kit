@@ -26,7 +26,6 @@
 | `footer` | 是 | 页脚多行，最后一行是免责声明（小字） |
 | `page_title` / `page_sub` | 否 | 网页标题和说明（不进海报） |
 | `mark` / `mark_sub` | 否 | 页脚右侧署名，默认 `pastel-poster` |
-| `gallery` | 否 | 发布到海报图库时的卡片信息（不进海报）：`{"slug", "title", "subtitle", "tags", "hero", "hero_label", "hero_tone", "date", "time"}`，见 `scripts/publish_gallery.py` |
 
 *只要版块里引用了公司就必须写。常用交易所：`SSE` 上交所、`SZSE` 深交所、`HKEX` 港交所、`NASDAQ`、`NYSE`、`AMEX`、`TSE` 东京、`KRX` 韩国、`TWSE` 台湾、`LSE` 伦敦；也可以写 `7203.T`、`2330.TW` 这类 Yahoo 代码。完整写法见 `logos.md`。
 港股 `code` 建议写 5 位，如 `"06869"`；A 股、美股可省略 `code`，自动取键里的代码。
