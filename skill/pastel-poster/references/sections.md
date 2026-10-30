@@ -21,7 +21,7 @@
 | `versions` | 否 | 默认 `["clear"]`（雾彩·清透）。新增风格后，需要对比时写多个，如 `["clear","新风格id"]` |
 | `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；有 `brand.colors` 时取第一个品牌色。写任意颜色都会吸附到 8 色里最接近的一个，`"exact_color": true` 才保留原色 |
 | `companies` | 是* | 公司表，键是 `交易所:代码`（或 Yahoo 后缀代码、`市场:代码`），值是 `{"name": "中文名", "code": "显示代码(可选)", "color": "#rrggbb(可选，logo 描边色)"}` |
-| `badge_ring` | 否 | 圆形 logo 的彩色描边：`brand`（默认，取各家 logo 的品牌色）、`category`（跟所在分类色）、`accent`（统一强调色）、`none`（浅灰细边） |
+| `badge_ring` | 否 | 圆形 logo 的彩色描边：`auto`（默认，跟所在分类色，单独出现时按公司代码固定分配 8 色之一）、`brand`（取 logo 自己的品牌色）、`accent`（统一强调色）、`none`（浅灰细边） |
 | `sections` | 是 | 版块数组 |
 | `footer` | 是 | 页脚多行，最后一行是免责声明（小字） |
 | `page_title` / `page_sub` | 否 | 网页标题和说明（不进海报） |
@@ -135,7 +135,7 @@
 {"type":"bars","unit":"%","max":100,"items":[{"label":"美光","sub":"6–9 月 · GAAP","value":80.7,"extra":"542 亿美元"},{"label":"SK 海力士","value":79.7,"highlight":true}]}
 ```
 - `value` 可以是 `[低, 高]` 区间；`text` 改右侧数值文字（如 `"+20% 中段"`）；`company` 用公司 logo 当标签；`extra` 是最右侧灰字。
-- 有 `highlight` 时高亮那行用强调色、其余变灰（同业对比用）；`tone:"gray"` 单独把某行变灰；`colors:"cats"` 每行一种分类色。
+- 每行默认一种分类色；有 `highlight` 时那一行用强调色，并加同色浅底和描边的“选中”样式（同业对比突出自己用）；`tone:"gray"` 单独把某行变灰；`colors:"accent"` 全部用强调色；`g` 指定分类色序号。
 - `layout:"stack"` 标签在条上方（窄卡片、并排时用）；`label_width`、`value_width` 调列宽，`max` 定刻度上限。
 
 ### `line` 折线

@@ -197,12 +197,13 @@
     },
     "badge_ring": {
       "enum": [
+        "auto",
         "brand",
         "category",
         "accent",
         "none"
       ],
-      "description": "圆形 logo 描边颜色"
+      "description": "圆形 logo 描边颜色，默认 auto"
     },
     "numbered": {
       "type": "boolean",
