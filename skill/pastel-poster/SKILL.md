@@ -30,10 +30,13 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 
 ## 流程
 
-1. **判断类型、定骨架**：读 `references/recipes.md`，判断属于哪一类（财报速览、公司事件、产业链名单、持仓构成、数据统计、行情日报、研报观点、知识科普、通用数据报告、事件始末、对比评测），按配方的骨架选版块。不限于财经：用户给了资料或让你上网搜一个话题，都可以做。
-   每个版块用什么图，按 `references/charts.md` 的“想说明什么 → 用哪个版块”选（字段见 `references/sections.md`）。现有版块都表达不了时才用 `draw` 自己画。
-2. **按清单收集并核实数据**：照配方里的信息收集清单逐项上网查，数字和公司名单都要核实，写清口径、来源和日期。几家媒体数字不一致时对上口径；没公布的写“未披露”；拿不准的不放。先想清楚每个版块回答什么问题，小标题写成结论。
-3. **写 spec.json**：标题、背景物件、公司表（键写 `交易所:代码`、Yahoo 后缀代码如 `7203.T`，或 `市场:代码`）、版块、页脚。字段见 `references/sections.md`，可从 `examples/` 里最接近的示例复制改写。
+1. **判断类型**：读 `references/recipes.md`，判断属于哪一类（财报速览、公司事件、产业链名单、持仓构成、数据统计、行情日报、研报观点、知识科普、通用数据报告、事件始末、对比评测），看这一类“常问的问题”和信息收集清单。不限于财经：用户给了资料或让你上网搜一个话题，都可以做。**这一步不定版块。**
+2. **查资料 → 资料卡 → 分析 → 大纲**：按 `references/story.md` 做。
+   - **资料卡**（`research.md`）是记账本，不是筛子：查到的事实、数字、观点、传闻、线索都记下，每条写口径、来源、日期；几家数字不一致就都记并写清口径，传闻标“传闻”，查不到写“未披露”。清单只提醒别漏，不限制去哪查、查什么。
+   - **分析**：找出这次最重要的变化（大标题），列读者会问的 3～5 个问题，用比较（预期、指引、上季、去年、同行）和拆分（业务、量价、利润各层、一次性）找原因，写出反方和不确定的地方。
+   - **大纲**（`outline.md`）：每个版块写“问题 → 结论小标题 → 用哪几条资料 → 用什么图”（按 `references/charts.md` 选，字段见 `references/sections.md`）。没资料支撑的版块删掉；没用上的资料列在“未用”里，不删。按 `story.md` 第 4 节过一遍内容关卡。深度海报能和用户对话时，先给用户看大纲。
+   - 另有专门的资料技能时，按它补充来源和问题。
+3. **写 spec.json**：按大纲写标题、背景物件、公司表（键写 `交易所:代码`、Yahoo 后缀代码如 `7203.T`，或 `市场:代码`）、版块、页脚。字段见 `references/sections.md`，可从 `examples/` 里最接近的示例复制改写。
    - 个股和公司事件加 `brand`：头部放公司字标（`scripts/find_wordmark.py` 找官方 SVG，找不到就按品牌色文字重建），`brand.colors` 写品牌色作强调色，见 `references/logos.md`。
    - 海报里提到其他公司时，在条、线、点、卡片上写 `company` 带出 logo。
    - 要点、步骤、时间线可以写 `icon`（Lucide 图标名），让海报更形象。
@@ -93,5 +96,5 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 - `assets/poster-template.html`：海报模板（样式、版块渲染、背景物件、下载）
 - `assets/vendor/html2canvas.min.js`：导出用的 html2canvas 1.4.1
 - `examples/`：财报速览、融资事件、行情日报、城市生活报告、睡眠科普、产业链名单、跨市场名单、持仓占比、资本开支统计九个完整示例（财报、融资、日报、城市为示例或虚构数据，只演示版式）
-- `references/`：海报类型配方 `recipes.md`、图表选型 `charts.md`、版块、配色、风格、版式关卡、logo 规则、`spec.schema.json`
+- `references/`：资料卡、分析与大纲 `story.md`，海报类型配方 `recipes.md`（常问的问题、收集清单、常见排法），图表选型 `charts.md`，版块、配色、风格、版式关卡、logo 规则、`spec.schema.json`
 - `requirements.txt`：可选依赖（cairosvg、Pillow、playwright）
