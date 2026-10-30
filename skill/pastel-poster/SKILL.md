@@ -42,6 +42,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
    - 要点、步骤、时间线可以写 `icon`（Lucide 图标名），让海报更形象。
    - 需要股价走势时用 `price` 版块只写公司代码，行情生成时自动取，不要手抄价格。
    - 深度速览加 `numbered`。
+   - 页脚右下角署名写 `mark`（制作者或用户指定的名字，如机器人名称），不写默认显示 `pastel-poster`。
 4. **取 logo**：
    ```bash
    python3 scripts/fetch_logos.py spec.json logos.json
