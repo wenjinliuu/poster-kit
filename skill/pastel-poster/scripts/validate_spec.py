@@ -96,8 +96,8 @@ def validate(spec):
 
     def check_one(t, s, where):
         if t == "chain":
-            if len(s["groups"]) > 8:
-                warnings.append(f"{where} 有 {len(s['groups'])} 组，超过 8 种分类色")
+            if len(s["groups"]) > 9:
+                warnings.append(f"{where} 有 {len(s['groups'])} 组，超过 9 种分类色")
             for g in s["groups"]:
                 for k in g.get("companies", []):
                     need(k, where)

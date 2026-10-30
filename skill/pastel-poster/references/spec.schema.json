@@ -211,7 +211,7 @@
     },
     "exact_color": {
       "type": "boolean",
-      "description": "true 时强调色用原色，不吸附到 8 色"
+      "description": "true 时强调色用原色，不吸附到图表色"
     }
   },
   "$defs": {

@@ -19,7 +19,7 @@
 | `object` | 否 | 右上背景物件，见 `style.md`：`chip` `module` `rack` `coin` `globe` `battery` `building` `wafer` `db` `robot`，或 `{"parts": [...]}` 自己拼 |
 | `updown` | 否 | `"cn"`（默认，红涨绿跌）或 `"us"`（绿涨红跌） |
 | `versions` | 否 | 默认 `["clear"]`（雾彩·清透）。新增风格后，需要对比时写多个，如 `["clear","新风格id"]` |
-| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；有 `brand.colors` 时取第一个品牌色。写任意颜色都会吸附到 8 个图表色（避开涨跌红绿）里最接近的一个，`"exact_color": true` 才保留原色 |
+| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；有 `brand.colors` 时取第一个品牌色。写任意颜色都会吸附到图表色里最接近的一个（主题色只用 6 个冷色，见 `style.md`），`"exact_color": true` 才保留原色 |
 | `companies` | 是* | 公司表，键是 `交易所:代码`（或 Yahoo 后缀代码、`市场:代码`），值是 `{"name": "中文名", "code": "显示代码(可选)", "color": "#rrggbb(可选，logo 描边色)"}` |
 | `badge_ring` | 否 | 圆形 logo 的描边：`auto`（默认，按 logo 底板配色：白底彩色取主色、彩色底取底色浅一档、黑底浅灰、黑白图形按代码固定色，见 `palette.md`）、`category`（跟所在分类色）、`brand`（logo 原色）、`accent`、`none` |
 | `sections` | 是 | 版块数组 |
@@ -33,7 +33,7 @@
 ## 版块类型
 
 ### `chain` 分组 + 公司网格
-受益股一览、产业链各环节名单。每组一种颜色，组数 ≤ 8，每组公司 ≤ 8 家。
+受益股一览、产业链各环节名单。每组一种颜色，组数 ≤ 9，每组公司 ≤ 8 家。
 ```json
 {"type":"chain","cols":4,"groups":[
   {"name":"光模块","desc":"一句话说明这一环节的作用","icon":"module","companies":["SZSE:300308","NASDAQ:COHR"]}]}
