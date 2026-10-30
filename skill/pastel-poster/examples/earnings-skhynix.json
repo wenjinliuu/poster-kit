@@ -144,12 +144,12 @@
        "actual": 83.33,
        "estimates": [
         {
-         "name": "联合 Infomax",
-         "value": 76.26
-        },
-        {
          "name": "LSEG",
          "value": 76.72
+        },
+        {
+         "name": "联合 Infomax",
+         "value": 76.26
         },
         {
          "name": "韩媒汇总",

@@ -13,7 +13,7 @@
 | **谁大谁小、排名**（量级、排序） | `bars`（排好序）、`ranking`（带 logo） | `bars style:"lollipop"`（条很多、长度接近时）、`columns`（类别少且是时间） | 饼图、雷达 |
 | **随时间变化**（趋势） | `line`（连续、点多）、`columns`（点少、强调每期的量） | `years`（3–8 年）、`sparks`（多个指标各看趋势）、`columns stack:true`（总量和构成一起变） | 面积堆叠多于 3 层 |
 | **前后两个时间点对比** | `slope`（看排名或方向变化） | `dumbbell`（看差距大小）、`bars` 两项 | 两条线的折线图 |
-| **偏离基准**（高于 / 低于目标、均值、常态） | `deviation`、`beat`（实际 vs 预期） | `heatmap`（多日、多项）、`stackbar diverging`（问卷态度） | 普通柱状图配一条均线 |
+| **偏离基准**（高于 / 低于目标、均值、常态） | `deviation`、`beat`（实际 vs 预期记分卡：一行一个指标，写实际、预期、偏离和结论） | `heatmap`（多日、多项）、`stackbar diverging`（问卷态度） | 普通柱状图配一条均线 |
 | **占整体多少**（部分与整体） | `donut`（≤6 项）、`mix`（一条 100% 条 + 量价说明） | `treemap`（项多或有分组）、`waffle`（“每 100 人里有几个”）、`holdings`（持仓）、`stackbar`（多组构成对比） | 3D 饼图、超过 6 块的饼 |
 | **单个百分比 / 完成度** | `rings` | `waffle`、`kpis` | 仪表盘指针 |
 | **一个总量怎么拆出来**（加减拆解） | `waterfall` | `flows`、`mix` | 堆叠柱 |
