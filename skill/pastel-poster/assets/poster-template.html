@@ -603,7 +603,7 @@ Chart.prototype.done=function(el){el.style.height=this.h+"px";
   el.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" width="${this.w}" height="${this.h}" viewBox="0 0 ${this.w} ${this.h}"><defs>${this.d.join("")}</defs>${this.s.join("")}</svg>${this.t.join("")}`};
 const vgrad=(id,c)=>`<linearGradient id="${id}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="${mix(c,W,.32)}"/><stop offset="1" stop-color="${c}"/></linearGradient>`;
 const hatch=(id,c)=>`<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="12" height="12" fill="${mix(c,W,.8)}"/><rect width="5" height="12" fill="${c}"/></pattern>`;
-function niceTicks(lo,hi){const span=hi-lo||1,step0=span/3,mag=Math.pow(10,Math.floor(Math.log10(step0))),step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=step0);
+function niceTicks(lo,hi){const span=hi-lo||1,step0=span/4,mag=Math.pow(10,Math.floor(Math.log10(step0))),step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=step0);
   const out=[];for(let v=Math.ceil(lo/step)*step;v<=hi+1e-9;v+=step)out.push(+v.toFixed(10));return out}
 function rect(C,x,y,w,h,fill,state,c){const r=Math.min(7,h/2,w/2);
   if(state==="plan")C.svg(`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="${r}" fill="#f0f1f5" stroke="${DIM}" stroke-width="2" stroke-dasharray="7 6"/>`);
@@ -677,7 +677,7 @@ const CH={
     C.done(el)},
 
   columns(el,w,s){const ser=s.series,n=s.x.length,m=ser.length,hiOf=v=>Array.isArray(v)?v[1]:v,u=s.unit||"";
-    const all=ser.flatMap(q=>q.values.filter(v=>v!=null).map(hiOf));let hi=s.ymax??Math.max(0,...all)*1.14,lo=s.ymin??Math.min(0,...all)*1.14;
+    const all=ser.flatMap(q=>q.values.filter(v=>v!=null).map(hiOf));let hi=s.ymax??Math.max(0,...all)*1.14,lo=s.ymin??Math.min(0,...all)*1.14;if(s.ymin==null&&lo<0)lo-=(hi-lo)*.14; // 负值柱下方留出标签位置，不压类别名
     const top=36,H=s.height||210,padL=s.axis===false?0:52,C=new Chart(w,top+H+44);
     const slot=(w-padL)/n,gap=8,bw=Math.min(54,(slot*.74-(m-1)*gap)/m),gw=m*bw+(m-1)*gap,Y=v=>top+(hi-v)/(hi-lo)*H;
     if(s.axis!==false)niceTicks(lo,hi).forEach(t=>{C.svg(`<line x1="${padL}" x2="${w}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}" stroke="#eef0f4" stroke-width="1.5"/>`);C.text(padL-12,Y(t),fmt(t)+esc(u),"ax","r","m")});
@@ -1055,7 +1055,7 @@ CARD.add("price");
 CH.price=(el,w,s)=>{const r=s.data,n=r.length,tg=(s.targets||[]).slice().sort((a,b)=>a.tp-b.tp),tps=tg.map(t=>t.tp),candle=s.style==="candle",vol=s.volume!==false&&r.some(x=>x[5]>0);
   const top=34,H=s.height||250,VH=vol?54:0,gap=vol?24:0,fanW=tps.length?Math.min(170,w*.2):0,padL=56,padR=tps.length?fanW+110:26;
   const C=new Chart(w,top+H+gap+VH+30),f=v=>v.toFixed(1);
-  let lo=Math.min(...r.map(x=>candle?x[3]:x[4]),...tps),hi=Math.max(...r.map(x=>candle?x[2]:x[4]),...tps);const pd=(hi-lo)*.08||hi*.05;lo-=pd;hi+=pd;
+  let lo=Math.min(...r.map(x=>candle?x[3]:x[4]),...tps),hi=Math.max(...r.map(x=>candle?x[2]:x[4]),...tps);const pd=(hi-lo)*.08||hi*.05;lo-=pd*2;hi+=pd; // 底部多留空给“低”标签，不压日期
   const x0=padL,x1=w-padR,X=i=>x0+(n===1?0:i/(n-1))*(x1-x0),Y=v=>top+(hi-v)/(hi-lo)*H,c0=s.color!=null?toneHex(s.color):ACC;
   yAxis(C,lo,hi,Y,padL,x1,"");
   const long=(new Date(r.at(-1)[0])-new Date(r[0][0]))>400*864e5,fd=d=>long?`${d.slice(0,4)}/${+d.slice(5,7)}`:`${+d.slice(5,7)}/${+d.slice(8,10)}`;
@@ -1078,9 +1078,8 @@ CH.price=(el,w,s)=>{const r=s.data,n=r.length,tg=(s.targets||[]).slice().sort((a
   // 区间最高、最低点
   const hiI=r.reduce((a,x,i)=>x[4]>r[a][4]?i:a,0),loI=r.reduce((a,x,i)=>x[4]<r[a][4]?i:a,0),edge=i=>X(i)<x0+60?"l":X(i)>x1-60?"r":"c";
   if(!candle){C.svg(`<circle cx="${f(X(hiI))}" cy="${f(Y(r[hiI][4]))}" r="5" fill="${c0}"/><circle cx="${f(X(loI))}" cy="${f(Y(r[loI][4]))}" r="5" fill="${c0}"/>`);
-    C.text(X(hiI),Y(r[hiI][4])-10,`高 ${fmt(r[hiI][4])}`,"sm",edge(hiI),"b",ink(c0));C.text(X(loI),Y(r[loI][4])+10,`低 ${fmt(r[loI][4])}`,"sm",edge(loI),"t",ink(c0))}
+    C.text(X(hiI),Y(r[hiI][4])-10,`高 ${fmt(r[hiI][4])}`,"sm",edge(hiI),"b",ink(c0));const le=edge(loI);le==="c"?C.text(X(loI),Y(r[loI][4])+10,`低 ${fmt(r[loI][4])}`,"sm","c","t",ink(c0)):C.text(X(loI)+(le==="l"?12:-12),Y(r[loI][4]),`低 ${fmt(r[loI][4])}`,"sm",le,"m",ink(c0))} // 最低点在两端时标签放侧面，不压首尾日期
   const lx=X(n-1),ly=Y(r[n-1][4]);C.svg(`<circle cx="${f(lx)}" cy="${f(ly)}" r="6.5" fill="${c0}" stroke="#fff" stroke-width="3"/>`);
-  if(!tps.length)C.text(lx-8,ly-12,fmt(r[n-1][4]),"","r","b",ink(c0));
   // 喇叭口：从最新收盘向各家目标价的最高 / 中位 / 最低张开，高于现价淡涨色、低于现价淡跌色
   if(tps.length){const xe=x1+fanW,med=tps[tps.length>>1],th=tps.at(-1),tl=tps[0],tri=(a,b,c)=>`<polygon points="${f(lx)},${f(ly)} ${f(xe)},${f(a)} ${f(xe)},${f(b)}" fill="${c}"/>`;
     C.svg(`<line x1="${f(lx)}" x2="${f(lx)}" y1="${top}" y2="${top+H}" stroke="#d5d9e2" stroke-dasharray="3 4"/>`);
