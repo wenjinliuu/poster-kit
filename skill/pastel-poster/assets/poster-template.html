@@ -539,7 +539,9 @@ function snapIn(c,list){if(!c)return null;c=c.toLowerCase();if(list.includes(c))
   if(sat<.2||l<.12||l>.93)return null;let best=null,bd=1e9;
   list.forEach(k=>{const[h2,,l2]=hsl(k),dh=Math.min(Math.abs(h-h2),360-Math.abs(h-h2)),d=dh+Math.abs(l-l2)*60;if(d<bd){bd=d;best=k}});return best}
 // 主题色只从 8 个图表色里选（红、绿品牌落到相邻的非涨跌色），写 exact_color 才用原色
-function snapTheme(c){if(!c)return CATS[0];if(SPEC.exact_color)return c.toLowerCase();return snapIn(c,CATS)||CATS[0]}
+function snapTheme(c){if(!c)return CATS[0];if(SPEC.exact_color)return c.toLowerCase();const[h,sat,l]=hsl(c);
+  if(sat>=.2&&l>.12&&l<.93&&h>=70&&h<=170)return "#00a8c6"; // 绿色品牌 → 湖青（按色相最近会落到琥珀）
+  return snapIn(c,CATS)||CATS[0]}
 const ACC=snapTheme(SPEC.accent||BRANDC[0]);
 // 分类色：强调色（品牌色）和品牌辅色排前面，再接 8 色里和它们不太像的；强调色本身是 8 色之一时直接从它轮转
 const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
@@ -547,7 +549,10 @@ const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],
 const PAL=[...(CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)]),...LIMITED];
 // 文字安全色：太浅的颜色（黄、浅青等品牌色）用作文字时自动加深，保证在白底上看得清
 const lum=h=>{const[r,g,b]=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
-function ink(c){let x=c;for(let t=.1;t<.8&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,K,t);return x}
+// 文字用的深色档：一般颜色先混黑再保证对比度；黄、琥珀直接走 ink（先混黑会发褐）
+const deep=(c,t)=>{const h=hsl(c)[0];return h>=25&&h<=70?ink(c):ink(mix(c,K,t))};
+// 黄、琥珀这类颜色往黑里压会变成芥末黄、土褐色：改往深橙压，加深后仍然干净
+function ink(c){const h=hsl(c)[0],to=h>=25&&h<=70?"#c2410c":K;let x=c;for(let t=.1;t<.9&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,to,t);return x}
 const UD=UPDOWN[SPEC.updown||"cn"];const GRAY="#b8bdc8",DIM="#a3a9b8";
 const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<em>$1</em>").replace(/\n/g,"<br>"); // **重点** 显示为强调，\n 换行
 const sign=v=>typeof v!=="number"?esc(v):(v>0?"+":v<0?"−":"")+fmt(Math.abs(v));
@@ -630,11 +635,11 @@ const CH={
         segs.forEach(sg=>{const cc=colOf(sg);rect(C,x0,y(sg.b),bw,y(sg.a)-y(sg.b),cc,sg.it.state,cc)})}
       else rect(C,x0,y1,bw,y2-y1,it.total&&it.g==null?`url(#${tid})`:c,st,c);
       if(k<n-1)C.svg(`<line x1="${(x0+bw).toFixed(1)}" x2="${(slot*(k+1.5)-bw/2).toFixed(1)}" y1="${y(b.b).toFixed(1)}" y2="${y(b.b).toFixed(1)}" stroke="#c4c8d4" stroke-width="1.5" stroke-dasharray="3 4"/>`);
-      C.text(cx,y1-8,esc(it.text??(it.total?fmt(b.b):sign(it.value))),"","c","b",st==="plan"?"#16172a":ink(mix(c,K,.15)));
+      C.text(cx,y1-8,esc(it.text??(it.total?fmt(b.b):sign(it.value))),"","c","b",st==="plan"?"#16172a":deep(c,.15));
       C.text(cx,top+H+12,esc(it.label),"xl","c","t");if(it.sub)C.text(cx,top+H+37,esc(it.sub),"xs","c","t")});
     C.svg(`<line x1="0" x2="${w}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
     (s.brackets||[]).forEach(r=>{const xa=slot*r.from+(slot-bw)/2,xb=slot*(r.to+1)-(slot-bw)/2,yb=top+H+xl+4;
-      C.svg(`<path d="M${xa.toFixed(1)},${yb}v10H${xb.toFixed(1)}v-10" fill="none" stroke="${ACC}" stroke-width="2"/>`);C.text((xa+xb)/2,yb+16,rich(r.text),"sm","c","t",ink(mix(ACC,K,.15)))});
+      C.svg(`<path d="M${xa.toFixed(1)},${yb}v10H${xb.toFixed(1)}v-10" fill="none" stroke="${ACC}" stroke-width="2"/>`);C.text((xa+xb)/2,yb+16,rich(r.text),"sm","c","t",deep(ACC,.15))});
     C.done(el)},
 
   line(el,w,s){const ser=s.series,n=s.x.length,multi=ser.length>1,hl=ser.some(q=>q.highlight),u=s.unit||"";
@@ -658,9 +663,9 @@ const CH={
       let idx=Array.isArray(s.labels)?s.labels:s.labels==="all"?ok.map(p=>p[3]):s.labels==="end"?[ok.at(-1)[3]]
         :[...new Set([ok[0][3],ok.at(-1)[3],ok.reduce((a,b)=>b[2]<a[2]?b:a)[3],ok.reduce((a,b)=>b[2]>a[2]?b:a)[3]])];
       idx.forEach(i=>{const p=pts[i];if(!p)return;C.svg(`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="6" fill="${c}" stroke="#fff" stroke-width="2.5"/>`);
-        const neg=p[2]<0,lab=fmt(p[2])+esc(u),cc=ink(mix(c,K,.12));if(neg)C.text(p[0]+12,p[1],lab,"","l","m",cc);else C.text(p[0],p[1]-12,lab,"",i===0?"l":i===n-1?"r":"c","b",cc)})});
+        const neg=p[2]<0,lab=fmt(p[2])+esc(u),cc=deep(c,.12);if(neg)C.text(p[0]+12,p[1],lab,"","l","m",cc);else C.text(p[0],p[1]-12,lab,"",i===0?"l":i===n-1?"r":"c","b",cc)})});
     ends.sort((a,b)=>a.y-b.y);for(let k=1;k<ends.length;k++)if(ends[k].y-ends[k-1].y<28)ends[k].y=ends[k-1].y+28;
-    ends.forEach(e=>C.text(e.x+14,e.y,e.txt,e.hl?"":"sm","l","m",e.hl?ink(mix(e.c,K,.1)):ink(mix(e.c,K,.25))));
+    ends.forEach(e=>C.text(e.x+14,e.y,e.txt,e.hl?"":"sm","l","m",e.hl?deep(e.c,.1):deep(e.c,.25)));
     C.done(el)},
 
   columns(el,w,s){const ser=s.series,n=s.x.length,m=ser.length,hiOf=v=>Array.isArray(v)?v[1]:v,u=s.unit||"";
@@ -674,7 +679,7 @@ const CH={
       ser.forEach((q,j)=>{const v=q.values[i];if(v==null)return;const c0=q.g!=null?PAL[q.g%8]:(s.highlight!=null?(i===s.highlight?ACC:mix(ACC,W,.55)):PAL[j%8]);
         const est=s.est_from!=null&&i>=s.est_from,c=est?mix(c0,W,.5):c0,h=hiOf(v),x=cx-gw/2+j*(bw+gap),y1=Y(Math.max(h,0)),y2=Y(Math.min(h,0));
         rect(C,x,y1,bw,y2-y1,c,"solid",c);
-        C.text(x+bw/2,h>=0?y1-6:y2+6,Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:sign(h).replace(/^\+/,s.signed?"+":"")+(s.unit_on_bars?esc(u):""),small?"sm":"","c",h>=0?"b":"t",ink(mix(c0,K,.2)))})});
+        C.text(x+bw/2,h>=0?y1-6:y2+6,Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:sign(h).replace(/^\+/,s.signed?"+":"")+(s.unit_on_bars?esc(u):""),small?"sm":"","c",h>=0?"b":"t",deep(c0,.2))})});
     C.done(el)},
 
   target(el,w,{it}){const C=new Chart(w,78),tps=it.targets.map(t=>t.tp),all=[...tps,it.price];let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo)*.12||hi*.05;lo-=pad;hi+=pad;
@@ -751,28 +756,28 @@ const SEC={
       const label=b.company?`<div class="bl-co">${badge(b.company,40)}${txt}</div>`:txt;
       const val=b.text!=null?rich(b.text):(lo===hi?fmt(lo):`${fmt(lo)}–${fmt(hi)}`)+(s.unit?`<small>${esc(s.unit)}</small>`:"");
       const bar=s.style==="lollipop"?`<b data-bar="${g}" style="width:${pc(hi)}%"></b><i data-dot="${g}" style="left:${pc(hi)}%"></i>`:lo===hi?`<b data-bar="${g}" style="width:${pc(hi)}%"></b>`:`<b data-bar="${g}" style="width:${pc(lo)}%"></b><b data-bar="${g}" class="rg" style="width:${(pc(hi)-pc(lo)).toFixed(1)}%"></b>`;
-      return `<div class="br-row${ex?" ex":""}${b.highlight?" hl":""}" style="--g:${gc};--hl-bg:${mix(gc,W,.91)};--hl-bd:${mix(gc,W,.55)};--hl-ink:${ink(mix(gc,K,.12))}">${label}<div class="trk${s.style==="lollipop"?" lol":""}">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
+      return `<div class="br-row${ex?" ex":""}${b.highlight?" hl":""}" style="--g:${gc};--hl-bg:${mix(gc,W,.91)};--hl-bd:${mix(gc,W,.55)};--hl-ink:${deep(gc,.12)}">${label}<div class="trk${s.style==="lollipop"?" lol":""}">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
   line(s){const multi=s.series.length>1&&!s.series.some(q=>q.highlight)&&s.legend!==false;
     return `${multi?legendHTML(s.series.map((q,j)=>["line",q.color||PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("line",{s})}"></div>`},
   columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%8]:PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
   // 标签 + 一句话：电话会要点、市场观点、风险提示。tone: up/down/gray/dark/accent 或分类色序号，不写则同名标签同色
   points(s){const tags=[...new Set(s.items.map(p=>p.tag))];return `<div class="pts" style="--cols:${s.cols||1}">${s.items.map(p=>{
     const c=p.tone!=null?toneHex(p.tone):s.colors==="accent"?ACC:PAL[tags.indexOf(p.tag)%PAL.length];return `<div class="pt">${p.tag?`<span class="ptag" style="background:${c}">${esc(p.tag)}</span>`:""}<div>${p.company?`<span class="co-in">${badge(p.company,30)}${esc(coInfo(p.company).name||coInfo(p.company).code)}</span>`:""}${rich(p.text)}${p.sub?`<small>${rich(p.sub)}</small>`:""}</div></div>`}).join("")}</div>`},
-  callout(s){const c=toneHex(s.tone||"accent");return `<div class="callout" style="background:${mix(c,W,.91)}"><b style="color:${ink(mix(c,K,.2))}">${rich(s.title)}</b>${s.text?`<span>${rich(s.text)}</span>`:""}</div>`},
+  callout(s){const c=toneHex(s.tone||"accent");return `<div class="callout" style="background:${mix(c,W,.91)}"><b style="color:${deep(c,.2)}">${rich(s.title)}</b>${s.text?`<span>${rich(s.text)}</span>`:""}</div>`},
   text(s){return `<div class="p-text">${s.title?`<h3>${rich(s.title)}</h3>`:""}${s.text?`<p>${rich(s.text)}</p>`:""}</div>`},
   cards(s){return `<div class="mcards" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((c,i)=>`<div class="mcard" data-g="${s.colors==="accent"?"acc":i}">${c.company?badge(c.company,44):""}${c.icon?`<i class="ico" data-ico="${esc(c.icon)}" style="--is:40px"></i>`:""}<b>${rich(c.title||(c.company&&coInfo(c.company).name)||"")}</b>${c.value!=null?`<strong>${rich(c.value)}</strong>`:""}${c.sub?`<span>${rich(c.sub)}</span>`:""}</div>`).join("")}</div>`},
   // 热力表：格子颜色按 colors（不给则按 values）相对 center 的方向和幅度
   heatmap(s){const ctr=s.center??0,cv=s.rows.flatMap(r=>(r.colors||r.values).filter(v=>typeof v==="number").map(v=>Math.abs(v-ctr))),m=s.range||Math.max(...cv)||1;
     const f=v=>s.format==="pct"?(v>0?"+":"")+fmt(v)+"%":s.format==="x"?v.toFixed(1)+"×":fmt(v);
     const cell=(v,c)=>{if(v==null)return `<td><span class="hm na">—</span></td>`;const d=(c??v)-ctr,col=d>=0?UD.up:UD.down,t=Math.min(1,Math.abs(d)/m);
-      return `<td><span class="hm" style="background:${mix(col,W,.92-.5*t)};color:${ink(mix(col,K,.25))}">${f(v)}</span></td>`};
+      return `<td><span class="hm" style="background:${mix(col,W,.92-.5*t)};color:${deep(col,.25)}">${f(v)}</span></td>`};
     return `<table class="tbl hmt"><thead><tr><th></th>${s.columns.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r.company?coItem(r.company,36):`<b>${esc(r.label)}</b>${r.sub?`<small>${esc(r.sub)}</small>`:""}`}</td>${r.values.map((v,j)=>cell(v,r.colors?r.colors[j]:null)).join("")}</tr>`).join("")}</tbody></table>`},
   // 偏离条：中线为常态/基准，向右为高于、向左为低于
   deviation(s){const r=s.range||Math.max(...s.rows.map(x=>Math.abs(x.value)))*1.15||1,cols=s.columns||[],u=s.unit??"%";
     const gt=`grid-template-columns:${s.label_width||190}px ${cols.map(()=>(s.col_width||120)+"px").join(" ")} minmax(0,1fr) 110px`;
     const hdr=cols.length||s.bar_label?`<div class="dv-row dv-h" style="${gt}"><span></span>${cols.map(c=>`<span>${esc(c)}</span>`).join("")}<span>${esc(s.bar_label||"")}</span><span></span></div>`:"";
     return `<div class="devs">${hdr}${s.rows.map(x=>{const v=x.value,dir=v>=0?"up":"down",w=Math.min(50,Math.abs(v)/r*50);
-      return `<div class="dv-row" style="${gt}">${x.company?coItem(x.company,40):`<div class="bl"><b>${esc(x.label)}</b>${x.sub?`<span>${esc(x.sub)}</span>`:""}</div>`}${(x.cols||[]).map(c=>Array.isArray(c)?`<span class="dv-c">${rich(c[0])}<small>${esc(c[1])}</small></span>`:`<span class="dv-c">${rich(c)}</span>`).join("")}<div class="dv-trk"><i class="q" style="left:25%"></i><i class="q" style="left:75%"></i><b data-dv="${dir}" style="left:${v>=0?50:50-w}%;width:${w.toFixed(2)}%"></b><i></i></div><div class="dv-v" style="color:${ink(mix(UD[dir],K,.1))}">${sign(v)}${esc(u)}</div></div>`}).join("")}</div>`},
+      return `<div class="dv-row" style="${gt}">${x.company?coItem(x.company,40):`<div class="bl"><b>${esc(x.label)}</b>${x.sub?`<span>${esc(x.sub)}</span>`:""}</div>`}${(x.cols||[]).map(c=>Array.isArray(c)?`<span class="dv-c">${rich(c[0])}<small>${esc(c[1])}</small></span>`:`<span class="dv-c">${rich(c)}</span>`).join("")}<div class="dv-trk"><i class="q" style="left:25%"></i><i class="q" style="left:75%"></i><b data-dv="${dir}" style="left:${v>=0?50:50-w}%;width:${w.toFixed(2)}%"></b><i></i></div><div class="dv-v" style="color:${deep(UD[dir],.1)}">${sign(v)}${esc(u)}</div></div>`}).join("")}</div>`},
   // 分组名单：每家一个 logo 胶囊，可带方向圆点
   chips(s){return `<div class="chips">${s.groups.map(g=>`<div class="ch-row"><b>${esc(g.label)}</b><div class="ch-list">${g.items.map(it=>{const [k,t]=Array.isArray(it)?it:[it];const c=coInfo(k);
     return `<span class="chip">${badge(k,34)}<b>${esc(c.code)}</b>${s.show_name?`<span>${esc(c.name)}</span>`:""}${t?`<i style="background:${toneHex(t)}"></i>`:""}</span>`}).join("")}</div></div>`).join("")}</div>`},
@@ -882,7 +887,7 @@ Object.assign(SEC,{
     return `<div class="cmp"><div class="cmp-hs">${head(L,cl,"l")}<div class="cmp-vs">${esc(s.vs||"VS")}</div>${head(R,cr,"r")}</div>${body}</div>`},
   // 四象限 / SWOT：cells 顺序为左上、右上、左下、右下
   quadrant(s){const def=["优势","劣势","机会","威胁"],cells=s.cells.map((c,i)=>s.swot?{letter:"SWOT"[i],title:def[i],...c}:c);
-    const cell=(c,i)=>{const col=c.tone!=null?toneHex(c.tone):PAL[i%PAL.length];return `<div class="qd-c" style="background:${mix(col,W,.92)}">${c.letter?`<em style="background:${col};color:${onC(col)}">${esc(c.letter)}</em>`:""}<b style="color:${ink(mix(col,K,.1))}">${rich(c.title||"")}</b>${(c.items||[]).length?`<ul>${c.items.map(t=>`<li>${rich(t)}</li>`).join("")}</ul>`:""}${c.text?`<span>${rich(c.text)}</span>`:""}</div>`};
+    const cell=(c,i)=>{const col=c.tone!=null?toneHex(c.tone):PAL[i%PAL.length];return `<div class="qd-c" style="background:${mix(col,W,.92)}">${c.letter?`<em style="background:${col};color:${onC(col)}">${esc(c.letter)}</em>`:""}<b style="color:${deep(col,.1)}">${rich(c.title||"")}</b>${(c.items||[]).length?`<ul>${c.items.map(t=>`<li>${rich(t)}</li>`).join("")}</ul>`:""}${c.text?`<span>${rich(c.text)}</span>`:""}</div>`};
     return `<div class="qd">${s.y_title?`<div class="qd-ylab">↑ ${esc(s.y_title)}</div>`:""}<div class="qd-g">${cells.map(cell).join("")}</div>${s.x_title?`<div class="qd-xlab">${esc(s.x_title)} →</div>`:""}</div>`},
   // 层级：横向树（最多 3 层）
   tree(s){return `<div class="chart tree" data-chart="${reg("tree",{s})}"></div>`},
@@ -984,7 +989,7 @@ Object.assign(CH,{
     const walk2=n=>{nodes.push(n);(n.children||[]).forEach(c=>{const xa=X(n._d)+colW,ya=n._y+rowH/2,xb=X(c._d),yb=c._y+rowH/2,m=(xa+xb)/2;
       paths.push(`<path d="M${f(xa)},${f(ya)}C${f(m)},${f(ya)} ${f(m)},${f(yb)} ${f(xb)},${f(yb)}" fill="none" stroke="${mix(PAL[c._c%PAL.length],W,.45)}" stroke-width="2.5"/>`);walk2(c)})};walk2(s.root);
     el.style.height=y+"px";el.innerHTML=`<svg width="${w}" height="${y}" viewBox="0 0 ${w} ${y}">${paths.join("")}</svg>`+nodes.map(n=>{const c=n._d===0?ACC:PAL[n._c%PAL.length],leaf=!(n.children||[]).length&&n._d>0;
-      const st=n._d===0?`background:${c};color:${onC(c)}`:leaf?`background:#fff;border:1.5px solid ${mix(c,W,.55)};color:#16172a`:`background:${mix(c,W,.86)};color:${ink(mix(c,K,.15))}`;
+      const st=n._d===0?`background:${c};color:${onC(c)}`:leaf?`background:#fff;border:1.5px solid ${mix(c,W,.55)};color:#16172a`:`background:${mix(c,W,.86)};color:${deep(c,.15)}`;
       return `<div class="tn" style="left:${f(X(n._d))}px;top:${f(n._y+6)}px;width:${f(colW)}px;height:${rowH-12}px;${st}"><b>${rich(n.label)}</b>${n.sub?`<span>${rich(n.sub)}</span>`:""}</div>`}).join("")},
   pyramid(el,w,s){const it=s.items,n=it.length,rowH=s.row_height||74,gap=6,pw=Math.min(w*(s.width||.46),480),C=new Chart(w,n*(rowH+gap)-gap),cx=pw/2,half=v=>(.14+.86*v)*pw/2,f=v=>v.toFixed(1);
     it.forEach((x,k)=>{const y0=k*(rowH+gap),y1=y0+rowH,c=x.tone!=null?toneHex(x.tone):s.colors==="accent"?mix(ACC,W,k/Math.max(1,n-1)*.62):PAL[k%PAL.length];
@@ -1070,7 +1075,7 @@ CH.price=(el,w,s)=>{const r=s.data,n=r.length,tg=(s.targets||[]).slice().sort((a
   if(tps.length){const xe=x1+fanW,med=tps[tps.length>>1],th=tps.at(-1),tl=tps[0],tri=(a,b,c)=>`<polygon points="${f(lx)},${f(ly)} ${f(xe)},${f(a)} ${f(xe)},${f(b)}" fill="${c}"/>`;
     C.svg(`<line x1="${f(lx)}" x2="${f(lx)}" y1="${top}" y2="${top+H}" stroke="#d5d9e2" stroke-dasharray="3 4"/>`);
     if(tps.length>1)C.svg(tri(Math.min(Y(th),ly),Math.min(Y(tl),ly),mix(UD.up,W,.82))+tri(Math.max(Y(th),ly),Math.max(Y(tl),ly),mix(UD.down,W,.84)));
-    C.svg(`<line x1="${f(lx)}" y1="${f(ly)}" x2="${f(xe)}" y2="${f(Y(med))}" stroke="${ink(mix(ACC,K,.1))}" stroke-width="2" stroke-dasharray="6 5"/>`);
+    C.svg(`<line x1="${f(lx)}" y1="${f(ly)}" x2="${f(xe)}" y2="${f(Y(med))}" stroke="${deep(ACC,.1)}" stroke-width="2" stroke-dasharray="6 5"/>`);
     tg.forEach(t=>C.svg(`<circle cx="${f(xe)}" cy="${f(Y(t.tp))}" r="${t.highlight?7:4.5}" fill="${t.highlight?ACC:"#fff"}" stroke="${t.highlight?"#fff":DIM}" stroke-width="2"/>`));
     let labs=tps.length>1?[["最高",th],["中位",med],["最低",tl]]:[["目标",th]];labs=labs.map(([t,v])=>({t,v,y:Y(v)}));
     if(labs.length===3&&(labs[1].y-labs[0].y<22||labs[2].y-labs[1].y<22))labs=[labs[0],labs[2]];for(let i=1;i<labs.length;i++)labs[i].y=Math.max(labs[i].y,labs[i-1].y+22);
@@ -1090,7 +1095,7 @@ function paint(p,vid){
   const gcol=i=>i==="gray"?GRAY:i==="acc"?accent:PAL[+i%PAL.length];
   p.querySelectorAll("[data-g]").forEach(el=>{const g=el.dataset.g;if(g==="-1")return;const c=gcol(g);
     el.style.setProperty("--g",c);el.style.setProperty("--g-tint",mix(c,W,V.tint));
-    el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",ink(mix(c,K,.18)));
+    el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",deep(c,.18));
     if(el.tagName==="B"&&el.parentElement.classList.contains("track"))el.style.background=g==="gray"?c:tone(c);
     else if(el.tagName==="B"||el.parentElement.classList.contains("share"))el.style.background=c});
   // 图标：Lucide 线条图标，描边换成元素当前文字色（导出时 currentColor 不可靠）
