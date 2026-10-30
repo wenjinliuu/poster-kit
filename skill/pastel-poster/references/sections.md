@@ -19,9 +19,9 @@
 | `object` | 否 | 右上背景物件，见 `style.md`：`chip` `module` `rack` `coin` `globe` `battery` `building` `wafer` `db` `robot`，或 `{"parts": [...]}` 自己拼 |
 | `updown` | 否 | `"cn"`（默认，红涨绿跌）或 `"us"`（绿涨红跌） |
 | `versions` | 否 | 默认 `["clear"]`（雾彩·清透）。新增风格后，需要对比时写多个，如 `["clear","新风格id"]` |
-| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；有 `brand.colors` 时取第一个品牌色。写任意颜色都会吸附到 8 色里最接近的一个，`"exact_color": true` 才保留原色 |
+| `accent` | 否 | 强调色，默认靛紫 `#5b4cff`；有 `brand.colors` 时取第一个品牌色。写任意颜色都会吸附到 8 个图表色（避开涨跌红绿）里最接近的一个，`"exact_color": true` 才保留原色 |
 | `companies` | 是* | 公司表，键是 `交易所:代码`（或 Yahoo 后缀代码、`市场:代码`），值是 `{"name": "中文名", "code": "显示代码(可选)", "color": "#rrggbb(可选，logo 描边色)"}` |
-| `badge_ring` | 否 | 圆形 logo 的彩色描边：`auto`（默认，跟所在分类色，单独出现时按公司代码固定分配 8 色之一）、`brand`（取 logo 自己的品牌色）、`accent`（统一强调色）、`none`（浅灰细边） |
+| `badge_ring` | 否 | 圆形 logo 的描边：`auto`（默认，按 logo 底板配色：白底彩色取主色、彩色底取底色浅一档、黑底浅灰、黑白图形按代码固定色，见 `palette.md`）、`category`（跟所在分类色）、`brand`（logo 原色）、`accent`、`none` |
 | `sections` | 是 | 版块数组 |
 | `footer` | 是 | 页脚多行，最后一行是免责声明（小字） |
 | `page_title` / `page_sub` | 否 | 网页标题和说明（不进海报） |

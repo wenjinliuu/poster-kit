@@ -198,36 +198,55 @@ def to_data_uri(content, ext):
     return "data:image/png;base64," + base64.b64encode(content).decode()
 
 
-def brand_color(src):
-    """从 logo 里取品牌色（给圆形徽章的彩色描边用）：最常见的饱和色；全是黑白灰的 logo 返回深灰"""
+def analyze_logo(src):
+    """看 logo 属于哪种底板、主色是什么，给圆形徽章的描边配色用（模板再吸附到海报自己的色板）：
+    kind = light（白底 / 透明底）、color（整块彩色底）、dark（黑底 / 深色底）；
+    bg = 彩色底的底色；mark = 底板以外最主要的彩色（白底彩色图形时就是图形颜色）；color = mark 或 bg（兼容旧字段）"""
     import colorsys
+    import math
+    from collections import Counter
     head, data = src.split(",", 1)
     raw = base64.b64decode(data)
-    if "svg" in head:  # 没有转成 PNG 的 SVG：数 fill 里出现最多的彩色
+    hx = lambda t: "#%02x%02x%02x" % t if t else None
+    if "svg" in head:  # 没有转成 PNG 的 SVG：只能数 fill 里出现最多的彩色，当成白底彩色图形
         cols = re.findall(r"#([0-9a-fA-F]{6})\b", raw.decode("utf-8", "ignore"))
         sat = [c for c in cols if colorsys.rgb_to_hsv(*(int(c[i:i + 2], 16) / 255 for i in (0, 2, 4)))[1] > .25]
-        return "#" + max(set(sat), key=sat.count).lower() if sat else None
+        mark = "#" + max(set(sat), key=sat.count).lower() if sat else None
+        return {"kind": "light", "mark": mark, "color": mark}
     try:
         from PIL import Image
-        im = Image.open(io.BytesIO(raw)).convert("RGBA").resize((64, 64))
+        im = Image.open(io.BytesIO(raw)).convert("RGBA").resize((96, 96))
     except Exception:
-        return None
-    buckets, dark = {}, 0
-    for r, g, b, a in (im.get_flattened_data() if hasattr(im, "get_flattened_data") else im.getdata()):
-        if a < 200 or min(r, g, b) > 225:
-            continue
-        h, sv, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
-        if sv > .3 and v > .25:
-            k = (r // 24, g // 24, b // 24)
-            n, sr, sg, sb = buckets.get(k, (0, 0, 0, 0))
-            buckets[k] = (n + 1, sr + r, sg + g, sb + b)
-        elif v < .4:
-            dark += 1
-    if buckets:
-        n, sr, sg, sb = max(buckets.values())
-        if n >= 12:
-            return "#%02x%02x%02x" % (sr // n, sg // n, sb // n)
-    return "#3a3d4f" if dark >= 40 else None
+        return {}
+    px, n = im.load(), 96
+    c, edge, inner = (n - 1) / 2, [], []
+    for y in range(n):
+        for x in range(n):
+            r, g, b, a = px[x, y]
+            rgb = (255, 255, 255) if a < 40 else (r, g, b)
+            d = math.hypot(x - c, y - c) / n
+            if .40 <= d <= .48:  # 徽章是圆形裁切：看圆周附近的一圈判断底板
+                edge.append(rgb)
+            elif d < .36:
+                inner.append(rgb)
+
+    def cls(rgb):
+        h, sv, v = colorsys.rgb_to_hsv(*(t / 255 for t in rgb))
+        return "dark" if v < .3 else "light" if sv < .18 else "color"
+    kind = Counter(cls(p) for p in edge).most_common(1)[0][0]
+    bg = None
+    if kind == "color":
+        cs = [p for p in edge if cls(p) == "color"]
+        bg = tuple(sum(t[i] for t in cs) // len(cs) for i in range(3))
+    marks = [p for p in inner if cls(p) == "color" and (bg is None or sum(abs(p[i] - bg[i]) for i in range(3)) > 90)]
+    mark = None
+    if len(marks) > len(inner) * .03:
+        buckets = {}
+        for p in marks:
+            buckets.setdefault(int(colorsys.rgb_to_hsv(*(t / 255 for t in p))[0] * 24), []).append(p)
+        best = max(buckets.values(), key=len)
+        mark = tuple(sum(t[i] for t in best) // len(best) for i in range(3))
+    return {"kind": kind, "bg": hx(bg), "mark": hx(mark), "color": hx(mark) or hx(bg)}
 
 
 def fetch_one(key, tradingview=False):
@@ -248,7 +267,7 @@ def fetch_all(keys, tradingview=False):
         src, origin = fetch_one(key, tradingview)
         report[key] = origin
         if src:
-            out[key] = {"src": src, "from": origin, "color": brand_color(src)}
+            out[key] = {"src": src, "from": origin, **{k: v for k, v in analyze_logo(src).items() if v}}
     return out, report
 
 
