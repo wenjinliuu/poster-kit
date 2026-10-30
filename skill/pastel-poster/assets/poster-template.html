@@ -469,12 +469,15 @@ const SPEC=/*__SPEC__*/null;
 const LOGOS=/*__LOGOS__*/{};
 const ICONS=/*__ICONS__*/{};
 
-/* ---------- 配色：8 个分类色（已过色盲区分校验），各风格共用 ---------- */
-// 图表分类色 8 个（避开涨跌红绿，按顺序分配，相邻两色差异大）：靛紫 天蓝 琥珀 紫罗兰 湖青 洋红 珊瑚橙 宝蓝
+/* ---------- 配色：8 个主分类色 + 2 个辅助色（已过色盲区分校验），各风格共用 ---------- */
+// 主分类色 8 个（避开涨跌红绿，按顺序分配，相邻两色差异大）：靛紫 天蓝 琥珀 紫罗兰 湖青 洋红 珊瑚橙 宝蓝
 const CATS=["#5b4cff","#1296f0","#f5a314","#a04cf5","#00a8c6","#d23fd8","#ff6b2c","#2b6cf2"];
-// 限制使用 4 个（接近涨跌红绿）：翠绿 草绿 玫红 朱红。只给 logo 描边、品牌字标；图表分类超过 8 个或手动指定时才用
-const LIMITED=["#0fb57b","#4cb82e","#f0347f","#f2413d"];
-const ALLC=[...CATS,...LIMITED];
+// 辅助色 2 个：玫红 青柠绿。色相离涨跌色不远，只在分类多、和涨跌无关的图表里接在 8 色后面用（第 9、10 类），
+// 不做强调色、主题色，不用在有涨跌色的版块里
+const EXTRA=["#f0347f","#84cc16"];
+// 限制使用 3 个（就是或很接近涨跌红绿）：翠绿 草绿 朱红。只给 logo 描边、品牌字标；分类超过 10 个或手动指定时才用
+const LIMITED=["#0fb57b","#4cb82e","#f2413d"];
+const ALLC=[...CATS,...EXTRA,...LIMITED];
 // 默认只有“清透”。以后新增风格在这里加一项，并在 CSS 里写 .poster[data-v="新id"] 的差异。
 // 渐变只用同色深浅：bar 从浅到深、横幅从深到浅，不跨色相。
 const VERSIONS={
@@ -561,20 +564,21 @@ function snapTheme(c){if(!c)return CATS[0];if(SPEC.exact_color)return c.toLowerC
 const ACC=snapTheme(SPEC.accent||BRANDC[0]);
 // 分类色：强调色（品牌色）和品牌辅色排前面，再接 8 色里和它们不太像的；强调色本身是 8 色之一时直接从它轮转
 const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
-// 分类色：从强调色开始轮转 8 个图表色，再接限制使用的 4 个（分类超过 8 个才用到）
-const PAL=[...(CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)]),...LIMITED];
+// 分类色：从强调色开始轮转 8 个主分类色，接 2 个辅助色（第 9、10 类），再接限制使用的 3 个（分类超过 10 个才用到）
+const NC=CATS.length+EXTRA.length;
+const PAL=[...(CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)]),...EXTRA,...LIMITED];
 // 文字安全色：太浅的颜色（黄、浅青等品牌色）用作文字时自动加深，保证在白底上看得清
 const lum=h=>{const[r,g,b]=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
-// 文字用的深色档：一般颜色先混黑再保证对比度；黄、琥珀直接走 ink（先混黑会发褐）
-const deep=(c,t)=>{const h=hsl(c)[0];return h>=25&&h<=70?ink(c):ink(mix(c,K,t))};
-// 黄、琥珀这类颜色往黑里压会变成芥末黄、土褐色：改往深橙压，加深后仍然干净
-function ink(c){const h=hsl(c)[0],to=h>=25&&h<=70?"#c2410c":K;let x=c;for(let t=.1;t<.9&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,to,t);return x}
+// 文字用的深色档：一般颜色先混黑再保证对比度；黄、琥珀、青柠绿直接走 ink（先混黑会发褐、发橄榄）
+const deep=(c,t)=>{const h=hsl(c)[0];return h>=25&&h<=100?ink(c):ink(mix(c,K,t))};
+// 黄、琥珀往黑里压会变成芥末黄、土褐色，改往深橙压；青柠绿往黑里压会变橄榄绿，改往深绿压。加深后仍然干净
+function ink(c){const h=hsl(c)[0],to=h>=25&&h<=70?"#c2410c":h>70&&h<=100?"#3f6212":K;let x=c;for(let t=.1;t<.9&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,to,t);return x}
 const UD=UPDOWN[SPEC.updown||"cn"];const GRAY="#b8bdc8",DIM="#a3a9b8";
 const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<em>$1</em>").replace(/\n/g,"<br>"); // **重点** 显示为强调，\n 换行
 const sign=v=>typeof v!=="number"?esc(v):(v>0?"+":v<0?"−":"")+fmt(Math.abs(v));
 const autoTone=s=>/^\s*\+/.test(String(s))?"up":/^\s*[-−]/.test(String(s))?"down":"";
 function toneHex(t,i){if(t==="up")return UD.up;if(t==="down")return UD.down;if(t==="gray")return DIM;if(t==="dark")return "#23253a";
-  if(t==="accent")return ACC;if(typeof t==="number")return PAL[t%8];if(typeof t==="string"&&t[0]==="#")return t;return PAL[(i||0)%8]}
+  if(t==="accent")return ACC;if(typeof t==="number")return PAL[t%NC];if(typeof t==="string"&&t[0]==="#")return t;return PAL[(i||0)%NC]}
 
 /* ---------- 公司 ---------- */
 const CO=SPEC.companies||{};
@@ -634,7 +638,7 @@ const CH={
     const vals=bars.flatMap(b=>[b.a,b.b]),lo=Math.min(0,...vals),hi=Math.max(...vals);
     const top=44,H=s.height||250,xl=60,bk=(s.brackets||[]).length?48:0,C=new Chart(w,top+H+xl+bk);
     const y=v=>top+(hi-v)/(hi-lo)*H,n=bars.length,slot=w/n,bw=Math.min(118,slot*.62),tid="t"+(UID++);C.def(vgrad(tid,ACC));
-    const colOf=b=>b.it.g!=null?PAL[b.it.g%8]:b.it.total?ACC:s.colors==="updown"?(b.b>=b.a?UD.up:UD.down):(b.b>=b.a?PAL[1]:DIM);
+    const colOf=b=>b.it.g!=null?PAL[b.it.g%NC]:b.it.total?ACC:s.colors==="updown"?(b.b>=b.a?UD.up:UD.down):(b.b>=b.a?PAL[1]:DIM);
     bars.forEach((b,k)=>{const it=b.it,cx=slot*(k+.5),x0=cx-bw/2,c=colOf(b),st=it.state||"solid";const y1=y(Math.max(b.a,b.b)),y2=y(Math.min(b.a,b.b));
       if(it.total&&it.stack){const segs=[];for(let j=k-1;j>=0&&!bars[j].it.total;j--)segs.unshift(bars[j]);
         segs.forEach(sg=>{const cc=colOf(sg);rect(C,x0,y(sg.b),bw,y(sg.a)-y(sg.b),cc,sg.it.state,cc)})}
@@ -654,7 +658,7 @@ const CH={
     if(s.axis!==false)niceTicks(lo,hi).forEach(t=>{C.svg(`<line x1="${padL}" x2="${w-padR+10}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}" stroke="${t===0?"#c4c8d4":"#eef0f4"}" stroke-width="1.5"${t===0&&lo<0?' stroke-dasharray="5 5"':""}/>`);C.text(padL-12,Y(t),fmt(t)+u,"ax","r","m")});
     const every=s.x_every||Math.ceil(n/7);s.x.forEach((t,i)=>{if(i===n-1||(i%every===0&&X(n-1)-X(i)>64))C.text(X(i),top+H+12,esc(t),"ax","c","t")});
     const grays=["#7d8496","#a3a9b8","#c4c8d4"],ends=[];
-    ser.forEach((q,j)=>{const c=q.color||(hl?(q.highlight?ACC:grays[j%3]):multi?PAL[j%8]:ACC);
+    ser.forEach((q,j)=>{const c=q.color||(hl?(q.highlight?ACC:grays[j%3]):multi?PAL[j%NC]:ACC);
       const pts=q.values.map((v,i)=>typeof v==="number"?[X(i),Y(v),v,i]:null),ok=pts.filter(Boolean);if(!ok.length)return;
       if(!multi&&s.area!==false){const id="a"+(UID++);C.def(`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".2"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient>`);
         C.svg(`<path d="M${ok[0][0].toFixed(1)},${Y(lo).toFixed(1)}L${ok.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join("L")}L${ok.at(-1)[0].toFixed(1)},${Y(lo).toFixed(1)}Z" fill="url(#${id})"/>`)}
@@ -681,7 +685,7 @@ const CH={
     C.svg(`<line x1="${padL}" x2="${w}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
     const small=m*n>10;
     s.x.forEach((t,i)=>{const cx=padL+slot*(i+.5);C.text(cx,top+H+14,esc(t),"xl","c","t");
-      ser.forEach((q,j)=>{const v=q.values[i];if(v==null)return;const c0=q.g!=null?PAL[q.g%8]:(s.highlight!=null?(i===s.highlight?ACC:mix(ACC,W,.55)):PAL[j%8]);
+      ser.forEach((q,j)=>{const v=q.values[i];if(v==null)return;const c0=q.g!=null?PAL[q.g%NC]:(s.highlight!=null?(i===s.highlight?ACC:mix(ACC,W,.55)):PAL[j%NC]);
         const est=s.est_from!=null&&i>=s.est_from,c=est?mix(c0,W,.5):c0,h=hiOf(v),x=cx-gw/2+j*(bw+gap),y1=Y(Math.max(h,0)),y2=Y(Math.min(h,0));
         rect(C,x,y1,bw,y2-y1,c,"solid",c);
         C.text(x+bw/2,h>=0?y1-6:y2+6,Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:sign(h).replace(/^\+/,s.signed?"+":"")+(s.unit_on_bars?esc(u):""),small?"sm":"","c",h>=0?"b":"t",deep(c0,.2))})});
@@ -778,8 +782,8 @@ const SEC={
       const bar=s.style==="lollipop"?`<b data-bar="${g}" style="width:${pc(hi)}%"></b><i data-dot="${g}" style="left:${pc(hi)}%"></i>`:lo===hi?`<b data-bar="${g}" style="width:${pc(hi)}%"></b>`:`<b data-bar="${g}" style="width:${pc(lo)}%"></b><b data-bar="${g}" class="rg" style="width:${(pc(hi)-pc(lo)).toFixed(1)}%"></b>`;
       return `<div class="br-row${ex?" ex":""}${b.highlight?" hl":""}" style="--g:${gc};--hl-bg:${mix(gc,W,.91)};--hl-bd:${mix(gc,W,.55)};--hl-ink:${deep(gc,.12)}">${label}<div class="trk${s.style==="lollipop"?" lol":""}">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
   line(s){const multi=s.series.length>1&&!s.series.some(q=>q.highlight)&&s.legend!==false;
-    return `${multi?legendHTML(s.series.map((q,j)=>["line",q.color||PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("line",{s})}"></div>`},
-  columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%8]:PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
+    return `${multi?legendHTML(s.series.map((q,j)=>["line",q.color||PAL[j%NC],q.name])):""}<div class="chart" data-chart="${reg("line",{s})}"></div>`},
+  columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%NC]:PAL[j%NC],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
   // 标签 + 一句话：电话会要点、市场观点、风险提示。tone: up/down/gray/dark/accent 或分类色序号，不写则同名标签同色
   points(s){const tags=[...new Set(s.items.map(p=>p.tag))];return `<div class="pts" style="--cols:${s.cols||1}">${s.items.map(p=>{
     const c=p.tone!=null?toneHex(p.tone):s.colors==="accent"?ACC:PAL[tags.indexOf(p.tag)%PAL.length];return `<div class="pt">${p.tag?`<span class="ptag" style="background:${c}">${esc(p.tag)}</span>`:""}<div>${p.company?`<span class="co-in">${badge(p.company,30)}${esc(coInfo(p.company).name||coInfo(p.company).code)}</span>`:""}${rich(p.text)}${p.sub?`<small>${rich(p.sub)}</small>`:""}</div></div>`}).join("")}</div>`},
