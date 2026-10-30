@@ -457,7 +457,11 @@ const LOGOS=/*__LOGOS__*/{};
 const ICONS=/*__ICONS__*/{};
 
 /* ---------- 配色：8 个分类色（已过色盲区分校验），各风格共用 ---------- */
-const CATS=["#5b4cff","#1296f0","#0fb57b","#ff6b2c","#f0347f","#00a8c6","#a04cf5","#4cb82e"];
+// 图表分类色 8 个（避开涨跌红绿，按顺序分配，相邻两色差异大）：靛紫 天蓝 琥珀 紫罗兰 湖青 洋红 珊瑚橙 宝蓝
+const CATS=["#5b4cff","#1296f0","#f5a314","#a04cf5","#00a8c6","#d23fd8","#ff6b2c","#2b6cf2"];
+// 限制使用 4 个（接近涨跌红绿）：翠绿 草绿 玫红 朱红。只给 logo 描边、品牌字标；图表分类超过 8 个或手动指定时才用
+const LIMITED=["#0fb57b","#4cb82e","#f0347f","#f2413d"];
+const ALLC=[...CATS,...LIMITED];
 // 默认只有“清透”。以后新增风格在这里加一项，并在 CSS 里写 .poster[data-v="新id"] 的差异。
 // 渐变只用同色深浅：bar 从浅到深、横幅从深到浅，不跨色相。
 const VERSIONS={
@@ -530,13 +534,17 @@ const BRANDC=((SPEC.brand&&SPEC.brand.colors)||[]).map(c=>c.toLowerCase());
 // 发灰、近黑近白的颜色用默认靛紫。确实要原色时写 "exact_color": true
 function hsl(h){const[r,g,b]=hex2rgb(h).map(v=>v/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;
   if(!d)return[0,0,l];const s=d/(1-Math.abs(2*l-1));let H=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;return[(H*60+360)%360,s,l]}
-function snapTheme(c){if(!c)return CATS[0];c=c.toLowerCase();if(SPEC.exact_color||CATS.includes(c))return c;const[h,sat,l]=hsl(c);
-  if(sat<.2||l<.12||l>.93)return CATS[0];let best=CATS[0],bd=1e9;
-  CATS.forEach(k=>{const[h2,,l2]=hsl(k),dh=Math.min(Math.abs(h-h2),360-Math.abs(h-h2)),d=dh+Math.abs(l-l2)*60;if(d<bd){bd=d;best=k}});return best}
+// 把任意颜色吸附到色板 list 里色相最接近的一个；发灰、近黑近白的返回 null
+function snapIn(c,list){if(!c)return null;c=c.toLowerCase();if(list.includes(c))return c;const[h,sat,l]=hsl(c);
+  if(sat<.2||l<.12||l>.93)return null;let best=null,bd=1e9;
+  list.forEach(k=>{const[h2,,l2]=hsl(k),dh=Math.min(Math.abs(h-h2),360-Math.abs(h-h2)),d=dh+Math.abs(l-l2)*60;if(d<bd){bd=d;best=k}});return best}
+// 主题色只从 8 个图表色里选（红、绿品牌落到相邻的非涨跌色），写 exact_color 才用原色
+function snapTheme(c){if(!c)return CATS[0];if(SPEC.exact_color)return c.toLowerCase();return snapIn(c,CATS)||CATS[0]}
 const ACC=snapTheme(SPEC.accent||BRANDC[0]);
 // 分类色：强调色（品牌色）和品牌辅色排前面，再接 8 色里和它们不太像的；强调色本身是 8 色之一时直接从它轮转
 const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
-const PAL=CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)];
+// 分类色：从强调色开始轮转 8 个图表色，再接限制使用的 4 个（分类超过 8 个才用到）
+const PAL=[...(CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)]),...LIMITED];
 // 文字安全色：太浅的颜色（黄、浅青等品牌色）用作文字时自动加深，保证在白底上看得清
 const lum=h=>{const[r,g,b]=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
 function ink(c){let x=c;for(let t=.1;t<.8&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,K,t);return x}
@@ -552,14 +560,18 @@ const CO=SPEC.companies||{};
 function coInfo(key){const c=CO[key]||{};const code=c.code||String(key).split(":").pop();return{code,name:c.name||"",logo:LOGOS[key]&&LOGOS[key].src}}
 // 圆形 logo：外圈一道彩色描边 + 一圈细白边。描边颜色由 spec.badge_ring 决定：
 // brand（默认，取 logo 自己的品牌色）、category（跟所在分类色）、accent（强调色）、none（浅灰细边）
-// 圆形 logo 的描边（spec.badge_ring）：auto（默认）跟所在分类色（产业链环节、横条那一行等），不在分类里就按公司代码固定分配一个 8 色；
-// brand 取 logo 自己的品牌色；accent 统一强调色；none 浅灰细边。companies 里写 color 时以它为准。描边和 logo 之间不留白
+// 圆形 logo 的描边（spec.badge_ring），描边和 logo 之间不留白。auto（默认）按 logo 的底板配色（底板类型和颜色由 fetch_logos.py 分析）：
+//   白底彩色图形 → 图形主色吸附到 12 色；整块彩色底 → 底色吸附后浅一档；黑底 → 浅灰；白底黑白图形或没有 logo → 按公司代码固定分配 8 色之一
+// category 跟所在分类色（同一产业链环节、横条同一行）；brand 用 logo 原色；accent 统一强调色；none 浅灰细边。companies 里写 color 以它为准
 const RING=SPEC.badge_ring||"auto";
-const keyColor=k=>{let h=0;for(const ch of String(k))h=(h*31+ch.charCodeAt(0))>>>0;return PAL[h%PAL.length]};
+const keyColor=k=>{let h=0;for(const ch of String(k))h=(h*31+ch.charCodeAt(0))>>>0;return CATS[h%CATS.length]};
 function ringColor(key){if(CO[key]&&CO[key].color)return CO[key].color;
-  if(RING==="none")return "#e4e6ee";if(RING==="accent")return ACC;
-  if(RING==="brand"){const lc=LOGOS[key]&&LOGOS[key].color;return !lc?keyColor(key):lum(lc)>.6?ink(lc):lc}
-  return `var(--g,${keyColor(key)})`}
+  if(RING==="none")return "#e4e6ee";if(RING==="accent")return ACC;if(RING==="category")return `var(--g,${keyColor(key)})`;
+  const L=LOGOS[key]||{};
+  if(RING==="brand"){const lc=L.color;return !lc?keyColor(key):lum(lc)>.6?ink(lc):lc}
+  if(L.kind==="dark")return "#d5d9e1";
+  if(L.kind==="color"){const b=snapIn(L.bg,ALLC);if(b)return mix(b,W,.5)}
+  return snapIn(L.mark,ALLC)||keyColor(key)}
 function badge(key,size){const c=coInfo(key),bw=RING==="none"?1.5:size>=44?3:2,pd=0,inner=(size-2*bw-2*pd).toFixed(1);
   const st=`--bs:${size}px;border-width:${bw}px;padding:${pd}px;--rc:${ringColor(key)}`;
   if(c.logo)return `<span class="badge" style="${st}"><img src="${c.logo}" alt="${esc(c.code)}" style="width:${inner}px;height:${inner}px"></span>`;

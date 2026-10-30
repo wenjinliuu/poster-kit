@@ -166,7 +166,8 @@ def hosted_logos(logos):
     out, dropped = {}, []
     for key, v in logos.items():
         if v.get("from") in HOSTED_LOGO_FROM:
-            out[key] = {"src": HOSTED_LOGO.format(key=urllib.parse.quote(key, safe=":")), "from": v["from"], **({"color": v["color"]} if v.get("color") else {})}
+            out[key] = {"src": HOSTED_LOGO.format(key=urllib.parse.quote(key, safe=":")), "from": v["from"],
+                        **{k: v[k] for k in ("kind", "bg", "mark", "color") if v.get(k)}}  # 底板类型和颜色留给描边配色
         else:
             dropped.append(key)
     if dropped:
