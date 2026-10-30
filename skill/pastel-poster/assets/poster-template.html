@@ -206,9 +206,22 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .kpis.list .kpi{border:none;padding:0;border-radius:0;background:none;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"k k" "v d";column-gap:22px;align-items:end}
 .kpis.list .kpi .k{grid-area:k;font-weight:700} .kpis.list .kpi .v{grid-area:v} .kpis.list .kpi .d{grid-area:d;padding-bottom:8px;line-height:1.45}
 /* beat：实际 vs 预期 */
-.beat{display:grid;gap:22px}
-.bt-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:start}
-.bt-row > b{font-size:22px;font-weight:900;padding-top:38px}
+.beat{display:grid}
+.bt-row{display:grid;grid-template-columns:minmax(0,1fr) 150px 150px 190px 130px;column-gap:18px;align-items:center;padding:16px 0;border-top:1.5px solid #eef0f4}
+.bt-row.hd{padding:0 0 10px;border:none;font-size:15px;color:var(--ink3);font-weight:600}
+.bt-row.hd > :nth-child(2),.bt-row.hd > :nth-child(3){text-align:right}
+.bt-k b{display:block;font-size:22px;font-weight:900;line-height:1.3}
+.bt-k span{display:block;font-size:14px;color:var(--ink3);margin-top:3px;line-height:1.4}
+.bt-a,.bt-e{text-align:right;font-family:var(--p-num);font-weight:800;line-height:1.1;white-space:nowrap}
+.bt-a{font-size:30px} .bt-a small,.bt-e small{font-size:15px;margin-left:3px;font-weight:600}
+.bt-e{font-size:22px;color:var(--ink2)} .bt-e span{display:block;font-family:var(--p-body);font-size:13px;color:var(--ink3);font-weight:500;margin-top:4px;white-space:normal}
+.bt-bar{position:relative;height:30px}
+.bt-bar i{position:absolute;top:7px;height:16px;border-radius:4px}
+.bt-bar .z{left:50%;top:0;height:30px;width:2px;margin-left:-1px;border-radius:0;background:#c9cdd8}
+.bt-v{text-align:right} .bt-v .pill{font-size:17px;padding:5px 12px;white-space:nowrap}
+.pill.flat{background:#eef0f4;color:var(--ink2)}
+.row .bt-row{grid-template-columns:minmax(0,1fr) auto auto;column-gap:14px} .row .bt-bar,.row .bt-row > span:nth-child(4),.row .bt-row.hd > span:nth-child(5){display:none}
+.row .bt-v{grid-column:1/-1;text-align:left;margin-top:6px} .row .bt-a{font-size:26px}
 /* mix：构成条 + 分项卡 */
 .mixbar{height:54px}
 .mixbar div{place-items:center start;padding:0 18px;font-family:var(--p-body);font-size:20px}
@@ -616,22 +629,6 @@ function legendHTML(items){return `<div class="legend">${items.map(([kind,c,labe
   return `<span>${sw}${esc(label)}</span>`}).join("")}</div>`}
 
 const CH={
-  // 同一组共用一把刻度：按偏离一致预期（各家中位）的百分比画，中线是预期；0.2% 和 5% 一眼能分出大小。预期不是正数时退回单行刻度
-  beat(el,w,{it,M}){const C=new Chart(w,72),est=(it.estimates||[]).map(e=>e.value),y=52,L=10,R=w-10;
-    const med=est.length?est.slice().sort((a,b)=>a-b)[est.length>>1]:it.actual;
-    const good=it.higher_better===false?it.actual<=med:it.actual>=med,c=good?UD.up:UD.down,lab=esc(it.actual_label||(/指引|guidance/i.test(it.label)?"指引":"实际"));
-    let x,mid;
-    if(M&&med>0){mid=(L+R)/2;x=v=>mid+Math.max(-1,Math.min(1,(v/med-1)*100/M))*(R-L)/2}
-    else{let lo=Math.min(...est,it.actual),hi=Math.max(...est,it.actual);const pad=(hi-lo)*.4||Math.abs(hi)*.05||1;lo-=pad;hi+=pad*.7;x=v=>L+(v-lo)/(hi-lo)*(R-L);mid=x(med)}
-    C.svg(`<rect x="${L}" y="${y-6}" width="${R-L}" height="12" rx="6" fill="#eceef4"/>`);
-    if(est.length)C.svg(`<rect x="${Math.min(mid,x(it.actual)).toFixed(1)}" y="${y-4}" width="${Math.abs(x(it.actual)-mid).toFixed(1)}" height="8" rx="4" fill="${mix(c,W,.5)}"/>`+
-      `<line x1="${mid.toFixed(1)}" x2="${mid.toFixed(1)}" y1="${y-17}" y2="${y+17}" stroke="#aab0bd" stroke-width="2" stroke-dasharray="4 3"/>`);
-    est.forEach(v=>C.svg(`<circle cx="${x(v).toFixed(1)}" cy="${y}" r="8" fill="#9aa1ae" stroke="#fff" stroke-width="2.5"/>`));
-    C.svg(`<circle cx="${x(it.actual).toFixed(1)}" cy="${y}" r="13" fill="${c}" stroke="#fff" stroke-width="3"/>`);
-    const d=est.length&&med?(it.actual/med-1)*100:null,ax=Math.min(Math.max(x(it.actual),110),w-110);
-    C.text(ax,y-20,`${lab} ${fmt(it.actual)}${d==null?"":`<small style="margin-left:8px">${d>=0?"+":"−"}${Math.abs(d).toFixed(1)}%</small>`}`,"","c","b",ink(c));
-    if(est.length&&Math.abs(ax-mid)>170)C.text(mid,y-20,`预期 ${fmt(med)}`,"sm","c","b","#8a90a0");
-    C.done(el)},
 
   waterfall(el,w,s){let run=0;const bars=s.items.map(it=>{let a,b;if(it.total){a=0;b=it.value??run;run=b}else{a=run;b=run+it.value;run=b}return{it,a,b}});
     const vals=bars.flatMap(b=>[b.a,b.b]),lo=Math.min(0,...vals),hi=Math.max(...vals);
@@ -743,11 +740,24 @@ const SEC={
   html(s){return s.html},
 
   // 实际 vs 预期：灰点为各家预期，彩点为实际，超预期用涨色、不及预期用跌色
-  beat(s){const devs=s.items.flatMap(it=>{const e=(it.estimates||[]).map(x=>x.value).sort((a,b)=>a-b),m=e[e.length>>1];return m>0?[it.actual,...e].map(v=>Math.abs(v/m-1)*100):[]});
-    const M=devs.length?Math.max(3,Math.max(...devs)*1.15):0;
-    return `<div class="beat">${s.items.map(it=>{const est=it.estimates||[];
-    const txt=est.map(e=>{const d=(it.actual/e.value-1)*100;return `${esc(e.name)} ${fmt(e.value)}，${d>=0?"超":"低"} ${Math.abs(d).toFixed(1)}%`}).join("；");
-    return `<div class="bt-row"><b>${esc(it.label)}</b><div><div class="chart" data-chart="${reg("beat",{it,M})}" style="height:72px"></div>${txt?`<div class="cap">预期（灰点）：${txt}</div>`:""}</div></div>`}).join("")}</div>`},
+  // 预期对比记分卡：指标 | 实际 | 一致预期 | 偏离条 | 结论。一眼读出“超了还是没超、差多少”，不用看图例。
+  // 第一家预期是对比基准；偏离按百分比、同一张卡共用刻度；|偏离| 小于 inline（默认 1%）算“符合”。实际值可写区间 [低, 高]（指引），按中点比
+  beat(s){const mid=v=>Array.isArray(v)?(v[0]+v[1])/2:v,show=(v,u)=>(Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:fmt(v))+(u?`<small>${esc(u)}</small>`:"");
+    const rows=s.items.map(it=>{const e0=(it.estimates||[])[0],med=e0?e0.value:null,a=mid(it.actual); // 第一家是对比基准（一般写一致预期），其余几家只列在下方
+      const d=med>0?(a/med-1)*100:null;return{it,med,d}});
+    const M=Math.max(5,...rows.map(r=>Math.abs(r.d||0)))*1.08,inl=s.inline??1;
+    const head=`<div class="bt-row hd"><span></span><span>${esc(s.actual_title||"实际")}</span><span>${esc(s.estimate_title||"一致预期")}</span><span style="text-align:center">差多少</span><span></span></div>`;
+    return `<div class="beat">${head}${rows.map(({it,med,d})=>{const est=it.estimates||[],hb=it.higher_better!==false,guide=/指引|guidance/i.test(it.label)||it.actual_label;
+      const flat=d!=null&&Math.abs(d)<inl,good=d==null?null:hb?d>=0:d<=0,cls=flat||d==null?"flat":good?"up":"down",c=cls==="flat"?"#9aa1ae":cls==="up"?UD.up:UD.down;
+      const w=d==null?0:Math.abs(d)/M*50,bar=d==null?"":`<i class="b" style="${d>=0?"left:50%":`left:${(50-w).toFixed(2)}%`};width:${Math.max(w,.8).toFixed(2)}%;background:${mix(c,W,cls==="flat"?.2:.35)}"></i>`;
+      const verdict=d==null?"":flat?`符合 <small>${d>=0?"+":"−"}${Math.abs(d).toFixed(1)}%</small>`:`${d>=0?(guide?"高于":"超"):(guide?"低于":"低")} ${Math.abs(d).toFixed(1)}%`;
+      const src=est.length?esc(est[0].name):"";
+      const sub=it.note?esc(it.note):guide?esc(it.actual_label||"公司指引")+" vs 预期":"";
+      return `<div class="bt-row"><div class="bt-k"><b>${esc(it.label)}</b>${sub?`<span>${sub}</span>`:""}</div>`+
+        `<div class="bt-a" style="color:${cls==="flat"?"var(--ink)":ink(c)}">${show(it.actual,it.unit)}</div>`+
+        `<div class="bt-e">${med==null?"—":show(med,it.unit)}${src?`<span>${src}</span>`:""}</div>`+
+        `<div class="bt-bar"><i class="z"></i>${bar}</div><div class="bt-v">${verdict?`<span class="pill ${cls}">${verdict}</span>`:""}</div></div>`}).join("")}</div>`+
+      (rows.some(r=>(r.it.estimates||[]).length>1)?`<div class="cap" style="margin-top:12px">其他预期：${rows.filter(r=>(r.it.estimates||[]).length>1).map(r=>`${esc(r.it.label)} ${r.it.estimates.slice(1).map(e=>{const d=(mid(r.it.actual)/e.value-1)*100;return `${esc(e.name)} ${fmt(e.value)}（${d>=0?"超":"低"} ${Math.abs(d).toFixed(1)}%）`}).join("、")}`).join("；")}</div>`:"")},
   // 瀑布：total 项从 0 画起，其余项在累计值上浮动；state: solid 确定 / option 可选（斜纹）/ plan 计划（虚线框）
   waterfall(s){const st=[...new Set(s.items.map(i=>i.state||"solid"))],L=Object.assign({solid:"确定",option:"可选",plan:"计划"},s.legend||{});
     return `<div class="chart" data-chart="${reg("waterfall",{s})}"></div>${st.length>1?legendHTML(st.map(k=>[k,ACC,L[k]])):""}`},

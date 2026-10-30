@@ -130,6 +130,12 @@ def validate(spec):
             for it in s["items"]:
                 if "actual" not in it:
                     errors.append(f"{where} 每项要有 actual（实际值）")
+                elif not it.get("estimates"):
+                    warnings.append(f"{where} 的“{it.get('label')}”没有 estimates，记分卡只放有一致预期的指标")
+                elif "指引" in str(it["estimates"][0].get("name", "")):
+                    warnings.append(f"{where} 的“{it.get('label')}”第一家预期是公司指引；第一家应写一致预期（LSEG、FactSet 等），指引放后面")
+            if len(s["items"]) > 6:
+                warnings.append(f"{where} 超过 6 行，只留最关键的指标")
         elif t == "waterfall":
             for it in s["items"]:
                 if "value" not in it and not it.get("total"):
