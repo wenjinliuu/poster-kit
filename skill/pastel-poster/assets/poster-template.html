@@ -538,10 +538,13 @@ function hsl(h){const[r,g,b]=hex2rgb(h).map(v=>v/255),mx=Math.max(r,g,b),mn=Math
 function snapIn(c,list){if(!c)return null;c=c.toLowerCase();if(list.includes(c))return c;const[h,sat,l]=hsl(c);
   if(sat<.2||l<.12||l>.93)return null;let best=null,bd=1e9;
   list.forEach(k=>{const[h2,,l2]=hsl(k),dh=Math.min(Math.abs(h-h2),360-Math.abs(h-h2)),d=dh+Math.abs(l-l2)*60;if(d<bd){bd=d;best=k}});return best}
-// 主题色只从 8 个图表色里选（红、绿品牌落到相邻的非涨跌色），写 exact_color 才用原色
+// 主题色只从 6 个冷色里选：暖色（红、橙、黄）做大标题发土、又和涨红打架，统一回到默认靛紫；绿色品牌 → 湖青。写 exact_color 才用原色
+const THEMES=["#5b4cff","#1296f0","#a04cf5","#00a8c6","#d23fd8","#2b6cf2"];
 function snapTheme(c){if(!c)return CATS[0];if(SPEC.exact_color)return c.toLowerCase();const[h,sat,l]=hsl(c);
-  if(sat>=.2&&l>.12&&l<.93&&h>=70&&h<=170)return "#00a8c6"; // 绿色品牌 → 湖青（按色相最近会落到琥珀）
-  return snapIn(c,CATS)||CATS[0]}
+  if(sat<.2||l<=.12||l>=.93)return CATS[0];
+  if(h>=70&&h<=170)return "#00a8c6";
+  if(h<70||h>=340)return CATS[0];
+  return snapIn(c,THEMES)||CATS[0]}
 const ACC=snapTheme(SPEC.accent||BRANDC[0]);
 // 分类色：强调色（品牌色）和品牌辅色排前面，再接 8 色里和它们不太像的；强调色本身是 8 色之一时直接从它轮转
 const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
