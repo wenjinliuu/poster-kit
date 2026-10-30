@@ -616,16 +616,21 @@ function legendHTML(items){return `<div class="legend">${items.map(([kind,c,labe
   return `<span>${sw}${esc(label)}</span>`}).join("")}</div>`}
 
 const CH={
-  beat(el,w,{it}){const C=new Chart(w,72),est=(it.estimates||[]).map(e=>e.value),all=[...est,it.actual];
-    let lo=Math.min(...all),hi=Math.max(...all);const pad=(hi-lo)*.4||Math.abs(hi)*.05||1;lo-=pad;hi+=pad*.7;
-    const L=10,R=w-10,x=v=>L+(v-lo)/(hi-lo)*(R-L),y=52;
+  // 同一组共用一把刻度：按偏离一致预期（各家中位）的百分比画，中线是预期；0.2% 和 5% 一眼能分出大小。预期不是正数时退回单行刻度
+  beat(el,w,{it,M}){const C=new Chart(w,72),est=(it.estimates||[]).map(e=>e.value),y=52,L=10,R=w-10;
     const med=est.length?est.slice().sort((a,b)=>a-b)[est.length>>1]:it.actual;
-    const good=it.higher_better===false?it.actual<=med:it.actual>=med,c=good?UD.up:UD.down;
+    const good=it.higher_better===false?it.actual<=med:it.actual>=med,c=good?UD.up:UD.down,lab=esc(it.actual_label||(/指引|guidance/i.test(it.label)?"指引":"实际"));
+    let x,mid;
+    if(M&&med>0){mid=(L+R)/2;x=v=>mid+Math.max(-1,Math.min(1,(v/med-1)*100/M))*(R-L)/2}
+    else{let lo=Math.min(...est,it.actual),hi=Math.max(...est,it.actual);const pad=(hi-lo)*.4||Math.abs(hi)*.05||1;lo-=pad;hi+=pad*.7;x=v=>L+(v-lo)/(hi-lo)*(R-L);mid=x(med)}
     C.svg(`<rect x="${L}" y="${y-6}" width="${R-L}" height="12" rx="6" fill="#eceef4"/>`);
-    if(est.length){const a=good?Math.min(...est):Math.max(...est);C.svg(`<rect x="${Math.min(x(a),x(it.actual)).toFixed(1)}" y="${y-4}" width="${Math.abs(x(it.actual)-x(a)).toFixed(1)}" height="8" rx="4" fill="${mix(c,W,.5)}"/>`)}
-    est.forEach(v=>C.svg(`<circle cx="${x(v).toFixed(1)}" cy="${y}" r="9" fill="#9aa1ae" stroke="#fff" stroke-width="2.5"/>`));
+    if(est.length)C.svg(`<rect x="${Math.min(mid,x(it.actual)).toFixed(1)}" y="${y-4}" width="${Math.abs(x(it.actual)-mid).toFixed(1)}" height="8" rx="4" fill="${mix(c,W,.5)}"/>`+
+      `<line x1="${mid.toFixed(1)}" x2="${mid.toFixed(1)}" y1="${y-17}" y2="${y+17}" stroke="#aab0bd" stroke-width="2" stroke-dasharray="4 3"/>`);
+    est.forEach(v=>C.svg(`<circle cx="${x(v).toFixed(1)}" cy="${y}" r="8" fill="#9aa1ae" stroke="#fff" stroke-width="2.5"/>`));
     C.svg(`<circle cx="${x(it.actual).toFixed(1)}" cy="${y}" r="13" fill="${c}" stroke="#fff" stroke-width="3"/>`);
-    C.text(Math.min(Math.max(x(it.actual),80),w-80),y-20,`${esc(it.actual_label||"实际")} ${fmt(it.actual)}`,"","c","b",c);
+    const d=est.length&&med?(it.actual/med-1)*100:null,ax=Math.min(Math.max(x(it.actual),110),w-110);
+    C.text(ax,y-20,`${lab} ${fmt(it.actual)}${d==null?"":`<small style="margin-left:8px">${d>=0?"+":"−"}${Math.abs(d).toFixed(1)}%</small>`}`,"","c","b",ink(c));
+    if(est.length&&Math.abs(ax-mid)>170)C.text(mid,y-20,`预期 ${fmt(med)}`,"sm","c","b","#8a90a0");
     C.done(el)},
 
   waterfall(el,w,s){let run=0;const bars=s.items.map(it=>{let a,b;if(it.total){a=0;b=it.value??run;run=b}else{a=run;b=run+it.value;run=b}return{it,a,b}});
@@ -738,9 +743,11 @@ const SEC={
   html(s){return s.html},
 
   // 实际 vs 预期：灰点为各家预期，彩点为实际，超预期用涨色、不及预期用跌色
-  beat(s){return `<div class="beat">${s.items.map(it=>{const est=it.estimates||[];
+  beat(s){const devs=s.items.flatMap(it=>{const e=(it.estimates||[]).map(x=>x.value).sort((a,b)=>a-b),m=e[e.length>>1];return m>0?[it.actual,...e].map(v=>Math.abs(v/m-1)*100):[]});
+    const M=devs.length?Math.max(3,Math.max(...devs)*1.15):0;
+    return `<div class="beat">${s.items.map(it=>{const est=it.estimates||[];
     const txt=est.map(e=>{const d=(it.actual/e.value-1)*100;return `${esc(e.name)} ${fmt(e.value)}，${d>=0?"超":"低"} ${Math.abs(d).toFixed(1)}%`}).join("；");
-    return `<div class="bt-row"><b>${esc(it.label)}</b><div><div class="chart" data-chart="${reg("beat",{it})}" style="height:72px"></div>${txt?`<div class="cap">预期（灰点）：${txt}</div>`:""}</div></div>`}).join("")}</div>`},
+    return `<div class="bt-row"><b>${esc(it.label)}</b><div><div class="chart" data-chart="${reg("beat",{it,M})}" style="height:72px"></div>${txt?`<div class="cap">预期（灰点）：${txt}</div>`:""}</div></div>`}).join("")}</div>`},
   // 瀑布：total 项从 0 画起，其余项在累计值上浮动；state: solid 确定 / option 可选（斜纹）/ plan 计划（虚线框）
   waterfall(s){const st=[...new Set(s.items.map(i=>i.state||"solid"))],L=Object.assign({solid:"确定",option:"可选",plan:"计划"},s.legend||{});
     return `<div class="chart" data-chart="${reg("waterfall",{s})}"></div>${st.length>1?legendHTML(st.map(k=>[k,ACC,L[k]])):""}`},
