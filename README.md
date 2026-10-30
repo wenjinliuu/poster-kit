@@ -23,7 +23,8 @@
 
 ## 能做什么
 
-- **按海报类型出骨架**：财报速览、公司事件、产业链名单、持仓构成、数据统计、行情日报、研报观点、知识科普、通用数据报告、事件始末、对比评测十一种配方，每种带信息收集清单和叙事规则（大标题回答问题、小标题写结论、口径分层、不画示意图），见 [`recipes.md`](skill/pastel-poster/references/recipes.md)。
+- **先分析再画**：查到的资料全部记进资料卡（标来源、日期、口径，不做筛选），再找出这次最重要的变化、读者会问的问题，用比较和拆分找原因，写成大纲后才定版块和图，见 [`story.md`](skill/pastel-poster/references/story.md)。
+- **十一种海报类型的配方**：财报速览、公司事件、产业链名单、持仓构成、数据统计、行情日报、研报观点、知识科普、通用数据报告、事件始末、对比评测，每种给常问的问题、信息收集清单和常见排法，见 [`recipes.md`](skill/pastel-poster/references/recipes.md)。
 - **按“想说明什么”选图**：参考 FT 图表词汇表的九类关系（排序、变化、偏差、占比、相关、分布、流向……）和 AntV 的信息结构，整理成 [`charts.md`](skill/pastel-poster/references/charts.md) 选型表和常见错误清单。
 - **40 多种版块**：
   - 数据图：横条 / 棒棒糖、柱状（分组、堆叠、区间、预估）、折线、环形、堆叠横条（含态度色阶）、散点 / 气泡（四象限）、坡度、哑铃、矩形树、漏斗、雷达、圆环进度、象形方格、桑基、小多图、热力表、偏离条、瀑布（确定 / 可选 / 计划三档）、实际 vs 预期、目标价刻度
@@ -54,7 +55,7 @@ python3 scripts/build_poster.py examples/supply-chain.json logos.json poster.htm
 ## 在 Claude 里使用
 
 1. 到 [Releases](../../releases/tag/latest) 下载 `pastel-poster.zip`，在 Claude 的技能设置里上传（只需要第一次）。
-2. 对 Claude 说“做一张 AI 光互连产业链的海报”之类的话，技能会按 [`SKILL.md`](skill/pastel-poster/SKILL.md) 的流程收集数据、写 spec、取 logo、生成并检查海报。
+2. 对 Claude 说“做一张 AI 光互连产业链的海报”之类的话，技能会按 [`SKILL.md`](skill/pastel-poster/SKILL.md) 的流程查资料、分析、写大纲、写 spec、取 logo、生成并检查海报。
 3. 技能每次使用前会自动拉取本仓库 main 分支的最新版，所以改动推到 main 就生效，不用重新上传。fork 后把 `SKILL.md` 第 0 步里的仓库名换成自己的。
 
 ## 结构
@@ -63,7 +64,7 @@ python3 scripts/build_poster.py examples/supply-chain.json logos.json poster.htm
 poster-kit/
 ├─ skill/pastel-poster/        技能本体（打包上传的就是这个目录）
 │  ├─ SKILL.md                 流程与要点
-│  ├─ references/              海报配方、图表选型、版块、配色、风格、版式关卡、logo 规则、spec.schema.json
+│  ├─ references/              资料卡与大纲、海报配方、图表选型、版块、配色、风格、版式关卡、logo 规则、spec.schema.json
 │  ├─ scripts/
 │  │  ├─ fetch_logos.py        取 logo：手工修正版 → logo 仓库 → 可选 TradingView → 首字徽章
 │  │  ├─ build_poster.py       spec.json + logos.json → 海报网页（--png 直接出图）
