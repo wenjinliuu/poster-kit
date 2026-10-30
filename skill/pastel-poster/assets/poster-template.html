@@ -469,13 +469,15 @@ const SPEC=/*__SPEC__*/null;
 const LOGOS=/*__LOGOS__*/{};
 const ICONS=/*__ICONS__*/{};
 
-/* ---------- 配色：9 个分类色（已过色盲区分校验），各风格共用 ---------- */
-// 图表分类色 9 个（按顺序分配，相邻两色差异大）：靛紫 天蓝 琥珀 紫罗兰 湖青 洋红 珊瑚橙 宝蓝 玫红
-// 玫红偏粉，在条形、进度条、图表里不会被读成涨跌，作普通分类色；排第 9，前 8 个的分配不变
-const CATS=["#5b4cff","#1296f0","#f5a314","#a04cf5","#00a8c6","#d23fd8","#ff6b2c","#2b6cf2","#f0347f"];
-// 限制使用 3 个（就是或很接近涨跌红绿）：翠绿 草绿 朱红。只给 logo 描边、品牌字标；图表分类超过 9 个或手动指定时才用
+/* ---------- 配色：8 个主分类色 + 2 个辅助色（已过色盲区分校验），各风格共用 ---------- */
+// 主分类色 8 个（避开涨跌红绿，按顺序分配，相邻两色差异大）：靛紫 天蓝 琥珀 紫罗兰 湖青 洋红 珊瑚橙 宝蓝
+const CATS=["#5b4cff","#1296f0","#f5a314","#a04cf5","#00a8c6","#d23fd8","#ff6b2c","#2b6cf2"];
+// 辅助色 2 个：玫红 青柠绿。色相离涨跌色不远，只在分类多、和涨跌无关的图表里接在 8 色后面用（第 9、10 类），
+// 不做强调色、主题色，不用在有涨跌色的版块里
+const EXTRA=["#f0347f","#84cc16"];
+// 限制使用 3 个（就是或很接近涨跌红绿）：翠绿 草绿 朱红。只给 logo 描边、品牌字标；分类超过 10 个或手动指定时才用
 const LIMITED=["#0fb57b","#4cb82e","#f2413d"];
-const ALLC=[...CATS,...LIMITED];
+const ALLC=[...CATS,...EXTRA,...LIMITED];
 // 默认只有“清透”。以后新增风格在这里加一项，并在 CSS 里写 .poster[data-v="新id"] 的差异。
 // 渐变只用同色深浅：bar 从浅到深、横幅从深到浅，不跨色相。
 const VERSIONS={
@@ -562,15 +564,15 @@ function snapTheme(c){if(!c)return CATS[0];if(SPEC.exact_color)return c.toLowerC
 const ACC=snapTheme(SPEC.accent||BRANDC[0]);
 // 分类色：强调色（品牌色）和品牌辅色排前面，再接 8 色里和它们不太像的；强调色本身是 8 色之一时直接从它轮转
 const cdist=(a,b)=>{const x=hex2rgb(a),y=hex2rgb(b);return Math.hypot(x[0]-y[0],x[1]-y[1],x[2]-y[2])};
-// 分类色：从强调色开始轮转 9 个图表色，再接限制使用的 3 个（分类超过 9 个才用到）
-const NC=CATS.length;
-const PAL=[...(CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)]),...LIMITED];
+// 分类色：从强调色开始轮转 8 个主分类色，接 2 个辅助色（第 9、10 类），再接限制使用的 3 个（分类超过 10 个才用到）
+const NC=CATS.length+EXTRA.length;
+const PAL=[...(CATS.includes(ACC)?[...CATS.slice(CATS.indexOf(ACC)),...CATS.slice(0,CATS.indexOf(ACC))]:[ACC,...CATS.filter(c=>cdist(c,ACC)>110)]),...EXTRA,...LIMITED];
 // 文字安全色：太浅的颜色（黄、浅青等品牌色）用作文字时自动加深，保证在白底上看得清
 const lum=h=>{const[r,g,b]=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
-// 文字用的深色档：一般颜色先混黑再保证对比度；黄、琥珀直接走 ink（先混黑会发褐）
-const deep=(c,t)=>{const h=hsl(c)[0];return h>=25&&h<=70?ink(c):ink(mix(c,K,t))};
-// 黄、琥珀这类颜色往黑里压会变成芥末黄、土褐色：改往深橙压，加深后仍然干净
-function ink(c){const h=hsl(c)[0],to=h>=25&&h<=70?"#c2410c":K;let x=c;for(let t=.1;t<.9&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,to,t);return x}
+// 文字用的深色档：一般颜色先混黑再保证对比度；黄、琥珀、青柠绿直接走 ink（先混黑会发褐、发橄榄）
+const deep=(c,t)=>{const h=hsl(c)[0];return h>=25&&h<=100?ink(c):ink(mix(c,K,t))};
+// 黄、琥珀往黑里压会变成芥末黄、土褐色，改往深橙压；青柠绿往黑里压会变橄榄绿，改往深绿压。加深后仍然干净
+function ink(c){const h=hsl(c)[0],to=h>=25&&h<=70?"#c2410c":h>70&&h<=100?"#3f6212":K;let x=c;for(let t=.1;t<.9&&1.05/(lum(x)+.05)<3.2;t+=.08)x=mix(c,to,t);return x}
 const UD=UPDOWN[SPEC.updown||"cn"];const GRAY="#b8bdc8",DIM="#a3a9b8";
 const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<em>$1</em>").replace(/\n/g,"<br>"); // **重点** 显示为强调，\n 换行
 const sign=v=>typeof v!=="number"?esc(v):(v>0?"+":v<0?"−":"")+fmt(Math.abs(v));
@@ -584,7 +586,7 @@ function coInfo(key){const c=CO[key]||{};const code=c.code||String(key).split(":
 // 圆形 logo：外圈一道彩色描边 + 一圈细白边。描边颜色由 spec.badge_ring 决定：
 // brand（默认，取 logo 自己的品牌色）、category（跟所在分类色）、accent（强调色）、none（浅灰细边）
 // 圆形 logo 的描边（spec.badge_ring），描边和 logo 之间不留白。auto（默认）按 logo 的底板配色（底板类型和颜色由 fetch_logos.py 分析）：
-//   白底彩色图形 → 图形主色吸附到 12 色；整块彩色底 → 底色吸附后浅一档；黑底 → 浅灰；白底黑白图形或没有 logo → 按公司代码固定分配 9 色之一
+//   白底彩色图形 → 图形主色吸附到 12 色；整块彩色底 → 底色吸附后浅一档；黑底 → 浅灰；白底黑白图形或没有 logo → 按公司代码固定分配 8 色之一
 // category 跟所在分类色（同一产业链环节、横条同一行）；brand 用 logo 原色；accent 统一强调色；none 浅灰细边。companies 里写 color 以它为准
 const RING=SPEC.badge_ring||"auto";
 const keyColor=k=>{let h=0;for(const ch of String(k))h=(h*31+ch.charCodeAt(0))>>>0;return CATS[h%CATS.length]};

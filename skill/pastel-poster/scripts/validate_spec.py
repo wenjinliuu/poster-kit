@@ -95,9 +95,14 @@ def validate(spec):
             check_one(t, s, where)
 
     def check_one(t, s, where):
+        # 第 9、10 类用辅助色（玫红、青柠绿），离涨跌色不远：有涨跌色的版块分类不要超过 8 个
+        n = len(s.get("groups") or s.get("series") or s.get("items") or [])
+        updown = s.get("colors") == "updown" or any(isinstance(x, dict) and x.get("tone") in ("up", "down") for x in (s.get("items") or []))
+        if updown and n > 8 and t not in ("table", "kpis", "points", "steps", "timeline"):
+            warnings.append(f"{where} 有涨跌色，又有 {n} 个分类：第 9、10 类会用到玫红、青柠绿，容易和涨跌混，拆开或并进“其他”")
         if t == "chain":
-            if len(s["groups"]) > 9:
-                warnings.append(f"{where} 有 {len(s['groups'])} 组，超过 9 种分类色")
+            if len(s["groups"]) > 10:
+                warnings.append(f"{where} 有 {len(s['groups'])} 组，超过 10 种分类色")
             for g in s["groups"]:
                 for k in g.get("companies", []):
                     need(k, where)
