@@ -227,12 +227,13 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .bl{display:grid;min-width:0}
 .bl b{font-size:19px;font-weight:800;line-height:1.3}
 .bl span{font-size:14px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.br-row.hl .bl b{color:var(--accent-ink)} .br-row.dim .bl b{font-weight:500;color:var(--ink2)}
+.br-row.hl{background:var(--hl-bg);border:2px solid var(--hl-bd);border-radius:18px;margin:-4px -16px;padding:4px 14px}
+.br-row.hl .bl b{color:var(--hl-ink);font-weight:900} .br-row.hl .bl span{color:var(--hl-ink);opacity:.75}
 .trk{display:flex;height:24px;border-radius:12px;background:var(--track);overflow:hidden}
 .trk b{display:block;height:100%}
 .trk b:first-child{border-radius:12px 0 0 12px} .trk b:last-child{border-radius:0 12px 12px 0} .trk b:only-child{border-radius:12px}
 .br-row .val{font-family:var(--p-num);font-weight:800;font-size:26px;white-space:nowrap}
-.br-row.hl .val{color:var(--accent-ink)}
+.br-row.hl .val{color:var(--hl-ink)}
 .br-row .val small{font-family:var(--p-body);font-size:15px;color:var(--ink3);font-weight:500;margin-left:4px}
 .br-row .ex{font-size:15px;color:var(--ink3);text-align:right;white-space:nowrap}
 /* points：标签 + 一句话 */
@@ -551,11 +552,15 @@ const CO=SPEC.companies||{};
 function coInfo(key){const c=CO[key]||{};const code=c.code||String(key).split(":").pop();return{code,name:c.name||"",logo:LOGOS[key]&&LOGOS[key].src}}
 // 圆形 logo：外圈一道彩色描边 + 一圈细白边。描边颜色由 spec.badge_ring 决定：
 // brand（默认，取 logo 自己的品牌色）、category（跟所在分类色）、accent（强调色）、none（浅灰细边）
-const RING=SPEC.badge_ring||"brand";
-function ringColor(key){const lc=(CO[key]&&CO[key].color)||(LOGOS[key]&&LOGOS[key].color);
-  if(RING==="none")return "#e4e6ee";if(RING==="accent")return ACC;if(RING==="category")return `var(--g,${ACC})`;
-  if(!lc)return mix(ACC,W,.45);return lum(lc)>.6?ink(lc):lc}
-function badge(key,size){const c=coInfo(key),bw=RING==="none"?1.5:size>=44?2.5:2,pd=RING==="none"?0:size>=44?2.5:1.5,inner=(size-2*bw-2*pd).toFixed(1);
+// 圆形 logo 的描边（spec.badge_ring）：auto（默认）跟所在分类色（产业链环节、横条那一行等），不在分类里就按公司代码固定分配一个 8 色；
+// brand 取 logo 自己的品牌色；accent 统一强调色；none 浅灰细边。companies 里写 color 时以它为准。描边和 logo 之间不留白
+const RING=SPEC.badge_ring||"auto";
+const keyColor=k=>{let h=0;for(const ch of String(k))h=(h*31+ch.charCodeAt(0))>>>0;return PAL[h%PAL.length]};
+function ringColor(key){if(CO[key]&&CO[key].color)return CO[key].color;
+  if(RING==="none")return "#e4e6ee";if(RING==="accent")return ACC;
+  if(RING==="brand"){const lc=LOGOS[key]&&LOGOS[key].color;return !lc?keyColor(key):lum(lc)>.6?ink(lc):lc}
+  return `var(--g,${keyColor(key)})`}
+function badge(key,size){const c=coInfo(key),bw=RING==="none"?1.5:size>=44?3:2,pd=0,inner=(size-2*bw-2*pd).toFixed(1);
   const st=`--bs:${size}px;border-width:${bw}px;padding:${pd}px;--rc:${ringColor(key)}`;
   if(c.logo)return `<span class="badge" style="${st}"><img src="${c.logo}" alt="${esc(c.code)}" style="width:${inner}px;height:${inner}px"></span>`;
   const ch=/[一-鿿]/.test(c.name)?c.name[0]:(c.code[0]||"?");
@@ -729,12 +734,12 @@ const SEC={
   bars(s){const hiOf=v=>Array.isArray(v)?v[1]:v,max=s.max||Math.max(...s.items.map(b=>hiOf(b.value)))*1.02,hl=s.items.some(b=>b.highlight),ex=s.items.some(b=>b.extra);
     const pc=v=>(Math.max(0,v)/max*100).toFixed(1);
     return `<div class="bars${s.layout==="stack"?" stack":""}" style="${s.label_width?`--lw:${s.label_width}px;`:""}${s.value_width?`--vw:${s.value_width}px`:""}">${s.items.map((b,i)=>{
-      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],g=hl?(b.highlight?"acc":"gray"):b.tone==="gray"?"gray":s.colors==="accent"?"acc":i;
+      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],k=hl?s.items.slice(0,i).filter(x=>!x.highlight).length+1:i,g=b.tone==="gray"?"gray":s.colors==="accent"||b.highlight?"acc":b.g!=null?b.g:k%PAL.length,gc=g==="gray"?DIM:g==="acc"?ACC:PAL[g%PAL.length];
       const ci=b.company?coInfo(b.company):null,txt=`<div class="bl"><b>${rich(b.label||(ci&&(ci.name||ci.code))||"")}</b>${b.sub||ci?`<span>${esc(b.sub||(ci&&ci.code)||"")}</span>`:""}</div>`;
       const label=b.company?`<div class="bl-co">${badge(b.company,40)}${txt}</div>`:txt;
       const val=b.text!=null?rich(b.text):(lo===hi?fmt(lo):`${fmt(lo)}–${fmt(hi)}`)+(s.unit?`<small>${esc(s.unit)}</small>`:"");
       const bar=s.style==="lollipop"?`<b data-bar="${g}" style="width:${pc(hi)}%"></b><i data-dot="${g}" style="left:${pc(hi)}%"></i>`:lo===hi?`<b data-bar="${g}" style="width:${pc(hi)}%"></b>`:`<b data-bar="${g}" style="width:${pc(lo)}%"></b><b data-bar="${g}" class="rg" style="width:${(pc(hi)-pc(lo)).toFixed(1)}%"></b>`;
-      return `<div class="br-row${ex?" ex":""}${hl?(b.highlight?" hl":" dim"):""}">${label}<div class="trk${s.style==="lollipop"?" lol":""}">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
+      return `<div class="br-row${ex?" ex":""}${b.highlight?" hl":""}" style="--g:${gc};--hl-bg:${mix(gc,W,.91)};--hl-bd:${mix(gc,W,.55)};--hl-ink:${ink(mix(gc,K,.12))}">${label}<div class="trk${s.style==="lollipop"?" lol":""}">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
   line(s){const multi=s.series.length>1&&!s.series.some(q=>q.highlight)&&s.legend!==false;
     return `${multi?legendHTML(s.series.map((q,j)=>["line",q.color||PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("line",{s})}"></div>`},
   columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%8]:PAL[j%8],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
