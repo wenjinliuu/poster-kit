@@ -245,7 +245,7 @@
 | `tree` 树 | `root:{label, sub?, children:[…]}`，最多 3 层；`row_height` |
 | `pyramid` 金字塔 | `items:[{title, text?}]`，从上（窄）到下（宽） |
 | `cycle` 循环 | `items:[{title, text?, icon?}]`（3–6 个），`center`（中间文字，`\n` 换行），`size` |
-| `draw` 自定义 | `height`，`js`（见 `charts.md` 第五节） |
+| `draw` 自定义 | `height`，`js`（见 `charts.md` 第五节）。发到图库（`--hosted`）时不能用：图库禁止执行动态代码，改用 `html` 版块写静态 SVG |
 
 `cards` 和 `kpis` 也支持 `icon`、`company`；`cards` 有 `value` 时显示大数字。
 

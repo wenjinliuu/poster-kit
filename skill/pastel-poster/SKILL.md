@@ -61,7 +61,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 7. **交付**：
    - 在 claude.ai 里：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。页面带“下载高清图”按钮，导出约 2160px 宽 PNG。
    - 不在 claude.ai 里：加 `--standalone` 生成完整网页，直接把网页和 `--png` 导出的 PNG 交给用户；网页里的下载按钮走浏览器普通下载。
-   - 发到自己部署的海报站点（图库）：加 `--hosted` 生成托管模式的网页（字体、logo 引用站点地址，不内嵌；由站点提供下载），再按站点自己的发布方式提交。
+   - 发到自己部署的海报站点（图库）：加 `--hosted` 生成托管模式的网页（字体、logo 引用站点地址，不内嵌；由站点提供下载），再按站点自己的发布方式提交。图库禁止执行动态代码，`draw` 版块在线上画不出来，改用 `html` 写静态 SVG（见 `charts.md` 第五节）；发布后打开线上页面看一眼。
    默认只出“雾彩·清透”一个版本。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
 
 ## 风格要点（详细见 `references/style.md`、`references/palette.md`）

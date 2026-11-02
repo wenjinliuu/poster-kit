@@ -100,6 +100,12 @@
 - 其他：`PK.niceTicks(lo, hi)` 刻度、`PK.yAxis(C, lo, hi, Y, 左边距, 右端, 单位)` 纵轴、`PK.fmt` 千分位、`PK.badge(公司键, 尺寸)` logo、`PK.legendHTML`、`PK.arcPath`。
 - **文字一律用 `C.text`，不要写进 SVG 的 `<text>`**：导出 PNG 时 SVG 里拿不到网页字体。不要用 `box-shadow`（导出会变成色块）。
 - 画完跑一次 `scripts/test_export.py` 确认导出正常。
+- **发到图库（`--hosted` 托管模式）时不能用 `draw`**：`draw` 的 `js` 靠 `new Function` 在页面里执行，图库页面的内容安全策略（CSP）不允许执行动态生成的代码（没有 `unsafe-eval`），线上那一块会只显示“图表数据有误：… Content Security Policy …”，本地预览和 `--standalone`、Artifact 都看不出来。`build_poster.py --hosted` 发现 `draw` 会打印提醒。要发图库的自定义图改用 `html` 版块，写**静态**的 SVG 和 HTML：
+  - 图形写成 `<svg viewBox='0 0 宽 高' width='100%'>`，随卡片宽度缩放；
+  - 文字不要写进 SVG 的 `<text>`（导出 PNG 拿不到网页字体），用绝对定位的 `<div>` 叠在 SVG 上，位置写百分比（`left:x/宽×100%`、`top:y/高×100%`，再 `transform:translate(-50%,-50%)` 居中）；
+  - 外层 `<div style='position:relative;width:100%;aspect-ratio:宽/高'>`，SVG 用 `position:absolute;inset:0` 铺满；
+  - 颜色直接写色值（`PK.PAL` 在 `html` 版块里用不了），按 `palette.md` 取；图例也写成 HTML。
+  - 例：美国分州地图——用 `us-atlas` 的 `states-albers-10m.json`（已投影），`topojson-simplify` 简化后用 `d3-geo` 生成每州的 `path`（48 州约 13KB），按州上色，州名和数字用叠加的 `<div>` 写在 `path.centroid` 位置。这些都在生成 spec 时做，页面里只有静态内容。
 
 ## 参考
 
