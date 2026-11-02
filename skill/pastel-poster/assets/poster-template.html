@@ -855,7 +855,7 @@ Object.assign(SEC,{
       +(s.other?`<div class="dn-it"><i style="background:${GRAY}"></i><span>${esc(s.other_label||"其他")}</span><b>${s.show==="value"?fmt(s.other)+`<small>${esc(u)}</small>`:pc(s.other)}</b></div>`:"");
     return `<div class="dn"><div class="chart" data-chart="${reg("donut",{s})}"></div><div class="dn-leg">${leg}</div></div>`},
   // 部分与整体 / 偏差：堆叠横条（percent 默认归一到 100%；diverging 为“反对—中立—赞成”色阶）
-  stackbar(s){const pct=s.percent!==false,cols=s.diverging?divColors(s.series.length):s.series.map((n,j)=>PAL[j%PAL.length]);
+  stackbar(s){const pct=s.percent!==false,cols=Array.isArray(s.colors)?s.series.map((n,j)=>toneHex(s.colors[j],j)):s.diverging?divColors(s.series.length):s.series.map((n,j)=>PAL[j%PAL.length]);
     const maxT=s.max||Math.max(...s.rows.map(r=>r.values.reduce((a,b)=>a+b,0)));
     const rows=s.rows.map(r=>{const tot=r.values.reduce((a,b)=>a+b,0),base=pct?tot:maxT;
       const segs=r.values.map((v,j)=>{const wd=v/base*100;return `<div style="width:${wd.toFixed(2)}%;background:${cols[j]};color:${onC(cols[j])}">${wd>=(s.min_label??7)?(pct?Math.round(v/tot*100)+"%":fmt(v)):""}</div>`}).join("");
