@@ -219,7 +219,7 @@
 | 版块 | 字段 |
 |---|---|
 | `donut` 环形 | `items:[{label, value, company?, tone?}]`，`other`，`center_value`，`center_label`，`show:"value"`（图例显示数值而不是占比），`unit` |
-| `stackbar` 堆叠横条 | `series:[类别名]`，`rows:[{label, sub?, company?, values:[…]}]`，`percent`（默认 true 归一到 100%），`diverging:true`（态度色阶），`unit`、`max` |
+| `stackbar` 堆叠横条 | `series:[类别名]`，`rows:[{label, sub?, company?, values:[…]}]`，`percent`（默认 true 归一到 100%），`diverging:true`（态度色阶），`colors:[…]`（按系列指定颜色，每项写色值或 `up` `down` `gray` `accent`、分类色序号；有约定俗成配色时用，如美国两党 `["#2b6cf2","#e8364a"]` 民主党蓝、共和党红），`unit`、`max` |
 | `columns` 堆叠柱 | 在原 `columns` 上加 `stack:true`，柱顶标合计，段内标数值 |
 | `bars` 棒棒糖 | 在原 `bars` 上加 `style:"lollipop"` |
 | `scatter` 散点 / 气泡 | `points:[{label, x, y, size?, group?, company?, highlight?}]`，`x_label`、`y_label`、`x_unit`、`y_unit`，`quadrants:true` 或 `{x, y, labels:[右上,左上,左下,右下]}`，`labels:"all"/"highlight"/"none"` |
