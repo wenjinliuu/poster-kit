@@ -189,6 +189,13 @@ def to_data_uri(src, base):
     return f"data:{mime};base64," + base64.b64encode(raw).decode()
 
 
+def walk_sections(sections):
+    """逐个列出版块，包括 group / row 里的子版块"""
+    for s in sections:
+        yield s
+        yield from walk_sections(s.get("sections", []))
+
+
 def build(spec_path, logos_path, out_path, standalone=False, embed=True, hosted=False):
     spec = json.load(open(spec_path, encoding="utf-8"))
     from fetch_prices import fill_prices
@@ -222,6 +229,10 @@ def build(spec_path, logos_path, out_path, standalone=False, embed=True, hosted=
     if hosted:
         # 托管模式：字体、logo 用站点的，html2canvas 由站点的下载按钮按需加载，模板自带的标题栏和下载按钮隐藏
         logos = hosted_logos(logos)
+        # 图库的内容安全策略不允许执行动态代码，draw 的 js（new Function）在线上会报错，只显示“图表数据有误”
+        draws = [s.get("title") or "draw" for s in walk_sections(spec.get("sections", [])) if s.get("type") == "draw"]
+        if draws:
+            print(f"  提醒：托管模式下 draw 版块画不出来（图库禁止执行动态代码）：{'、'.join(draws)}；改用 html 版块写静态 SVG，见 references/charts.md 第五节")
         fonts = f'<link rel="stylesheet" href="{HOSTED_FONTS}">'
         html = html.replace("<!--__FONTS__-->", fonts + "<style>.page-h,.ver-h{display:none!important}</style>")
         html = html.replace("<!--__HTML2CANVAS__-->", "")
