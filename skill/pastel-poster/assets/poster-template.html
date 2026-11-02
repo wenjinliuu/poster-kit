@@ -720,7 +720,7 @@ function section(s,ctx){const f=SEC[s.type];if(!f)return "";
 const SEC={
   group(){},row(){},
   chain(s){return `<div class="groups">${s.groups.map((g,i)=>`<div class="grp" data-g="${i}"><div class="grp-tag"><div class="gt-name">${esc(g.name)}</div><div class="gt-desc">${esc(g.desc||"")}</div>${g.icon?(DRAW[g.icon]?`<div class="gt-icon" data-icon="${g.icon}" data-g="${i}"></div>`:`<div class="gt-icon gt-ico"><i class="ico" data-ico="${esc(g.icon)}" style="--is:52px"></i></div>`):""}</div><div class="grp-list" style="--cols:${s.cols||4}">${g.companies.map(k=>coItem(k,60)).join("")}</div></div>`).join("")}</div>`},
-  kpis(s){const list=s.layout==="list";return `<div class="kpis${list?" list":""}" style="--n:${list?1:s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone||""}" ${k.tone?"":`data-g="${i}"`}><div class="k">${k.company?badge(k.company,30):""}${k.icon?`<i class="ico" data-ico="${esc(k.icon)}" style="--is:26px"></i>`:""}${esc(k.label)}</div><div class="v" data-fit=".5">${rich(k.value)}<small>${esc(k.unit||"")}</small></div>${k.note?`<div class="d">${rich(k.note)}</div>`:""}${k.rows?`<div class="rows">${k.rows.map(r=>`<div><span>${esc(r[0])}</span><b class="${r[2]??autoTone(r[1])}">${esc(r[1])}</b></div>`).join("")}</div>`:""}</div>`).join("")}</div>`},
+  kpis(s){const list=s.layout==="list";return `<div class="kpis${list?" list":""}" style="--n:${list?1:s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone&&k.tone[0]!=="#"?k.tone:""}" ${k.tone&&k.tone[0]!=="#"?"":`data-g="${k.tone||i}"`}><div class="k">${k.company?badge(k.company,30):""}${k.icon?`<i class="ico" data-ico="${esc(k.icon)}" style="--is:26px"></i>`:""}${esc(k.label)}</div><div class="v" data-fit=".5">${rich(k.value)}<small>${esc(k.unit||"")}</small></div>${k.note?`<div class="d">${rich(k.note)}</div>`:""}${k.rows?`<div class="rows">${k.rows.map(r=>`<div><span>${esc(r[0])}</span><b class="${r[2]??autoTone(r[1])}">${esc(r[1])}</b></div>`).join("")}</div>`:""}</div>`).join("")}</div>`},
   holdings(s){const top=s.items.slice(0,6);
     const cards=top.map((h,i)=>{const c=coInfo(h[0]);return `<div class="hc" data-g="${i}">${badge(h[0],54)}<div class="co-t"><b>${esc(c.code)}</b><span>${esc(c.name)}</span></div><div class="pct">${h[1].toFixed(1)}<small>%</small></div></div>`}).join("");
     const rest=(s.items.slice(6).map(h=>`<div class="rc">${badge(h[0],36)}<b>${esc(coInfo(h[0]).code)}</b><em>${h[1].toFixed(1)}%</em></div>`).join(""))+(s.other!=null?`<div class="rc"><span class="badge" style="--bs:36px;--c:#8e91a7">…</span><b>其他</b><em>${s.other.toFixed(1)}%</em></div>`:"");
@@ -775,7 +775,7 @@ const SEC={
   bars(s){const hiOf=v=>Array.isArray(v)?v[1]:v,max=s.max||Math.max(...s.items.map(b=>hiOf(b.value)))*1.02,hl=s.items.some(b=>b.highlight),ex=s.items.some(b=>b.extra);
     const pc=v=>(Math.max(0,v)/max*100).toFixed(1);
     return `<div class="bars${s.layout==="stack"?" stack":""}" style="${s.label_width?`--lw:${s.label_width}px;`:""}${s.value_width?`--vw:${s.value_width}px`:""}">${s.items.map((b,i)=>{
-      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],k=hl?s.items.slice(0,i).filter(x=>!x.highlight).length+1:i,g=b.tone==="gray"?"gray":s.colors==="accent"||b.highlight?"acc":b.g!=null?b.g:k%PAL.length,gc=g==="gray"?DIM:g==="acc"?ACC:PAL[g%PAL.length];
+      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],k=hl?s.items.slice(0,i).filter(x=>!x.highlight).length+1:i,g=b.tone==="gray"?"gray":b.tone!=null?toneHex(b.tone):s.colors==="accent"||b.highlight?"acc":b.g!=null?b.g:k%PAL.length,gc=g==="gray"?DIM:g==="acc"?ACC:String(g)[0]==="#"?g:PAL[g%PAL.length];
       const ci=b.company?coInfo(b.company):null,txt=`<div class="bl"><b>${rich(b.label||(ci&&(ci.name||ci.code))||"")}</b>${b.sub||ci?`<span>${esc(b.sub||(ci&&ci.code)||"")}</span>`:""}</div>`;
       const label=b.company?`<div class="bl-co">${badge(b.company,40)}${txt}</div>`:txt;
       const val=b.text!=null?rich(b.text):(lo===hi?fmt(lo):`${fmt(lo)}–${fmt(hi)}`)+(s.unit?`<small>${esc(s.unit)}</small>`:"");
@@ -1115,7 +1115,7 @@ function paint(p,vid){
   const V=VERSIONS[vid];const accent=ACC,accent2=PAL[4];const ud=UD;
   p.style.setProperty("--accent",accent);p.style.setProperty("--accent-ink",ink(accent));p.style.setProperty("--accent-soft",mix(accent,W,.62));p.style.setProperty("--banner",V.banner(accent,accent2));
   p.style.setProperty("--up",ud.up);p.style.setProperty("--down",ud.down);p.style.setProperty("--up-soft",mix(ud.up,W,.88));p.style.setProperty("--down-soft",mix(ud.down,W,.88));
-  const gcol=i=>i==="gray"?GRAY:i==="acc"?accent:PAL[+i%PAL.length];
+  const gcol=i=>i==="gray"?GRAY:i==="acc"?accent:String(i)[0]==="#"?i:PAL[+i%PAL.length];
   p.querySelectorAll("[data-g]").forEach(el=>{const g=el.dataset.g;if(g==="-1")return;const c=gcol(g);
     el.style.setProperty("--g",c);el.style.setProperty("--g-tint",mix(c,W,V.tint));
     el.style.setProperty("--g-soft",mix(c,W,.7));el.style.setProperty("--g-deep",deep(c,.18));
