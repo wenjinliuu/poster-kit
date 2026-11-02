@@ -775,7 +775,7 @@ const SEC={
   bars(s){const hiOf=v=>Array.isArray(v)?v[1]:v,max=s.max||Math.max(...s.items.map(b=>hiOf(b.value)))*1.02,hl=s.items.some(b=>b.highlight),ex=s.items.some(b=>b.extra);
     const pc=v=>(Math.max(0,v)/max*100).toFixed(1);
     return `<div class="bars${s.layout==="stack"?" stack":""}" style="${s.label_width?`--lw:${s.label_width}px;`:""}${s.value_width?`--vw:${s.value_width}px`:""}">${s.items.map((b,i)=>{
-      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],k=hl?s.items.slice(0,i).filter(x=>!x.highlight).length+1:i,g=b.tone==="gray"?"gray":s.colors==="accent"||b.highlight?"acc":b.g!=null?b.g:k%PAL.length,gc=g==="gray"?DIM:g==="acc"?ACC:PAL[g%PAL.length];
+      const [lo,hi]=Array.isArray(b.value)?b.value:[b.value,b.value],k=hl?s.items.slice(0,i).filter(x=>!x.highlight).length+1:i,g=b.tone==="gray"?"gray":s.colors==="accent"||b.highlight?"acc":b.g!=null?b.g:k%PAL.length,gc=b.tone!=null&&b.tone!=="gray"?toneHex(b.tone):g==="gray"?DIM:g==="acc"?ACC:PAL[g%PAL.length];
       const ci=b.company?coInfo(b.company):null,txt=`<div class="bl"><b>${rich(b.label||(ci&&(ci.name||ci.code))||"")}</b>${b.sub||ci?`<span>${esc(b.sub||(ci&&ci.code)||"")}</span>`:""}</div>`;
       const label=b.company?`<div class="bl-co">${badge(b.company,40)}${txt}</div>`:txt;
       const val=b.text!=null?rich(b.text):(lo===hi?fmt(lo):`${fmt(lo)}–${fmt(hi)}`)+(s.unit?`<small>${esc(s.unit)}</small>`:"");

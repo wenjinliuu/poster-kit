@@ -144,7 +144,7 @@
 {"type":"bars","unit":"%","max":100,"items":[{"label":"美光","sub":"6–9 月 · GAAP","value":80.7,"extra":"542 亿美元"},{"label":"SK 海力士","value":79.7,"highlight":true}]}
 ```
 - `value` 可以是 `[低, 高]` 区间；`text` 改右侧数值文字（如 `"+20% 中段"`）；`company` 用公司 logo 当标签；`extra` 是最右侧灰字。
-- 每行默认一种分类色；有 `highlight` 时那一行用强调色，并加同色浅底和描边的“选中”样式（同业对比突出自己用）；`tone:"gray"` 单独把某行变灰；`colors:"accent"` 全部用强调色；`g` 指定分类色序号。
+- 每行默认一种分类色；有 `highlight` 时那一行用强调色，并加同色浅底和描边的“选中”样式（同业对比突出自己用）；`tone:"gray"` 单独把某行变灰；`tone` 也可写色值或 `up` `down` `accent`（按含义上色，如按党派、按地图图例，让同一张海报里有关联的版块颜色一致）；`colors:"accent"` 全部用强调色；`g` 指定分类色序号。
 - `layout:"stack"` 标签在条上方（窄卡片、并排时用）；`label_width`、`value_width` 调列宽，`max` 定刻度上限。
 
 ### `line` 折线
