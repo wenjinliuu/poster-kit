@@ -245,6 +245,9 @@ def build(spec_path, logos_path, out_path, standalone=False, embed=True, hosted=
     html = html.replace("/*__SPEC__*/null", safe_json(spec))
     html = html.replace("/*__LOGOS__*/{}", safe_json(logos))
     html = html.replace("/*__ICONS__*/{}", safe_json(icons))
+    # 地图州界（约 20KB）只在用到 map 版块时注入
+    if any(x.get("type") == "map" for x in walk_sections(spec.get("sections", []))):
+        html = html.replace("/*__GEO__*/{}", (pathlib.Path(__file__).resolve().parent.parent / "assets" / "us-states.json").read_text(encoding="utf-8"))
     if standalone:
         html = wrap(html)
     pathlib.Path(out_path).write_text(html, encoding="utf-8")

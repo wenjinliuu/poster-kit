@@ -61,7 +61,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 7. **交付**：
    - 在 claude.ai 里：用 Artifact 发布 `poster.html`，声明 `capabilities: {downloads: true}`，icon 用 `chart`。页面带“下载高清图”按钮，导出约 2160px 宽 PNG。
    - 不在 claude.ai 里：加 `--standalone` 生成完整网页，直接把网页和 `--png` 导出的 PNG 交给用户；网页里的下载按钮走浏览器普通下载。
-   - 发到自己部署的海报站点（图库）：加 `--hosted` 生成托管模式的网页（字体、logo 引用站点地址，不内嵌；由站点提供下载），再按站点自己的发布方式提交。图库禁止执行动态代码，`draw` 版块在线上画不出来，改用 `html` 写静态 SVG（见 `charts.md` 第五节）；发布后打开线上页面看一眼。
+   - 发到自己部署的海报站点（图库）：加 `--hosted` 生成托管模式的网页（字体、logo 引用站点地址，不内嵌；由站点提供下载），再按站点自己的发布方式提交。图库禁止执行动态代码，`draw` 版块在线上画不出来：地图用 `map` 版块，其他自定义图改用 `html` 写静态 SVG（见 `charts.md` 第五节）；发布后打开线上页面看一眼。
    默认只出“雾彩·清透”一个版本。以后新增风格时，用户要求对比才在 spec 里写多个 `versions`。
 
 ## 风格要点（详细见 `references/style.md`、`references/palette.md`）
@@ -76,7 +76,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 
 ## 内容原则
 
-- 用户要求精简时，优先合并同类项、减少行数，海报不要太长（普通 ≤ 2200px，深度速览 ≤ 5000px）。
+- 用户要求精简时，优先合并同类项、减少行数，海报不要太长（普通 ≤ 2200px，深度速览 ≤ 5000px，长文 / 专栏深读 ≤ 9000px）。长文要把原文的关键图表都重画出来，不要为了凑长度砍掉有数据的图；超过 9000px 才拆成两张。
 - 测算口径要保守：一次性的按一次性算，不拿极端情形拉高数字；用户指定的口径贯穿整张海报。
 - 页脚必须写：数据来源或筛选口径、制图或截至日期；用了公司 logo 时写“徽标仅用于识别，归各自所有者”，财经内容加“不构成投资建议”，健康类加“不构成医疗建议”。
 - 示意或估算数据要在 `tag` 或页脚里明说。
@@ -96,6 +96,7 @@ curl -sfL --max-time 30 -o /tmp/poster-kit.tgz https://codeload.github.com/wenji
 - `scripts/test_export.py`：验收导出，以手机视口和字体回退两种场景检查 PNG 尺寸和页脚（改模板或导出逻辑后跑一次）
 - `assets/poster-template.html`：海报模板（样式、版块渲染、背景物件、下载）
 - `assets/vendor/html2canvas.min.js`：导出用的 html2canvas 1.4.1
+- `assets/us-states.json`：`map` 版块用的美国本土 48 州州界（us-atlas 简化，约 20KB），用到地图时才注入
 - `examples/`：财报速览、融资事件、行情日报、城市生活报告、睡眠科普、产业链名单、跨市场名单、持仓占比、资本开支统计九个完整示例（财报、融资、日报、城市为示例或虚构数据，只演示版式）
 - `references/`：资料卡、分析与大纲 `story.md`，海报类型配方 `recipes.md`（常问的问题、收集清单、常见排法），图表选型 `charts.md`，版块、配色、风格、版式关卡、logo 规则、`spec.schema.json`
 - `requirements.txt`：可选依赖（cairosvg、Pillow、playwright）

@@ -74,6 +74,11 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 
 /* kpis */
 .kpis{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:16px}
+.map-wrap{position:relative;width:100%}.map-wrap svg{position:absolute;inset:0;display:block;overflow:visible}
+.map-st{position:absolute;transform:translate(-50%,-50%);font-size:14px;color:#9aa0b4;letter-spacing:2px;white-space:nowrap}
+.map-lab{position:absolute;transform:translate(0,-50%);background:#fff;border-radius:12px;padding:8px 12px;box-shadow:0 0 0 1.5px #e3e6ef;font-size:14px;line-height:1.45;color:var(--ink2)}
+.map-lab.l{transform:translate(-100%,-50%)}.map-lab b{display:block;font-size:17px;font-weight:800}.map-lab i{display:block;font-style:normal;font-family:var(--num);font-size:20px;font-weight:800;color:var(--ink)}.map-lab span{display:block}
+.map-leg{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:14px;color:var(--ink2)}.map-leg span{display:inline-flex;align-items:center;gap:8px}.map-leg i{display:inline-block;width:14px;height:14px;border-radius:50%}
 .kpi{background:#fff;border-radius:26px;box-shadow:0 8px 28px rgba(40,40,90,.06);padding:24px 26px;display:grid;gap:4px;align-content:start}
 .kpi .k{font-size:18px;color:var(--ink2)}
 .kpi .v{font-family:var(--p-num);font-weight:800;font-size:52px;line-height:1.1;letter-spacing:-.02em;white-space:nowrap;color:var(--g-deep,var(--ink))}
@@ -468,6 +473,11 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 const SPEC=/*__SPEC__*/null;
 const LOGOS=/*__LOGOS__*/{};
 const ICONS=/*__ICONS__*/{};
+const GEO=/*__GEO__*/{}; // 美国分州州界（assets/us-states.json），只有用到 map 版块时才由 build_poster.py 注入
+// 经纬度 → 和州界同一套坐标（d3 geoAlbersUsa 的本土部分：等积圆锥，标准纬线 29.5° / 45.5°，scale 1300，translate 487.5,305）
+const albers=(lon,lat)=>{const r=Math.PI/180,p0=29.5*r,p1=45.5*r,n=(Math.sin(p0)+Math.sin(p1))/2,C=1+Math.sin(p0)*(2*n-Math.sin(p0)),r0=Math.sqrt(C)/n,
+  raw=(l,p)=>{const q=Math.sqrt(C-2*n*Math.sin(p))/n;return [q*Math.sin(l*n),r0-q*Math.cos(l*n)]},cc=raw(-.6*r,38.7*r),k=1300;
+  let l=(lon+96)*r;l=((l+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;const q=raw(l,lat*r);return [487.5-k*cc[0]+k*q[0],305+k*cc[1]-k*q[1]]};
 
 /* ---------- 配色：8 个主分类色 + 2 个辅助色（已过色盲区分校验），各风格共用 ---------- */
 // 主分类色 8 个（避开涨跌红绿，按顺序分配，相邻两色差异大）：靛紫 天蓝 琥珀 紫罗兰 湖青 洋红 珊瑚橙 宝蓝
@@ -685,7 +695,7 @@ const CH={
     C.svg(`<line x1="${padL}" x2="${w}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
     const small=m*n>10;
     s.x.forEach((t,i)=>{const cx=padL+slot*(i+.5);C.text(cx,top+H+14,esc(t),"xl","c","t");
-      ser.forEach((q,j)=>{const v=q.values[i];if(v==null)return;const c0=q.g!=null?PAL[q.g%NC]:(s.highlight!=null?(i===s.highlight?ACC:mix(ACC,W,.55)):PAL[j%NC]);
+      ser.forEach((q,j)=>{const v=q.values[i];if(v==null)return;const c0=q.color!=null?toneHex(q.color):q.g!=null?PAL[q.g%NC]:(s.highlight!=null?(i===s.highlight?ACC:mix(ACC,W,.55)):PAL[j%NC]);
         const est=s.est_from!=null&&i>=s.est_from,c=est?mix(c0,W,.5):c0,h=hiOf(v),x=cx-gw/2+j*(bw+gap),y1=Y(Math.max(h,0)),y2=Y(Math.min(h,0));
         rect(C,x,y1,bw,y2-y1,c,"solid",c);
         C.text(x+bw/2,h>=0?y1-6:y2+6,Array.isArray(v)?`${fmt(v[0])}–${fmt(v[1])}`:sign(h).replace(/^\+/,s.signed?"+":"")+(s.unit_on_bars?esc(u):""),small?"sm":"","c",h>=0?"b":"t",deep(c0,.2))})});
@@ -720,7 +730,7 @@ function section(s,ctx){const f=SEC[s.type];if(!f)return "";
 const SEC={
   group(){},row(){},
   chain(s){return `<div class="groups">${s.groups.map((g,i)=>`<div class="grp" data-g="${i}"><div class="grp-tag"><div class="gt-name">${esc(g.name)}</div><div class="gt-desc">${esc(g.desc||"")}</div>${g.icon?(DRAW[g.icon]?`<div class="gt-icon" data-icon="${g.icon}" data-g="${i}"></div>`:`<div class="gt-icon gt-ico"><i class="ico" data-ico="${esc(g.icon)}" style="--is:52px"></i></div>`):""}</div><div class="grp-list" style="--cols:${s.cols||4}">${g.companies.map(k=>coItem(k,60)).join("")}</div></div>`).join("")}</div>`},
-  kpis(s){const list=s.layout==="list";return `<div class="kpis${list?" list":""}" style="--n:${list?1:s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone&&k.tone[0]!=="#"?k.tone:""}" ${k.tone&&k.tone[0]!=="#"?"":`data-g="${k.tone||i}"`}><div class="k">${k.company?badge(k.company,30):""}${k.icon?`<i class="ico" data-ico="${esc(k.icon)}" style="--is:26px"></i>`:""}${esc(k.label)}</div><div class="v" data-fit=".5">${rich(k.value)}<small>${esc(k.unit||"")}</small></div>${k.note?`<div class="d">${rich(k.note)}</div>`:""}${k.rows?`<div class="rows">${k.rows.map(r=>`<div><span>${esc(r[0])}</span><b class="${r[2]??autoTone(r[1])}">${esc(r[1])}</b></div>`).join("")}</div>`:""}</div>`).join("")}</div>`},
+  kpis(s){const list=s.layout==="list";return `<div class="kpis${list?" list":""}" style="--n:${list?1:s.items.length>4?3:s.items.length}">${s.items.map((k,i)=>`<div class="kpi ${k.tone&&k.tone[0]!=="#"?k.tone:""}" ${k.tone&&k.tone[0]!=="#"?"":`data-g="${k.tone||i}"`}><div class="k">${k.company?badge(k.company,30):""}${k.icon?`<i class="ico" data-ico="${esc(k.icon)}" style="--is:26px"></i>`:""}${esc(k.label)}</div><div class="v" data-fit=".5">${rich(k.value)}<small>${esc(k.unit||"")}</small></div>${k.note?`<div class="d">${rich(k.note)}</div>`:""}${k.rows?`<div class="rows">${k.rows.map(r=>`<div><span>${esc(r[0])}</span><b class="${r[2]??autoTone(r[1])}">${esc(r[1])}</b></div>`).join("")}</div>`:""}</div>`).join("")}</div>`},
   holdings(s){const top=s.items.slice(0,6);
     const cards=top.map((h,i)=>{const c=coInfo(h[0]);return `<div class="hc" data-g="${i}">${badge(h[0],54)}<div class="co-t"><b>${esc(c.code)}</b><span>${esc(c.name)}</span></div><div class="pct">${h[1].toFixed(1)}<small>%</small></div></div>`}).join("");
     const rest=(s.items.slice(6).map(h=>`<div class="rc">${badge(h[0],36)}<b>${esc(coInfo(h[0]).code)}</b><em>${h[1].toFixed(1)}%</em></div>`).join(""))+(s.other!=null?`<div class="rc"><span class="badge" style="--bs:36px;--c:#8e91a7">…</span><b>其他</b><em>${s.other.toFixed(1)}%</em></div>`:"");
@@ -783,10 +793,30 @@ const SEC={
       return `<div class="br-row${ex?" ex":""}${b.highlight?" hl":""}" style="--g:${gc};--hl-bg:${mix(gc,W,.91)};--hl-bd:${mix(gc,W,.55)};--hl-ink:${deep(gc,.12)}">${label}<div class="trk${s.style==="lollipop"?" lol":""}">${bar}</div><div class="val" data-fit=".6">${val}</div>${ex?`<div class="ex">${esc(b.extra||"")}</div>`:""}</div>`}).join("")}</div>`},
   line(s){const multi=s.series.length>1&&!s.series.some(q=>q.highlight)&&s.legend!==false;
     return `${multi?legendHTML(s.series.map((q,j)=>["line",q.color||PAL[j%NC],q.name])):""}<div class="chart" data-chart="${reg("line",{s})}"></div>`},
-  columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.g!=null?PAL[q.g%NC]:PAL[j%NC],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
+  columns(s){return `${s.series.length>1?legendHTML(s.series.map((q,j)=>["box",q.color!=null?toneHex(q.color):q.g!=null?PAL[q.g%NC]:PAL[j%NC],q.name])):""}<div class="chart" data-chart="${reg("columns",{s})}"></div>`},
   // 标签 + 一句话：电话会要点、市场观点、风险提示。tone: up/down/gray/dark/accent 或分类色序号，不写则同名标签同色
   points(s){const tags=[...new Set(s.items.map(p=>p.tag))];return `<div class="pts" style="--cols:${s.cols||1}">${s.items.map(p=>{
     const c=p.tone!=null?toneHex(p.tone):s.colors==="accent"?ACC:PAL[tags.indexOf(p.tag)%PAL.length];return `<div class="pt">${p.tag?`<span class="ptag" style="background:${c}">${esc(p.tag)}</span>`:""}<div>${p.company?`<span class="co-in">${badge(p.company,30)}${esc(coInfo(p.company).name||coInfo(p.company).code)}</span>`:""}${rich(p.text)}${p.sub?`<small>${rich(p.sub)}</small>`:""}</div></div>`}).join("")}</div>`},
+  // 地图：美国分州 + 按经纬度打点。静态 SVG（州界）+ 绝对定位的 HTML 标签（文字不进 SVG，导出 PNG 才拿得到网页字体），
+  // 不靠 draw 的动态代码，所以发到禁止 eval 的图库也能显示。states 指定画哪些州（并按它们裁切），不写画本土 48 州
+  map(s){const G=GEO.states||{},draw=(s.states&&s.states.length?s.states:Object.keys(G)).filter(n=>G[n]);
+    if(!draw.length)return `<div class="cap">地图数据缺失（build_poster.py 没注入州界）</div>`;
+    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;for(const n of draw){const b=G[n].b;x0=Math.min(x0,b[0][0]);y0=Math.min(y0,b[0][1]);x1=Math.max(x1,b[1][0]);y1=Math.max(y1,b[1][1])}
+    const pad=s.pad??10;x0-=pad;y0-=pad;x1+=pad;y1+=pad;const MW=x1-x0,MH=y1-y0,u=MW/936; // u：1 像素（按 936 宽卡片）对应多少地图单位
+    const P=(x,y)=>`left:${((x-x0)/MW*100).toFixed(2)}%;top:${((y-y0)/MH*100).toFixed(2)}%`;
+    const fillOf=n=>{const f=(s.fill||{})[n];return f==null?"#eef0f5":s.fill_solid?toneHex(f):mix(toneHex(f),W,s.fill_light??.8)}; // 州底色默认按同色变浅，避免整州实色压住标注
+    let svg=draw.map(n=>`<path d="${G[n].d}" fill="${fillOf(n)}" stroke="#fff" stroke-width="${(1.8*u).toFixed(2)}" stroke-linejoin="round"/>`).join("");
+    svg+=Object.entries(s.outline||{}).filter(([n])=>G[n]).map(([n,o])=>`<path d="${G[n].d}" fill="none" stroke="${toneHex(o.tone||"accent")}" stroke-width="${(2.5*u).toFixed(2)}"${o.dash?` stroke-dasharray="${7*u} ${5*u}"`:""}/>`).join("");
+    let html=Object.entries(s.labels||{}).filter(([n])=>G[n]).map(([n,t])=>`<div class="map-st" style="${P(G[n].c[0],G[n].c[1])}">${esc(t)}</div>`).join("");
+    (s.points||[]).forEach((pt,i)=>{const [x,y]=albers(pt.lon,pt.lat),c=toneHex(pt.tone??i,i),r=(pt.size??10)*u;
+      if(!pt.label_only)svg+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".2" stroke="${c}" stroke-width="${2.5*u}"${pt.dash?` stroke-dasharray="${6*u} ${4*u}"`:""}/><circle cx="${x}" cy="${y}" r="${6*u}" fill="${c}" stroke="#fff" stroke-width="${2*u}"/>`;
+      if(!pt.title&&!pt.text&&!pt.value)return;
+      const dx=(pt.dx??40)*u,dy=(pt.dy??-30)*u,lx=x+dx,ly=y+dy;
+      if(!pt.label_only)svg+=`<line x1="${x}" y1="${y}" x2="${lx}" y2="${ly}" stroke="${c}" stroke-width="${1.6*u}"/>`;
+      html+=`<div class="map-lab${dx<0?" l":""}" style="${P(lx,ly)};max-width:${pt.width||300}px"><b style="color:${deep(c,.12)}">${rich(pt.title||"")}</b>${pt.value?`<i>${rich(pt.value)}</i>`:""}${pt.text?`<span>${rich(pt.text)}</span>`:""}</div>`});
+    const leg=(s.legend||[]).map((g,i)=>{const c=toneHex(g.tone??i,i),sh=g.shape||"dot";
+      return `<span><i style="${sh==="box"?`border-radius:4px;background:${String(g.tone)[0]==="#"?c:mix(c,W,.8)}`:g.dash?`background:transparent;border:2px dashed ${c}`:`background:${c}`}"></i>${esc(g.label)}</span>`}).join("");
+    return `<div class="map-wrap" style="aspect-ratio:${MW.toFixed(1)}/${MH.toFixed(1)}"><svg viewBox="${x0} ${y0} ${MW} ${MH}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">${svg}</svg>${html}</div>${leg?`<div class="map-leg">${leg}</div>`:""}`},
   callout(s){const c=toneHex(s.tone||"accent");return `<div class="callout" style="background:${mix(c,W,.91)}"><b style="color:${deep(c,.2)}">${rich(s.title)}</b>${s.text?`<span>${rich(s.text)}</span>`:""}</div>`},
   text(s){return `<div class="p-text">${s.title?`<h3>${rich(s.title)}</h3>`:""}${s.text?`<p>${rich(s.text)}</p>`:""}</div>`},
   cards(s){return `<div class="mcards" style="--n:${s.cols||Math.min(s.items.length,4)}">${s.items.map((c,i)=>`<div class="mcard" data-g="${s.colors==="accent"?"acc":i}">${c.company?badge(c.company,44):""}${c.icon?`<i class="ico" data-ico="${esc(c.icon)}" style="--is:40px"></i>`:""}<b>${rich(c.title||(c.company&&coInfo(c.company).name)||"")}</b>${c.value!=null?`<strong>${rich(c.value)}</strong>`:""}${c.sub?`<span>${rich(c.sub)}</span>`:""}</div>`).join("")}</div>`},
@@ -1047,7 +1077,7 @@ CH.columns=function(el,w,s){if(!s.stack)return _columns(el,w,s);
   if(s.axis!==false)yAxis(C,0,hi,Y,padL,w,u);
   C.svg(`<line x1="${padL}" x2="${w}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="#dcdfe9" stroke-width="2"/>`);
   s.x.forEach((t,i)=>{const cx=padL+slot*(i+.5);let acc=0;C.text(cx,top+H+14,esc(t),"xl","c","t");
-    ser.forEach((q,j)=>{const v=q.values[i]||0;if(!v)return;const c=q.g!=null?PAL[q.g%PAL.length]:PAL[j%PAL.length],y1=Y(acc+v),y2=Y(acc);
+    ser.forEach((q,j)=>{const v=q.values[i]||0;if(!v)return;const c=q.color!=null?toneHex(q.color):q.g!=null?PAL[q.g%PAL.length]:PAL[j%PAL.length],y1=Y(acc+v),y2=Y(acc);
       C.svg(`<rect x="${(cx-bw/2).toFixed(1)}" y="${y1.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1,y2-y1-2).toFixed(1)}" rx="3" fill="${c}"/>`);
       if(y2-y1>24&&s.segment_labels!==false)C.text(cx,(y1+y2)/2,fmt(v),"sm","c","m",onC(c));acc+=v});
     C.text(cx,Y(tots[i])-6,fmt(+tots[i].toFixed(2)),"","c","b","#16172a")});

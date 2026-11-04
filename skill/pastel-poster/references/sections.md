@@ -41,7 +41,7 @@
 `icon` 可选（同背景物件的取值），`cols` 每行公司数，默认 4。组名 ≤ 7 字，说明 ≤ 22 字。
 
 ### `kpis` 大数字摘要
-2–4 个。`tone` 写 `up`/`down` 时数字用涨跌色，否则用分类色。
+2–6 个（5～6 个时每行 3 个）。`tone` 写 `up`/`down` 时数字用涨跌色，否则用分类色。
 ```json
 {"type":"kpis","items":[{"label":"板块周涨幅","value":"+5.84","unit":"%","note":"跑赢沪深300","tone":"up"}]}
 ```
@@ -160,7 +160,7 @@
 ```json
 {"type":"columns","unit":"%","est_from":3,"x":["4Q25","1Q26","2Q26","3Q26E"],"series":[{"name":"DRAM","values":[[45,50],[93,98],[58,63],[13,18]]},{"name":"NAND","values":[33,85,55,18]}]}
 ```
-值可以是数字或 `[低, 高]` 区间（柱高取上限，柱顶标“低–高”）；`est_from` 起的柱变淡表示预估；单系列时 `highlight` 写序号只把那根用强调色。
+值可以是数字或 `[低, 高]` 区间（柱高取上限，柱顶标“低–高”）；系列可写 `color`（色值或 tone，和别的版块里同一类别保持同色）或 `g`（分类色序号）；`est_from` 起的柱变淡表示预估；单系列时 `highlight` 写序号只把那根用强调色。
 
 ### `points` 标签 + 一句话
 ```json
@@ -245,6 +245,7 @@
 | `tree` 树 | `root:{label, sub?, children:[…]}`，最多 3 层；`row_height` |
 | `pyramid` 金字塔 | `items:[{title, text?}]`，从上（窄）到下（宽） |
 | `cycle` 循环 | `items:[{title, text?, icon?}]`（3–6 个），`center`（中间文字，`\n` 换行），`size` |
+| `map` 美国分州地图 | `states:[州英文名]`（画哪些州，并按它们裁切；不写画本土 48 州），`fill:{州: 色值或 tone}`（州底色，自动按同色变浅；`fill_light` 调浅的程度，默认 0.8；`fill_solid:true` 用原色），`outline:{州: {tone, dash}}`（描边，虚线表示“可能 / 推测”），`labels:{州: 中文名}`，`points:[{lon, lat, title, value?, text?, tone?, size?, dash?, dx?, dy?, width?}]`（按经纬度打点；`size` 圆圈半径（像素），`dx` / `dy` 标签相对点的偏移（像素，负 `dx` 标签放左边），`label_only:true` 只放标签不画点（位置不确定时用），文字可用 `**加粗**`），`legend:[{label, tone, shape: dot / box, dash?}]`，`pad`。州界随技能打包（`assets/us-states.json`，us-atlas 简化），用到时才注入；静态渲染，发图库也能显示 |
 | `draw` 自定义 | `height`，`js`（见 `charts.md` 第五节）。发到图库（`--hosted`）时不能用：图库禁止执行动态代码，改用 `html` 版块写静态 SVG |
 
 `cards` 和 `kpis` 也支持 `icon`、`company`；`cards` 有 `value` 时显示大数字。
