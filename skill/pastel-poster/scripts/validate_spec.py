@@ -22,7 +22,7 @@ SECTIONS = {
     "donut": ["items"], "stackbar": ["series", "rows"], "scatter": ["points"], "slope": ["items"], "dumbbell": ["items"],
     "treemap": ["items"], "funnel": ["items"], "radar": ["axes", "series"], "rings": ["items"], "waffle": [],
     "sankey": ["links"], "sparks": ["items"], "timeline": ["items"], "steps": ["items"], "compare": ["left", "right"],
-    "quadrant": ["cells"], "tree": ["root"], "pyramid": ["items"], "cycle": ["items"], "draw": ["js"], "price": [],
+    "quadrant": ["cells"], "tree": ["root"], "pyramid": ["items"], "cycle": ["items"], "draw": ["js"], "map": [], "price": [],
 }
 OBJECTS = {"chip", "module", "rack", "coin", "globe", "battery", "building", "wafer", "db", "robot"}
 
@@ -42,7 +42,7 @@ def validate(spec):
         errors.append("title 必须是 [黑色主句, 强调色大字, 灰色副句] 数组")
     else:
         # 主句、大字放不下一行会自动缩小字号；超过约 1.4 倍就缩得太小了
-        for t, n, label in zip(title, (13, 12, 22), ("主句", "大字", "副句")):
+        for t, n, label in zip(title, (16, 12, 26), ("主句", "大字", "副句")):  # 2026-11-04 放宽：专栏、研报类主句要带来源名
             if isinstance(t, str) and width(t) > n:
                 warnings.append(f"标题{label}“{t}”约 {width(t):.0f} 字宽，建议 ≤ {n}，太长会被缩得很小或换行")
     if not isinstance(spec.get("sections"), list) or not spec["sections"]:
@@ -129,8 +129,8 @@ def validate(spec):
             for r in s["items"]:
                 if isinstance(r[0], str) and ":" in r[0]:
                     need(r[0], where)
-        elif t == "kpis" and not 1 <= len(s["items"]) <= 4:
-            warnings.append(f"{where} 建议 2–4 个大数字")
+        elif t == "kpis" and not 1 <= len(s["items"]) <= 6:
+            warnings.append(f"{where} 建议 2–6 个大数字（5～6 个时每行 3 个）")
         elif t == "beat":
             for it in s["items"]:
                 if "actual" not in it:
