@@ -78,7 +78,7 @@
 ```
 
 ### `table` 通用表格
-板块行情、对比表。列类型：`company`（徽章+代码+名称）、`pct`（涨跌胶囊，带正负号）、不写为普通文本。行数 ≤ 10。
+板块行情、对比表。列类型：`company`（徽章+代码+名称）、`pct`（涨跌胶囊，带正负号）、`text`（一句话说明：左对齐、常规字重，适合“理由”“备注”这类长文字列）、不写为普通文本（右对齐粗体，适合数字和短词）。行数 ≤ 10。
 ```json
 {"type":"table","title":"领涨成分股","columns":[{"label":"股票","type":"company"},{"label":"收盘"},{"label":"周涨跌","type":"pct"}],
  "rows":[["SZSE:300308","186.40",12.6]]}
@@ -187,7 +187,7 @@
 ```json
 {"type":"heatmap","format":"pct","columns":["周一","周二"],"rows":[{"label":"SPY","values":[-6,4]}]}
 ```
-格子颜色按值相对 `center`（默认 0）的方向用涨跌色、按幅度定深浅；想显示 A 值、按 B 值上色时写 `colors` 矩阵（如格内写量倍数、颜色表示偏离）。`format`：`pct`（带正负号百分比）、`x`（倍数）或不写。
+格子颜色按值相对 `center`（默认 0）的方向用涨跌色、按幅度定深浅，等于 `center` 的格子是中性灰；想显示 A 值、按 B 值上色时写 `colors` 矩阵（如格内写量倍数、颜色表示偏离）。`format`：`pct`（带正负号百分比）、`x`（倍数）或不写。
 
 ### `deviation` 偏离条
 ```json
@@ -224,7 +224,7 @@
 | `bars` 棒棒糖 | 在原 `bars` 上加 `style:"lollipop"` |
 | `scatter` 散点 / 气泡 | `points:[{label, x, y, size?, group?, company?, highlight?}]`，`x_label`、`y_label`、`x_unit`、`y_unit`，`quadrants:true` 或 `{x, y, labels:[右上,左上,左下,右下]}`，`labels:"all"/"highlight"/"none"` |
 | `slope` 坡度 | `left`、`right`（两个时间点名），`items:[{label, a, b, company?, highlight?}]`，`unit`，`right_names:true` 右侧也写名字 |
-| `dumbbell` 哑铃 | `a_label`、`b_label`，`items:[{label, a, b, company?}]`，`unit`，`xmin`/`xmax`，`colors:"updown"` |
+| `dumbbell` 哑铃 | `a_label`、`b_label`，`items:[{label, a, b, company?}]`，`unit`，`xmin`/`xmax`，`colors:"updown"`（增加用涨色、减少用跌色，图例自动写成“之后（增加）/（减少）”） |
 | `treemap` 矩形树 | `items:[{label, value, group?, company?}]`，`height`，`show:"value"`，`unit` |
 | `funnel` 漏斗 | `items:[{label, value, sub?}]`，`unit`，`conv_label`（默认“转化”） |
 | `radar` 雷达 | `axes:[维度]`，`series:[{name, values, highlight?}]`（≤3），`max`，`size` |
