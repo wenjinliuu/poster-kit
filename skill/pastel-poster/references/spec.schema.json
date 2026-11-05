@@ -629,7 +629,8 @@
                     "type": {
                       "enum": [
                         "company",
-                        "pct"
+                        "pct",
+                        "text"
                       ]
                     }
                   }

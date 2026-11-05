@@ -142,6 +142,7 @@ section.ver{margin-top:28px;display:grid;gap:10px}
 .tbl th:first-child,.tbl td:first-child{text-align:left}
 .tbl td{padding:13px 8px;border-bottom:1px solid #eef0f5;text-align:right;font-family:var(--p-num);font-weight:700;vertical-align:middle}
 .tbl tr:last-child td{border-bottom:none}
+.tbl th.tx,.tbl td.tx{text-align:left;font-family:inherit;font-weight:400;font-size:17px;line-height:1.5;color:var(--ink2)}
 .pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:19px;font-weight:800}
 .pill.up{background:var(--up-soft);color:var(--up)} .pill.down{background:var(--down-soft);color:var(--down)}
 
@@ -748,8 +749,9 @@ const SEC={
   table(s){const cell=(v,j)=>{const col=s.columns[j]||{};
       if(col.type==="company")return `<td>${coItem(v,44)}</td>`;
       if(col.type==="pct"){const n=+v;return `<td><span class="pill ${n>=0?"up":"down"}">${n>0?"+":""}${n.toFixed(2)}%</span></td>`}
+      if(col.type==="text")return `<td class="tx">${rich(String(v))}</td>`;
       return `<td>${typeof v==="string"?rich(v):fmt(v)}</td>`};
-    return `<table class="tbl"><thead><tr>${s.columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr>${r.map(cell).join("")}</tr>`).join("")}</tbody></table>`},
+    return `<table class="tbl"><thead><tr>${s.columns.map(c=>`<th${c.type==="text"?' class="tx"':""}>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr>${r.map(cell).join("")}</tr>`).join("")}</tbody></table>`},
   notes(s){return `<div class="notes">${s.items.map(t=>`<div>${rich(t)}</div>`).join("")}</div>`},
   html(s){return s.html},
 
@@ -823,7 +825,8 @@ const SEC={
   // 热力表：格子颜色按 colors（不给则按 values）相对 center 的方向和幅度
   heatmap(s){const ctr=s.center??0,cv=s.rows.flatMap(r=>(r.colors||r.values).filter(v=>typeof v==="number").map(v=>Math.abs(v-ctr))),m=s.range||Math.max(...cv)||1;
     const f=v=>s.format==="pct"?(v>0?"+":"")+fmt(v)+"%":s.format==="x"?v.toFixed(1)+"×":fmt(v);
-    const cell=(v,c)=>{if(v==null)return `<td><span class="hm na">—</span></td>`;const d=(c??v)-ctr,col=d>=0?UD.up:UD.down,t=Math.min(1,Math.abs(d)/m);
+    const cell=(v,c)=>{if(v==null)return `<td><span class="hm na">—</span></td>`;const d=(c??v)-ctr,t=Math.min(1,Math.abs(d)/m);
+      if(d===0)return `<td><span class="hm" style="background:#f1f2f6;color:#8a8fa3">${f(v)}</span></td>`;const col=d>0?UD.up:UD.down;
       return `<td><span class="hm" style="background:${mix(col,W,.92-.5*t)};color:${deep(col,.25)}">${f(v)}</span></td>`};
     return `<table class="tbl hmt"><thead><tr><th></th>${s.columns.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r=>`<tr><td>${r.company?coItem(r.company,36):`<b>${esc(r.label)}</b>${r.sub?`<small>${esc(r.sub)}</small>`:""}`}</td>${r.values.map((v,j)=>cell(v,r.colors?r.colors[j]:null)).join("")}</tr>`).join("")}</tbody></table>`},
   // 偏离条：中线为常态/基准，向右为高于、向左为低于
@@ -896,7 +899,8 @@ Object.assign(SEC,{
   // 排序变化 / 前后对比：坡度图
   slope(s){return `<div class="chart" data-chart="${reg("slope",{s})}"></div>`},
   // 两点对比 / 区间：哑铃图
-  dumbbell(s){return legendHTML([["box",DIM,s.a_label||"之前"],["box",ACC,s.b_label||"之后"]])+`<div class="chart" data-chart="${reg("dumbbell",{s})}"></div>`},
+  dumbbell(s){const a=s.a_label||"之前",b=s.b_label||"之后",ud=s.colors==="updown"&&!s.items.some(i=>i.tone!=null);
+    return legendHTML(ud?[["box",DIM,a],["box",UD.up,b+"（增加）"],["box",UD.down,b+"（减少）"]]:[["box",DIM,a],["box",ACC,b]])+`<div class="chart" data-chart="${reg("dumbbell",{s})}"></div>`},
   // 层级占比：矩形树图
   treemap(s){const g=[...new Set(s.items.map(i=>i.group).filter(Boolean))];return (g.length>1?legendHTML(g.map((x,j)=>["box",PAL[j%PAL.length],x])):"")+`<div class="chart tm" data-chart="${reg("treemap",{s})}"></div>`},
   // 流程转化：漏斗
